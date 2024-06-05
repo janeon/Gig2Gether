@@ -1,5 +1,8 @@
 # datasharing
 
+## Firebase authentication setup
+Make sure you have .env file added to the root of the folder (under /datasharing) so that authentication is connected
+
 ## Developing
 
 Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
