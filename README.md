@@ -34,7 +34,7 @@ This authentication portion of this repo was created using a combination of [sve
 
 [ ] Tailwind 
 
-[ ] Fixing routing on ios for login
+[ ] Consider how to adapt for ios interface
 
 
 ## Outstanding questions 
