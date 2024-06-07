@@ -31,7 +31,9 @@ This authentication portion of this repo was created using a combination of [sve
 ## Todo 
 
 [ ] Demographic form - storing individual user backgrounds to database
+
 [ ] Tailwind 
+
 [ ] Fixing routing on ios for login
 
 
