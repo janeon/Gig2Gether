@@ -5,7 +5,11 @@ Make sure you have .env file added to the root of the folder (under /datasharing
 
 ## Developing
 
-Once you've created a project and installed dependencies with `npm install`, `npm i` (or `pnpm install` or `yarn`), start a development server:
+Installi dependencies with `npm install`, `npm i` (or `pnpm install` or `yarn`)
+
+Install tailwind with `npm install -D tailwindcss postcss autoprefixer`
+
+Once dependencies are installed, start a development server:
 
 ```bash
 npm run dev
@@ -30,11 +34,11 @@ This authentication portion of this repo was created using a combination of [sve
 
 ## Todo 
 
-[ ] Demographic form - storing individual user backgrounds to database
+- [ ] Demographic form - storing individual user backgrounds to database
 
-[ ] Tailwind 
+- [ ] Tailwind 
 
-[ ] Consider how to adapt for ios interface
+- [ ] Consider how to adapt for ios interface
 
 
 ## Outstanding questions 
