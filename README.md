@@ -5,7 +5,7 @@ Make sure you have .env file added to the root of the folder (under /datasharing
 
 ## Developing
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+Once you've created a project and installed dependencies with `npm install`, `npm i` (or `pnpm install` or `yarn`), start a development server:
 
 ```bash
 npm run dev
