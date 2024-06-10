@@ -1,13 +1,67 @@
 <script lang="ts">
-    let age: number;
-    let gender: string;
-    let race: string[];
-    let ethnicity : string;
+    let age: number = 0;
+    let gender: string = '';
+    let genders = [
+        "Male",
+        "Female",
+        "Non-Binary",
+        "Other"
+    ]
+    let race: string = '';
+    let races = [
+        'American Indian or Alaska Native',
+        'Asian',
+        'Black or African American',
+        'Hispanic or Latino', //Question on whether to include?
+        'Middle Eastern or North African',
+        'Native Hawaiian or Pacific Islander',
+        'White',
+        'Multi-Racial',
+        'Other'
+    ]
+    let ethnicity : string; // Haven't implemented
     let householdIncome : number; //Unsure what this value should be
-    let w2Hours : number;
-    let otherGigHours : number;
+    let w2Hours : number = 0;
+    let otherGigHours : number = 0;
 </script>
-<div>
+<div class = "flex space-x-4">
     <h2>Age</h2>
-    <input value = {age} type = "number"/>
+    <input class = "border-2" bind:value = {age} type = "number"/>
+    <p>{age}</p>
+</div>
+
+<div class = "flex space-x-4">
+    <h2>Gender</h2>
+    <select bind:value = {gender} class = "border-2">
+        {#each genders as g}
+            <option value = {g}>
+                {g}
+            </option>
+        {/each}
+    </select>
+    <p>{gender}</p>
+</div>
+
+<div class = "flex space-x-4">
+    <h2>Race</h2>
+    <select bind:value = {race} class = "border-2" placeholder = 'Please Select'>
+        {#each races as r}
+            <option value = {r}>
+                {r}
+            </option>
+        {/each}
+    </select>
+    <p>{race}</p>
+</div>
+
+<div class = "flex space-x-4">
+    <h2>Hours spent on a W2 job (per week)</h2>
+    <input class = "border-2" bind:value = {w2Hours} type = "number"/>
+    <p>{w2Hours}</p>
+</div>
+
+<div class = "flex space-x-4">
+    <h2>Estimated hours spent on gigs not part of this platform</h2>
+    <input class = "border-2" bind:value = {otherGigHours} type = "number"/>
+    <p>{otherGigHours}</p>
 </div>
