@@ -7,3 +7,7 @@
     let w2Hours : number;
     let otherGigHours : number;
 </script>
+<div>
+    <h2>Age</h2>
+    <input value = {age} type = "number"/>
+</div>
