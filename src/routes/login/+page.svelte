@@ -32,7 +32,6 @@
 					uid: userCredential.user.uid,
 					email: userCredential.user.email || ''
 				};
-
 				goto('/protected');
 			})
 			.catch((error) => {

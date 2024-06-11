@@ -1,4 +1,9 @@
 <script lang="ts">
+    import { authUser } from "$lib/authstore";
+    import { db } from "$lib/firebase.client";
+    import { doc, getDoc, setDoc } from "firebase/firestore";
+    import {onMount} from 'svelte'
+
     let age: number = 0;
     let gender: string = '';
     let genders = [
@@ -23,6 +28,69 @@
     let householdIncome : number; //Unsure what this value should be
     let w2Hours : number = 0;
     let otherGigHours : number = 0;
+
+    let dataToSetToStore
+    async function loadDemographics() {
+        const docRef = doc(db, "users", $authUser!.uid)
+        console.log("here1")
+        const docSnap = await getDoc(docRef);
+        console.log("here2")
+        if (!docSnap.exists()) {
+            const userRef = doc(db, "users", $authUser!.uid);
+            dataToSetToStore = {
+                email: $authUser!.email,
+                age: null,
+                gender: null,
+                race: null,
+                ethnicity: null,
+                householdIncome: null,
+                w2Hours: null,
+                otherGigHours: null
+            };
+            await setDoc(userRef,
+            dataToSetToStore), {merge: true}
+        } else {
+            const userData = docSnap.data();
+            dataToSetToStore = userData;
+        }
+
+        authUser.update(curr => {
+            return {
+                ...curr,
+                $authUser,
+                data: dataToSetToStore,
+                loading:false 
+            }
+        })
+    }
+    async function submitDemographics() {
+        let demographic_information = {
+            age: age,
+            race: race,
+            gender: gender,
+            ethnicity: ethnicity,
+            householdIncome: householdIncome,
+            w2Hours: w2Hours,
+            otherGigHours: otherGigHours
+        }
+        console.log(demographic_information)
+        try {
+            const userRef = doc(db, "users", $authUser!.uid);
+            const docSnap = await getDoc(userRef);
+            if (!docSnap) {
+                console.log("no snap")
+            }
+            console.log(userRef)
+            await setDoc(userRef,
+                demographic_information,
+             {merge: true})
+        } catch (error) {
+            console.log("There was an error saving your information")
+        }
+        
+    }
+
+    onMount(loadDemographics)
 </script>
 <div class = "flex space-x-4">
     <h2>Age</h2>
@@ -65,3 +133,5 @@
     <input class = "border-2" bind:value = {otherGigHours} type = "number"/>
     <p>{otherGigHours}</p>
 </div>
+
+<button on:click = {submitDemographics}>Submit</button>
