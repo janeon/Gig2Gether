@@ -4,6 +4,8 @@
 	import { signOut } from 'firebase/auth';
 	import { auth } from '$lib/firebase.client';
 	import { authUser } from '$lib/authstore';
+    import WorkerHeader from './WorkerHeader.svelte';
+    import PolicymakerHeader from './PolicymakerHeader.svelte';
 
 	const handleLogout = () => {
 		signOut(auth)
@@ -21,13 +23,10 @@
 	<a href="/" class="font-bold hover:underline">Home</a>
 
 	<nav class="flex gap-4">
-		{#if $authUser}
-			<a
-				href="/protected"
-				class="hover:underline"
-				class:active={$page.url.pathname === '/protected'}>Protected</a
-			>
-			<button class="hover:underline" on:click={handleLogout}>Logout</button>
+		{#if $authUser && $authUser.role == "worker"}
+			<WorkerHeader/>
+		{:else if $authUser && $authUser.role == "policymaker"}
+			<PolicymakerHeader/>
 		{:else}
 			<a href="/register" class="hover:underline" class:active={$page.url.pathname === '/register'}
 				>Register</a

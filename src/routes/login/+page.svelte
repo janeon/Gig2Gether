@@ -15,9 +15,14 @@
 			message: 'The password you entered is incorrect. Please try again.'
 		}
 	];
-
+	
+	const roles = [
+		"worker",
+		"policymaker"
+	]
 	let email: string;
 	let password: string;
+	let role: string;
 	let success: boolean | undefined = undefined;
 
 	let customError = {
@@ -30,9 +35,9 @@
 			.then((userCredential) => {
 				$authUser = {
 					uid: userCredential.user.uid,
-					email: userCredential.user.email || ''
+					email: userCredential.user.email || '',
+					role: role
 				};
-
 				goto('/protected');
 			})
 			.catch((error) => {
@@ -78,7 +83,13 @@
 		required
 		bind:value={password}
 	/>
-
+	<select bind:value={role} placeholder = "Sign in as" required>
+		{#each roles as r}
+            <option value = {r}>
+                {r}
+            </option>
+        {/each}
+	</select>
 	<button type="submit" class="default-action">Login</button>
 
 	{#if !success && success !== undefined}

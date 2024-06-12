@@ -2,17 +2,33 @@
 	import { goto } from '$app/navigation';
 
 	import { createUserWithEmailAndPassword } from 'firebase/auth';
-	import { auth } from '$lib/firebase.client';
+	import { auth, db } from '$lib/firebase.client';
+    import { authUser } from '$lib/authstore';
+    import { doc, setDoc } from 'firebase/firestore';
 
+	const roles = [
+		"worker",
+		"policymaker"
+	]
 	let email: string;
 	let password: string;
+	let role: string;
 
 	let success: boolean | undefined = undefined;
 
 	const register = () => {
 		createUserWithEmailAndPassword(auth, email, password)
-			.then(() => {
-				goto('/login');
+			.then(async(userCredential) => {
+				$authUser = {
+					uid: userCredential.user.uid,
+					email: userCredential.user.email || '',
+					role: role
+				};
+				const userRef = doc(db, "users", $authUser.uid);
+				// const docSnap = await getDoc(userRef);
+				await setDoc(userRef,
+            	{email: $authUser.email}), {merge: true}
+				goto('/protected');
 			})
 			.catch((error) => {
 				const errorCode = error.code;
@@ -48,7 +64,14 @@
 		required
 		bind:value={password}
 	/>
-
+	<select bind:value={role} placeholder = "Sign in as" required>
+		{#each roles as r}
+            <option value = {r}>
+                {r}
+            </option>
+        {/each}
+	</select>
+	
 	<button type="submit" class="default-action">Register</button>
 
 	{#if !success && success !== undefined}
