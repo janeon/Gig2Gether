@@ -64,7 +64,7 @@
 		required
 		bind:value={password}
 	/>
-	<select bind:value = {role} placeholder = "Sign in as" required>
+	<select bind:value={role} placeholder = "Sign in as" required>
 		{#each roles as r}
             <option value = {r}>
                 {r}

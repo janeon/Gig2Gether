@@ -35,29 +35,30 @@
     let w2Hours : number = 0;
     let otherGigHours : number = 0;
 
-    let dataToSetToStore : object;
+    // let dataToSetToStore : object;
 
-    async function loadDemographics() {
-        const docRef = doc(db, "demographics", uid)
-        const docSnap = await getDoc(docRef);
-        if (!docSnap.exists()) {
-            const userRef = doc(db, "demographics", uid);
-            dataToSetToStore = {
-                // Should check whether we can have undefined values, not zeroes
-                age: 0,
-                race: "",
-                gender: "",
-                ethnicity: "",
-                householdIncome: 0,
-                w2Hours: 0,
-                otherGigHours: 0
-            };
-            await setDoc(userRef,
-            dataToSetToStore), {merge: true}
-        } else {
-            const userData = docSnap.data();
-            dataToSetToStore = userData;
-        }
+    // TODO: For prepopulating 
+    // async function loadDemographics() {
+    //     const docRef = doc(db, "demographics", uid)
+    //     const docSnap = await getDoc(docRef);
+    //     if (!docSnap.exists()) {
+    //         const userRef = doc(db, "demographics", uid);
+    //         dataToSetToStore = {
+    //             // Should check whether we can have undefined values, not zeroes
+    //             age: 0,
+    //             race: "",
+    //             gender: "",
+    //             ethnicity: "",
+    //             householdIncome: 0,
+    //             w2Hours: 0,
+    //             otherGigHours: 0
+    //         };
+    //         await setDoc(userRef,
+    //         dataToSetToStore), {merge: true}
+    //     } else {
+    //         const userData = docSnap.data();
+    //         dataToSetToStore = userData;
+    //     }
 
         //Want to prepopulate with what the user has already done
 
@@ -69,7 +70,7 @@
         //         loading:false 
         //     }
         // })
-    }
+    // }
     async function submitDemographics() {
         let demographic_information = {
             age: age,
@@ -96,7 +97,7 @@
         onAuthStateChanged(auth, user => {
             if (user) {
                 uid = user.uid
-                loadDemographics();
+                // loadDemographics();
             }
             else {
                 goto('/login')
@@ -107,13 +108,13 @@
 </script>
 <div class = "flex space-x-4">
     <h2>Age</h2>
-    <input class = "border-2" bind:value = {age} type = "number"/>
+    <input class = "border-2" bind:value={age} type = "number"/>
     <p>{age}</p>
 </div>
 
 <div class = "flex space-x-4">
     <h2>Gender</h2>
-    <select bind:value = {gender} class = "border-2">
+    <select bind:value={gender} class = "border-2">
         {#each genders as g}
             <option value = {g}>
                 {g}
@@ -125,7 +126,7 @@
 
 <div class = "flex space-x-4">
     <h2>Race</h2>
-    <select bind:value = {race} class = "border-2" placeholder = 'Please Select'>
+    <select bind:value={race} class = "border-2" placeholder = 'Please Select'>
         {#each races as r}
             <option value = {r}>
                 {r}
@@ -137,13 +138,13 @@
 
 <div class = "flex space-x-4">
     <h2>Hours spent on a W2 job (per week)</h2>
-    <input class = "border-2" bind:value = {w2Hours} type = "number"/>
+    <input class = "border-2" bind:value={w2Hours} type = "number"/>
     <p>{w2Hours}</p>
 </div>
 
 <div class = "flex space-x-4">
     <h2>Estimated hours spent on gigs not part of this platform</h2>
-    <input class = "border-2" bind:value = {otherGigHours} type = "number"/>
+    <input class = "border-2" bind:value={otherGigHours} type = "number"/>
     <p>{otherGigHours}</p>
 </div>
 

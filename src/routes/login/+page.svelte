@@ -57,34 +57,6 @@
 				success = false;
 			});
 	};
-
-	// const loginWorker = () => {
-	// 	signInWithEmailAndPassword(auth, email, password)
-	// 		.then((userCredential) => {
-	// 			$authUser = {
-	// 				uid: userCredential.user.uid,
-	// 				email: userCredential.user.email || '',
-	// 				role: "worker"
-	// 			};
-	// 			goto('/protected');
-	// 		})
-	// 		.catch((error) => {
-	// 			const errorCode = error.code;
-
-	// 			const errorMatch = errorMessages.find((error) => error.type === errorCode);
-
-	// 			if (errorMatch) {
-	// 				customError = errorMatch;
-	// 			} else {
-	// 				customError = {
-	// 					type: 'unknown',
-	// 					message: 'There was an error logging in. Please try again.'
-	// 				};
-	// 			}
-
-	// 			success = false;
-	// 	});
-	// }
 </script>
 
 <svelte:head>
@@ -111,7 +83,7 @@
 		required
 		bind:value={password}
 	/>
-	<select bind:value = {role} placeholder = "Sign in as" required>
+	<select bind:value={role} placeholder = "Sign in as" required>
 		{#each roles as r}
             <option value = {r}>
                 {r}
