@@ -5,6 +5,8 @@
     import {onMount} from 'svelte'
     import {getAuth, onAuthStateChanged} from 'firebase/auth';
     import { goto } from '$app/navigation';
+
+
     let uid: string;
     let age: number = 0;
     let gender: string = '';
@@ -36,11 +38,8 @@
     let dataToSetToStore : object;
 
     async function loadDemographics() {
-        console.log(uid);
         const docRef = doc(db, "demographics", uid)
-        console.log("here1")
         const docSnap = await getDoc(docRef);
-        console.log("here2")
         if (!docSnap.exists()) {
             const userRef = doc(db, "demographics", uid);
             dataToSetToStore = {
@@ -60,14 +59,16 @@
             dataToSetToStore = userData;
         }
 
-        authUser.update(curr => {
-            return {
-                ...curr,
-                $authUser,
-                data: dataToSetToStore,
-                loading:false 
-            }
-        })
+        //Want to prepopulate with what the user has already done
+
+        // authUser.update(curr => {
+        //     return {
+        //         ...curr,
+        //         $authUser,
+        //         data: dataToSetToStore,
+        //         loading:false 
+        //     }
+        // })
     }
     async function submitDemographics() {
         let demographic_information = {
@@ -79,14 +80,8 @@
             w2Hours: w2Hours,
             otherGigHours: otherGigHours
         }
-        console.log(demographic_information)
         try {
             const userRef = doc(db, "demographics", uid);
-            // const docSnap = await getDoc(userRef);
-            // if (!docSnap) {
-            //     console.log("no snap")
-            // }
-            // console.log(userRef)
             await setDoc(userRef,
             demographic_information,
              {merge: true})
