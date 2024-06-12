@@ -3,7 +3,9 @@
     import { db } from "$lib/firebase.client";
     import { doc, getDoc, setDoc } from "firebase/firestore";
     import {onMount} from 'svelte'
-
+    import {getAuth, onAuthStateChanged} from 'firebase/auth';
+    import { goto } from '$app/navigation';
+    let uid: string;
     let age: number = 0;
     let gender: string = '';
     let genders = [
@@ -24,28 +26,24 @@
         'Multi-Racial',
         'Other'
     ]
-    let ethnicity : string; // Haven't implemented
-    let householdIncome : number; //Unsure what this value should be
+    let ethnicity : string = ''; // Haven't implemented
+    let householdIncome : number = 0; //Unsure what this value should be
     let w2Hours : number = 0;
     let otherGigHours : number = 0;
 
-    let dataToSetToStore
+    let dataToSetToStore : object;
+
     async function loadDemographics() {
-        const docRef = doc(db, "users", $authUser!.uid)
+        console.log(uid);
+        const docRef = doc(db, "users", uid)
         console.log("here1")
         const docSnap = await getDoc(docRef);
         console.log("here2")
         if (!docSnap.exists()) {
-            const userRef = doc(db, "users", $authUser!.uid);
+            const userRef = doc(db, "users", uid);
             dataToSetToStore = {
                 email: $authUser!.email,
-                age: null,
-                gender: null,
-                race: null,
-                ethnicity: null,
-                householdIncome: null,
-                w2Hours: null,
-                otherGigHours: null
+                demographics: {}
             };
             await setDoc(userRef,
             dataToSetToStore), {merge: true}
@@ -75,14 +73,16 @@
         }
         console.log(demographic_information)
         try {
-            const userRef = doc(db, "users", $authUser!.uid);
+            const userRef = doc(db, "users", uid);
             const docSnap = await getDoc(userRef);
             if (!docSnap) {
                 console.log("no snap")
             }
             console.log(userRef)
             await setDoc(userRef,
-                demographic_information,
+            {
+            demographics: demographic_information
+        },
              {merge: true})
         } catch (error) {
             console.log("There was an error saving your information")
@@ -90,7 +90,19 @@
         
     }
 
-    onMount(loadDemographics)
+    onMount(() => {
+        const auth = getAuth();
+        onAuthStateChanged(auth, user => {
+            if (user) {
+                uid = user.uid
+                loadDemographics();
+            }
+            else {
+                goto('/login')
+            }
+        })
+
+    })
 </script>
 <div class = "flex space-x-4">
     <h2>Age</h2>
