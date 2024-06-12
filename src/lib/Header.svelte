@@ -6,17 +6,6 @@
 	import { authUser } from '$lib/authstore';
     import WorkerHeader from './WorkerHeader.svelte';
     import PolicymakerHeader from './PolicymakerHeader.svelte';
-
-	const handleLogout = () => {
-		signOut(auth)
-			.then(() => {
-				$authUser = undefined;
-				goto('/login');
-			})
-			.catch((error) => {
-				console.log(error);
-			});
-	};
 </script>
 
 <header class="space-y-4">
