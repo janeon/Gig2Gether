@@ -12,7 +12,8 @@
         "Male",
         "Female",
         "Non-Binary",
-        "Other"
+        "Other",
+        "Do not wish to share"
     ]
     let race: string = '';
     let races = [
@@ -24,7 +25,8 @@
         'Native Hawaiian or Pacific Islander',
         'White',
         'Multi-Racial',
-        'Other'
+        'Other',
+        "Do not wish to share"
     ]
     let ethnicity : string = ''; // Haven't implemented
     let householdIncome : number = 0; //Unsure what this value should be
@@ -35,14 +37,14 @@
 
     async function loadDemographics() {
         console.log(uid);
-        const docRef = doc(db, "users", uid)
+        const docRef = doc(db, "demographics", uid)
         console.log("here1")
         const docSnap = await getDoc(docRef);
         console.log("here2")
         if (!docSnap.exists()) {
-            const userRef = doc(db, "users", uid);
+            const userRef = doc(db, "demographics", uid);
             dataToSetToStore = {
-                email: $authUser!.email,
+                // email: $authUser!.email,
                 demographics: {}
             };
             await setDoc(userRef,
@@ -73,16 +75,14 @@
         }
         console.log(demographic_information)
         try {
-            const userRef = doc(db, "users", uid);
-            const docSnap = await getDoc(userRef);
-            if (!docSnap) {
-                console.log("no snap")
-            }
-            console.log(userRef)
+            const userRef = doc(db, "demographics", uid);
+            // const docSnap = await getDoc(userRef);
+            // if (!docSnap) {
+            //     console.log("no snap")
+            // }
+            // console.log(userRef)
             await setDoc(userRef,
-            {
-            demographics: demographic_information
-        },
+            demographic_information,
              {merge: true})
         } catch (error) {
             console.log("There was an error saving your information")
