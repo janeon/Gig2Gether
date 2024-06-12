@@ -6,8 +6,13 @@
     import { authUser } from '$lib/authstore';
     import { doc, setDoc } from 'firebase/firestore';
 
+	const roles = [
+		"worker",
+		"policymaker"
+	]
 	let email: string;
 	let password: string;
+	let role: string;
 
 	let success: boolean | undefined = undefined;
 
@@ -16,7 +21,8 @@
 			.then(async(userCredential) => {
 				$authUser = {
 					uid: userCredential.user.uid,
-					email: userCredential.user.email || ''
+					email: userCredential.user.email || '',
+					role: role
 				};
 				const userRef = doc(db, "users", $authUser.uid);
 				// const docSnap = await getDoc(userRef);
@@ -58,7 +64,14 @@
 		required
 		bind:value={password}
 	/>
-
+	<select bind:value = {role} placeholder = "Sign in as" required>
+		{#each roles as r}
+            <option value = {r}>
+                {r}
+            </option>
+        {/each}
+	</select>
+	
 	<button type="submit" class="default-action">Register</button>
 
 	{#if !success && success !== undefined}
