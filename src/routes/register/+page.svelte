@@ -2,7 +2,9 @@
 	import { goto } from '$app/navigation';
 
 	import { createUserWithEmailAndPassword } from 'firebase/auth';
-	import { auth } from '$lib/firebase.client';
+	import { auth, db } from '$lib/firebase.client';
+    import { authUser } from '$lib/authstore';
+    import { doc, setDoc } from 'firebase/firestore';
 
 	let email: string;
 	let password: string;
@@ -11,8 +13,16 @@
 
 	const register = () => {
 		createUserWithEmailAndPassword(auth, email, password)
-			.then(() => {
-				goto('/login');
+			.then(async(userCredential) => {
+				$authUser = {
+					uid: userCredential.user.uid,
+					email: userCredential.user.email || ''
+				};
+				const userRef = doc(db, "users", $authUser.uid);
+				// const docSnap = await getDoc(userRef);
+				await setDoc(userRef,
+            	{email: $authUser.email}), {merge: true}
+				goto('/protected');
 			})
 			.catch((error) => {
 				const errorCode = error.code;

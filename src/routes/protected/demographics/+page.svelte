@@ -44,8 +44,14 @@
         if (!docSnap.exists()) {
             const userRef = doc(db, "demographics", uid);
             dataToSetToStore = {
-                // email: $authUser!.email,
-                demographics: {}
+                // Should check whether we can have undefined values, not zeroes
+                age: 0,
+                race: "",
+                gender: "",
+                ethnicity: "",
+                householdIncome: 0,
+                w2Hours: 0,
+                otherGigHours: 0
             };
             await setDoc(userRef,
             dataToSetToStore), {merge: true}
