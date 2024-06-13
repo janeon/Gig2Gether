@@ -18,7 +18,7 @@ To create build assets:
 npm run build
 ```
 
-Finally, start a development server:
+Finally, start a development server locally:
 
 ```bash
 npm run dev
@@ -38,10 +38,36 @@ This authentication portion of this repo was created using a combination of [sve
 (The following steps will require that you have nvm installed)
 
 Make sure your CLI has firebase installed, if not run 
-`npm install -g firebase-tools`
+
+```bash
+npm install -g firebase-tools
+```
+
+
+And make sure that the following project id 'robert-kraut-1234' available
+
+```bash
+firebase projects:list
+``` 
+
+
+If so, add it as the active project via
+
+```bash
+firebase use --add
+```
+
+Next, target gigshare as hosting target
+
+```bash
+firebase target:apply hosting datasharing gigshare
+```
+
 
 Deploy to domain using
-`firebase deploy --only hosting`
+```bash
+firebase deploy --only hosting
+```
 
 
 ## Todo 
