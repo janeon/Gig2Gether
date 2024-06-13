@@ -63,10 +63,10 @@
 	<title>Login</title>
 </svelte:head>
 
-<h1 class="text-4xl font-bold">Login</h1>
+<div class="flex flex-col items-center">
 
 <form
-	class="flex flex-col gap-4 p-8 space-y-4 bg-white sm:w-10/12"
+	class="flex flex-col gap-4 p-8 space-y-4 bg-white sm:w-6/12"
 	on:submit|preventDefault={login}
 >
 	<input
@@ -96,3 +96,4 @@
 		<div class="p-8 text-red-500 bg-red-100">{customError.message}</div>
 	{/if}
 </form>
+</div>

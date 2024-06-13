@@ -9,7 +9,16 @@ Installi dependencies with `npm install`, `npm i` (or `pnpm install` or `yarn`)
 
 Install tailwind with `npm install -D tailwindcss postcss autoprefixer`
 
-Once dependencies are installed, start a development server:
+
+## Building
+
+To create build assets:
+
+```
+npm run build
+```
+
+Finally, start a development server:
 
 ```bash
 npm run dev
@@ -19,13 +28,6 @@ npm run dev -- --open
 ```
 
 
-## Building
-
-To create a production version of your app:
-
-```
-npm run build
-```
 
 You can preview the production build with `npm run preview`.
 
