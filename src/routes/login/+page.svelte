@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { signInWithEmailAndPassword } from 'firebase/auth';
-	import { auth } from '$lib/firebase.client';
+	import { auth, db } from '$lib/firebase.client';
 	import { authUser } from '$lib/authstore';
+    import { doc, getDoc } from 'firebase/firestore';
 
 	const errorMessages = [
 		{
@@ -16,13 +17,13 @@
 		}
 	];
 	
-	const roles = [
-		"worker",
-		"policymaker"
-	]
+	// const roles = [
+	// 	"worker",
+	// 	"policymaker"
+	// ]
 	let email: string;
 	let password: string;
-	let role: string;
+	// let role: string;
 	let success: boolean | undefined = undefined;
 
 	let customError = {
@@ -32,13 +33,25 @@
 
 	const login = () => {
 		signInWithEmailAndPassword(auth, email, password)
-			.then((userCredential) => {
-				$authUser = {
-					uid: userCredential.user.uid,
-					email: userCredential.user.email || '',
-					role: role
-				};
-				goto('/protected');
+			.then(async(userCredential) => {
+				const docRef = doc(db, "users", userCredential.user.uid)
+				const docSnap = await getDoc(docRef)
+				if (docSnap.exists() && docSnap.data().datasharing) {
+					const role = docSnap.data().role;
+					$authUser = {
+						uid: userCredential.user.uid,
+						email: userCredential.user.email || '',
+						role: role
+					};
+					console.log(role);
+					goto('/protected');
+				}
+				else {
+					customError = {
+						type: "Not a user in ",
+						message: "You do not have an account associated with the datasharing portal."
+					}
+				}
 			})
 			.catch((error) => {
 				const errorCode = error.code;
@@ -83,13 +96,13 @@
 		required
 		bind:value={password}
 	/>
-	<select bind:value={role} placeholder = "Sign in as" required>
+	<!-- <select bind:value={role} placeholder = "Sign in as" required>
 		{#each roles as r}
             <option value = {r}>
                 {r}
             </option>
         {/each}
-	</select>
+	</select> -->
 	<button type="submit" class="default-action">Login</button>
 
 	{#if !success && success !== undefined}
