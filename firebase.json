@@ -1,5 +1,14 @@
 {
   "emulators": {
     "singleProjectMode": true
+  },
+  "hosting": {
+    "target": "datasharing",
+    "public": "build",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ]
   }
 }

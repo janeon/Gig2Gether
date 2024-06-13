@@ -34,6 +34,15 @@ You can preview the production build with `npm run preview`.
 This authentication portion of this repo was created using a combination of [sveltekit-auth-firebase](https://github.com/JustinyAhin/okupter-repos/tree/5e9403e30a49ce5e314f311cffb057d922d2c737/apps/sveltekit-auth-firebase) and [sveltekit-firebase-auth-example](https://github.com/eraygundogmus/sveltekit-firebase-auth-example)
 
 
+## Hosting
+
+Make sure your CLI has firebase installed, if not run 
+`npm install -g firebase-tools`
+
+Deploy to domain using
+`firebase deploy --only hosting`
+
+
 ## Todo 
 
 - [ ] Demographic form - storing individual user backgrounds to database
