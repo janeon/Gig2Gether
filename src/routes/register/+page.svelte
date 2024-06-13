@@ -25,9 +25,11 @@
 					role: role
 				};
 				const userRef = doc(db, "users", $authUser.uid);
-				// const docSnap = await getDoc(userRef);
 				await setDoc(userRef,
-            	{email: $authUser.email}), {merge: true}
+            	{	email: $authUser.email,
+					role: role,
+					datasharing: true
+				}), {merge: true}
 				goto('/protected');
 			})
 			.catch((error) => {
