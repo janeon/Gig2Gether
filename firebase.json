@@ -4,7 +4,7 @@
   },
   "hosting": {
     "target": "datasharing",
-    "public": "build",
+    "public": "public",
     "ignore": [
       "firebase.json",
       "**/.*",

@@ -35,6 +35,7 @@ This authentication portion of this repo was created using a combination of [sve
 
 
 ## Hosting
+(The following steps will require that you have nvm installed)
 
 Make sure your CLI has firebase installed, if not run 
 `npm install -g firebase-tools`

@@ -1,0 +1,16 @@
+{
+  "projects": {
+    "hosting": "robert-kraut-1234"
+  },
+  "targets": {
+    "robert-kraut-1234": {
+      "hosting": {
+        "datasharing": [
+          "gigshare"
+        ]
+      }
+    }
+  },
+  "etags": {},
+  "dataconnectEmulatorConfig": {}
+}
