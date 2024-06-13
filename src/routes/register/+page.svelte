@@ -1,18 +1,17 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-
 	import { createUserWithEmailAndPassword } from 'firebase/auth';
 	import { auth, db } from '$lib/firebase.client';
     import { authUser } from '$lib/authstore';
     import { doc, setDoc } from 'firebase/firestore';
-
-	const roles = [
-		"worker",
-		"policymaker"
-	]
+	import Switch from '$lib/Switch.svelte';
+	// const roles = [
+	// 	"worker",
+	// 	"policymaker"
+	// ]
 	let email: string;
 	let password: string;
-	let role: string;
+	let role: string = "worker" // = "worker" or "policymaker"
 
 	let success: boolean | undefined = undefined;
 
@@ -38,16 +37,19 @@
 				success = false;
 			});
 	};
+
+	
 </script>
 
 <svelte:head>
 	<title>Register</title>
 </svelte:head>
 
-<h1 class="text-4xl font-bold">Register</h1>
+<div class="flex flex-col items-center">
+	<Switch bind:value={role} label="I'm a gig" options={["worker", "policymaker"]} design="inner"/>
 
 <form
-	class="flex flex-col gap-4 p-8 space-y-4 bg-white sm:w-10/12"
+	class="flex flex-col gap-4 p-8 space-y-4 bg-white sm:w-6/12"
 	on:submit|preventDefault={register}
 >
 	<input
@@ -64,13 +66,6 @@
 		required
 		bind:value={password}
 	/>
-	<select bind:value={role} placeholder = "Sign in as" required>
-		{#each roles as r}
-            <option value = {r}>
-                {r}
-            </option>
-        {/each}
-	</select>
 	
 	<button type="submit" class="default-action">Register</button>
 
@@ -78,3 +73,4 @@
 		<div class="p-8 text-red-500 bg-red-100">There was an error registering. Please try again.</div>
 	{/if}
 </form>
+</div>
