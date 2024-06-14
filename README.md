@@ -69,14 +69,15 @@ firebase deploy --only hosting
 
 ## Todo 
 
-- [ ] Demographic form - storing individual user backgrounds to database
-
-- [ ] Tailwind
+- [ ] Fix auth so that login doesn't expire at each reload
 
 - [ ] How to store different types of workers' data, across different apps and work types (what if someone used both Uber and Rover?)
 
-- [ ] Consider how to adapt for ios interface
+- [ ] Tailwind
 
+- [X] Demographic form - storing individual user backgrounds to database
+
+- [ ] Consider how to adapt for ios interface
 
 ## Outstanding questions 
 -- Whether to have separate interfaces/apps for web and mobile
