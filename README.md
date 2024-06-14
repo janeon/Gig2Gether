@@ -66,6 +66,8 @@ Deploy to domain using
 firebase deploy --only hosting
 ```
 
+And see it live at [gigshare.web.app](https://gigshare.web.app/)
+
 
 ## Todo 
 
