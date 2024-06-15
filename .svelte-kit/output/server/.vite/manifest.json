@@ -95,11 +95,11 @@
       "_ssr.js",
       "_utils.js",
       "_stores.js",
-      "_client.js",
-      "_authstore.js"
+      "_authstore.js",
+      "_client.js"
     ],
     "css": [
-      "_app/immutable/assets/_layout.WgBgtXJa.css"
+      "_app/immutable/assets/_layout.DGVp1pjk.css"
     ]
   },
   "src/routes/+layout.ts": {
@@ -114,10 +114,7 @@
     "src": "src/routes/+page.svelte",
     "isEntry": true,
     "imports": [
-      "_utils.js",
-      "_ssr.js",
-      "_client.js",
-      "_authstore.js"
+      "_ssr.js"
     ]
   },
   "src/routes/login/+page.svelte": {
@@ -138,7 +135,10 @@
     "src": "src/routes/protected/+page.svelte",
     "isEntry": true,
     "imports": [
-      "_ssr.js"
+      "_utils.js",
+      "_ssr.js",
+      "_stores.js",
+      "_authstore.js"
     ]
   },
   "src/routes/protected/+page.ts": {
@@ -151,14 +151,29 @@
       "_index.js"
     ]
   },
+  "src/routes/protected/demographics/+page.svelte": {
+    "file": "entries/pages/protected/demographics/_page.svelte.js",
+    "name": "entries/pages/protected/demographics/_page.svelte",
+    "src": "src/routes/protected/demographics/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_ssr.js",
+      "_client.js"
+    ]
+  },
   "src/routes/register/+page.svelte": {
     "file": "entries/pages/register/_page.svelte.js",
     "name": "entries/pages/register/_page.svelte",
     "src": "src/routes/register/+page.svelte",
     "isEntry": true,
     "imports": [
+      "_utils.js",
       "_ssr.js",
-      "_client.js"
+      "_client.js",
+      "_authstore.js"
+    ],
+    "css": [
+      "_app/immutable/assets/_page.nbnyeoxM.css"
     ]
   }
 }

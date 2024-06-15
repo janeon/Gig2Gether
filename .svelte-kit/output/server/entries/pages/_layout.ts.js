@@ -1,5 +1,6 @@
 import "firebase/app";
 import { onAuthStateChanged } from "firebase/auth";
+import "firebase/firestore";
 let auth;
 async function load({ url }) {
   function getAuthUser() {
