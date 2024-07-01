@@ -1,6 +1,6 @@
 <script lang="ts">
     import { authUser } from "$lib/authstore";
-    import { db } from "$lib/firebase.client";
+    import { db } from "$lib/firebase";
     import { doc, getDoc, setDoc } from "firebase/firestore";
     import {onMount} from 'svelte'
     import {getAuth, onAuthStateChanged} from 'firebase/auth';

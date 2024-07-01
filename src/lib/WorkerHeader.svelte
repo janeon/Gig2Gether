@@ -1,6 +1,5 @@
 <script lang="ts">
     import { page } from '$app/stores';
-    import {handleLogout} from '$lib/utils';
 </script>
 
 <a
@@ -8,4 +7,6 @@
     class="hover:underline"
     class:active={$page.url.pathname === '/protected'}>Home</a
 >
-<button class="hover:underline" on:click={handleLogout}>Logout</button>
+<form action="/logout" method="POST">
+    <button type="submit">Log out</button>
+  </form>

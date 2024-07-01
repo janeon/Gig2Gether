@@ -1,19 +1,32 @@
 {
 	"/": [
 		"src/routes/+layout.ts",
-		"src/routes/+layout.ts"
+		"src/routes/+layout.server.ts",
+		"src/routes/+layout.ts",
+		"src/routes/+layout.server.ts"
 	],
-	"/login": [
-		"src/routes/+layout.ts"
+	"/(auth)/login": [
+		"src/routes/(auth)/login/+page.server.ts",
+		"src/routes/+layout.ts",
+		"src/routes/+layout.server.ts"
+	],
+	"/(auth)/logout": [
+		"src/routes/(auth)/logout/+page.server.ts",
+		"src/routes/+layout.ts",
+		"src/routes/+layout.server.ts"
 	],
 	"/protected": [
 		"src/routes/protected/+page.ts",
-		"src/routes/+layout.ts"
+		"src/routes/+layout.ts",
+		"src/routes/+layout.server.ts"
 	],
 	"/protected/demographics": [
-		"src/routes/+layout.ts"
+		"src/routes/+layout.ts",
+		"src/routes/+layout.server.ts"
 	],
-	"/register": [
-		"src/routes/+layout.ts"
+	"/(auth)/register": [
+		"src/routes/(auth)/register/+page.server.ts",
+		"src/routes/+layout.ts",
+		"src/routes/+layout.server.ts"
 	]
 }
