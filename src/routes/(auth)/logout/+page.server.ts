@@ -1,5 +1,5 @@
 import { signOut } from 'firebase/auth';
-import { auth} from '$lib/firebase';
+import { auth} from '../../../firebase/index';
 import { redirect } from '@sveltejs/kit'
 import type { Actions, PageServerLoad } from './$types'
 

@@ -1,7 +1,7 @@
 import { fail, redirect } from '@sveltejs/kit'
 import type { Action, Actions, PageServerLoad } from './$types'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
-import { auth, db } from '$lib/firebase'
+import { auth, db } from '../../../firebase/index'
 import { doc, setDoc } from 'firebase/firestore'
 import { randomUUID } from 'crypto'
 
@@ -32,7 +32,7 @@ const register: Action = async ({ request, cookies }) => {
     try {
         cookies.set('session', idToken, { path: '/' })
       } catch (error) {
-        console.log('error setting cookies')
+        console.log('error setting cookies', error)
       }
     try {
       const user = userCredential.user
@@ -43,7 +43,7 @@ const register: Action = async ({ request, cookies }) => {
         role: role
       })
     } catch (error) {
-      console.log("there was an error saving the user")
+      console.log("there was an error saving the user", error)
     }
 })
   .catch((error) => {

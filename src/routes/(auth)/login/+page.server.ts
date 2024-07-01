@@ -1,7 +1,7 @@
 import { fail, redirect } from '@sveltejs/kit'
 import type { Action, Actions, PageServerLoad } from './$types'
 import { signInWithEmailAndPassword } from 'firebase/auth'
-import { auth, db } from '$lib/firebase'
+import { auth, db } from '../../../firebase/index'
 import { doc, updateDoc } from 'firebase/firestore'
 import { randomUUID } from 'crypto'
 
@@ -31,7 +31,7 @@ const login: Action = async ({ cookies,request }) => {
     try {
         cookies.set('session', idToken, { path: '/' })
       } catch (error) {
-        console.log('error setting cookies')
+        console.log('error setting cookies'+error)
       }
     try {
       const user = userCredential.user
@@ -41,7 +41,7 @@ const login: Action = async ({ cookies,request }) => {
       })
       console.log(idToken)
     } catch (error) {
-      console.log("there was an error getting the user")
+      console.log("there was an error getting the user",error)
     }
 })
   .catch((error) => {

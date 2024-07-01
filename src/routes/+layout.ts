@@ -1,28 +1,13 @@
 /** @type {import('./$types').LayoutLoad} */
 
-// import { initializeFirebase, auth } from '$lib/firebase';
-// import { browser } from '$app/environment';
-// import { onAuthStateChanged } from 'firebase/auth';
+import type { LayoutLoad } from "./$types";
 
-// export async function load({ url }) {
-//  if (browser) {
-//   try {
-//    initializeFirebase();
-//   } catch (ex) {
-//    console.error(ex);
-//   }
-//  }
+// export const ssr = false;
 
-//  function getAuthUser() {
-//   return new Promise((resolve) => {
-//    onAuthStateChanged(auth, (user) => resolve(user ? user : false));
-//   });
-//  }
+export const load = (async () => {
+  const auth = await import("../firebase/auth");
 
-//  return {
-//   getAuthUser: getAuthUser,
-//   url: url.pathname
-//  };
-// }
-
-// export const prerender = true;
+  return {
+    auth,
+  };
+}) satisfies LayoutLoad;

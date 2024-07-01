@@ -1,7 +1,6 @@
 // import { page } from '$app/stores';
-import { goto } from '$app/navigation';
 import { signOut } from 'firebase/auth';
-import { auth, db } from '$lib/firebase';
+import { auth, db } from '../firebase/index';
 // import { authUser } from '$lib/authstore';../routes/login/$types';
 import { doc, getDoc } from 'firebase/firestore';
 import type { User } from '../app';
