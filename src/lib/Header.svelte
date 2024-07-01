@@ -9,10 +9,12 @@
 	<!-- <a href="/" class="font-bold hover:underline">Home</a> -->
 
 	<nav class="flex gap-4">
-		{#if $authUser && $authUser.role == "worker"}
+		{#if $page.data.user?.role == "worker"}
 			<WorkerHeader/>
-		{:else if $authUser && $authUser.role == "policymaker"}
+		{:else if $page.data.user?.role == "policymaker"}
 			<PolicymakerHeader/>
+		<!-- {#if $page.data.user}
+			<h1>{$page.data.user.role}</h1> -->
 		{:else}
 			<a href="/register" class="hover:underline text-4xl" class:active={$page.url.pathname === '/register'}
 				>Register</a

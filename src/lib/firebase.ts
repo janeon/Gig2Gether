@@ -16,14 +16,26 @@ const firebaseConfig = {
  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID
 };
 
-export const initializeFirebase = () => {
- if (!browser) {
-  throw new Error("Can't use the Firebase client on the server.");
- }
- if (!app) {
-  app = initializeApp(firebaseConfig);
-  auth = getAuth(app);
-  db = getFirestore(app, "gigshare")
-}
+// Initialize Firebase
+app = initializeApp(firebaseConfig);
+
+// For authentification
+auth = getAuth(app);
+db = getFirestore(app, "gigshare");
+// export const initializeFirebase = () => {
+//  if (!browser) {
+//   throw new Error("Can't use the Firebase client on the server.");
+//  }
+//  if (!app) {
+//   console.log("NO ERROR WITH FIREBASE")
+//   app = initializeApp(firebaseConfig);
+//   auth = getAuth(app);
+//   db = getFirestore(app, "gigshare")
+//   console.log(app)
+// }
+// else {
+//   console.log("ERROR WITH FIREBASE")
+//   console.log("auth in client ",auth)
+// }
  
-};
+// };

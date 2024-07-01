@@ -1,6 +1,6 @@
 <script lang="ts">
     import { authUser } from "$lib/authstore";
-    import { db } from "$lib/firebase.client";
+    import { db } from "$lib/firebase";
     import { doc, getDoc, setDoc } from "firebase/firestore";
     import {onMount} from 'svelte'
     import {getAuth, onAuthStateChanged} from 'firebase/auth';
@@ -35,42 +35,38 @@
     let w2Hours : number = 0;
     let otherGigHours : number = 0;
 
-    // let dataToSetToStore : object;
+    let dataToSetToStore;
 
     // TODO: For prepopulating 
-    // async function loadDemographics() {
-    //     const docRef = doc(db, "demographics", uid)
-    //     const docSnap = await getDoc(docRef);
-    //     if (!docSnap.exists()) {
-    //         const userRef = doc(db, "demographics", uid);
-    //         dataToSetToStore = {
-    //             // Should check whether we can have undefined values, not zeroes
-    //             age: 0,
-    //             race: "",
-    //             gender: "",
-    //             ethnicity: "",
-    //             householdIncome: 0,
-    //             w2Hours: 0,
-    //             otherGigHours: 0
-    //         };
-    //         await setDoc(userRef,
-    //         dataToSetToStore), {merge: true}
-    //     } else {
-    //         const userData = docSnap.data();
-    //         dataToSetToStore = userData;
-    //     }
-
-        //Want to prepopulate with what the user has already done
-
-        // authUser.update(curr => {
-        //     return {
-        //         ...curr,
-        //         $authUser,
-        //         data: dataToSetToStore,
-        //         loading:false 
-        //     }
-        // })
-    // }
+    async function loadDemographics() {
+        const docRef = doc(db, "demographics", uid)
+        const docSnap = await getDoc(docRef);
+        if (!docSnap.exists()) {
+            const userRef = doc(db, "demographics", uid);
+            dataToSetToStore = {
+                // Should check whether we can have undefined values, not zeroes
+                age: 0,
+                race: "",
+                gender: "",
+                ethnicity: "",
+                householdIncome: 0,
+                w2Hours: 0,
+                otherGigHours: 0
+            };
+            await setDoc(userRef,
+            dataToSetToStore), {merge: true}
+        } else {
+            const userData = docSnap.data();
+            dataToSetToStore = userData;
+        }
+        age = dataToSetToStore.age
+        gender = dataToSetToStore.gender
+        race = dataToSetToStore.race
+        ethnicity = dataToSetToStore.ethnicity
+        householdIncome = dataToSetToStore.householdIncome
+        w2Hours = dataToSetToStore.w2Hours
+        otherGigHours = dataToSetToStore.otherGigHours
+    }
     async function submitDemographics() {
         let demographic_information = {
             age: age,
@@ -89,6 +85,7 @@
         } catch (error) {
             console.log("There was an error saving your information")
         }
+        goto('/protected')
         
     }
 
@@ -97,7 +94,7 @@
         onAuthStateChanged(auth, user => {
             if (user) {
                 uid = user.uid
-                // loadDemographics();
+                loadDemographics();
             }
             else {
                 goto('/login')
