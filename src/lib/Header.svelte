@@ -22,6 +22,9 @@
 			<a href="/login" class="hover:underline text-4xl" class:active={$page.url.pathname === '/login'}
 				>Login</a
 			>
+			<a href="/phone" class="hover:underline text-4xl" class:active={$page.url.pathname === '/phone'}
+				>Phone</a
+			>
 		{/if}
 	</nav>
 

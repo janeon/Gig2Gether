@@ -54,17 +54,16 @@ export const recaptchaValidStore = writable<boolean>(false, (set) => {
         return;
     }
     useDeviceLanguage(auth);
-    
 
-    const recaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha-container", {
-        size: "normal",
-        callback: () => {
-          set(true);
-        },
-      });
+    // const recaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha-container", {
+    //     size: "normal",
+    //     callback: () => {
+    //       set(true);
+    //     },
+    //   });
       
-    recaptchaStore.set(recaptchaVerifier);
-    recaptchaVerifier.render().then((widgetId) => { 
-        setWindowProp("recaptchaWidgetId", widgetId);
-    })
+    // recaptchaStore.set(recaptchaVerifier);
+    // recaptchaVerifier.render().then((widgetId) => { 
+    //     setWindowProp("recaptchaWidgetId", widgetId);
+    // })
 });
