@@ -3,12 +3,15 @@
     "singleProjectMode": true
   },
   "hosting": {
+    "source": ".",
     "target": "datasharing",
-    "public": "public",
     "ignore": [
       "firebase.json",
       "**/.*",
       "**/node_modules/**"
-    ]
+    ],
+    "frameworksBackend": {
+      "region": "us-central1"
+    }
   }
 }

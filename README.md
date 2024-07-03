@@ -37,33 +37,33 @@ Make sure your CLI has firebase installed, if not run
 npm install -g firebase-tools
 ```
 
+To initialize hosting, may need to use local instead of global binary
+```bash
+npm exec firebase init hosting
+```
+
 
 Sign in to firebase via the cli, and the following project id 'robert-kraut-1234' should become available
 
 ```bash
-firebase projects:list
+npm exec firebase projects:list
 ``` 
 
 If so, add it as the active project via
 
 ```bash
-firebase use --add
+npm exec firebase use --add
 ```
 
 Next, target gigshare as hosting target
 
 ```bash
-firebase target:apply hosting datasharing gigshare
-```
-
-Create build assets:
-```
-npm run build
+npm exec firebase target:apply hosting datasharing gigshare
 ```
 
 Deploy to domain using
 ```bash
-firebase deploy --only hosting
+npm exec  firebase deploy
 ```
 
 And see it live at [gigshare.web.app](https://gigshare.web.app/)

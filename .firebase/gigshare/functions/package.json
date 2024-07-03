@@ -1,0 +1,18 @@
+{
+  "name": "datasharing",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@capacitor/ios": "^6.0.0",
+    "firebase": "^10.12.2",
+    "@sveltejs/kit": "^2.0.0",
+    "firebase-frameworks": "^0.11.0",
+    "firebase-functions": "^4.5.0",
+    "firebase-admin": "^11.11.1"
+  },
+  "main": "server.js",
+  "engines": {
+    "node": "18"
+  }
+}
