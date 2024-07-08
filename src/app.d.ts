@@ -4,6 +4,7 @@ export type User = {
 	uid: string
 	role: string
 	email: string
+	platform: string
 }
 
 declare global {
