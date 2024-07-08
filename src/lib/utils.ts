@@ -1,8 +1,5 @@
-// import { page } from '$app/stores';
-import { goto } from '$app/navigation';
 import { signOut } from 'firebase/auth';
 import { auth, db } from '$lib/firebase';
-// import { authUser } from '$lib/authstore';../routes/login/$types';
 import { doc, getDoc } from 'firebase/firestore';
 import type { User } from '../app';
 import type { RequestEvent } from '@sveltejs/kit';
@@ -13,6 +10,9 @@ import type { RequestEvent } from '@sveltejs/kit';
         let verifytoken : string
     
         const userToken = cookies.get("session")
+        if (!auth.currentUser) {
+            return null
+        }
         const currUser = auth.currentUser!.uid
         const ref = doc(db, "users", currUser)
         const docRef = await getDoc(ref)
@@ -27,7 +27,8 @@ import type { RequestEvent } from '@sveltejs/kit';
             const user : User = {
                 uid: currUser,
                 role: docRef.data().role,
-                email: docRef.data().email
+                email: docRef.data().email,
+                platform: docRef.data().platform
             }
             return user
         }
