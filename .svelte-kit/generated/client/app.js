@@ -8,7 +8,10 @@ export const nodes = [
 	() => import('./nodes/4'),
 	() => import('./nodes/5'),
 	() => import('./nodes/6'),
-	() => import('./nodes/7')
+	() => import('./nodes/7'),
+	() => import('./nodes/8'),
+	() => import('./nodes/9'),
+	() => import('./nodes/10')
 ];
 
 export const server_loads = [0];
@@ -18,7 +21,10 @@ export const dictionary = {
 		"/(auth)/login": [~3],
 		"/(auth)/logout": [~4],
 		"/protected": [6],
-		"/protected/demographics": [7],
+		"/protected/(settings)/account": [7],
+		"/protected/(settings)/demographics": [8],
+		"/protected/(settings)/profile": [9],
+		"/protected/settings": [10],
 		"/(auth)/register": [~5]
 	};
 
