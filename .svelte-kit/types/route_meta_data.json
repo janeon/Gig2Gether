@@ -20,7 +20,19 @@
 		"src/routes/+layout.ts",
 		"src/routes/+layout.server.ts"
 	],
-	"/protected/demographics": [
+	"/protected/(settings)/account": [
+		"src/routes/+layout.ts",
+		"src/routes/+layout.server.ts"
+	],
+	"/protected/(settings)/demographics": [
+		"src/routes/+layout.ts",
+		"src/routes/+layout.server.ts"
+	],
+	"/protected/(settings)/profile": [
+		"src/routes/+layout.ts",
+		"src/routes/+layout.server.ts"
+	],
+	"/protected/settings": [
 		"src/routes/+layout.ts",
 		"src/routes/+layout.server.ts"
 	],
