@@ -36,6 +36,10 @@
 		"src/routes/+layout.ts",
 		"src/routes/+layout.server.ts"
 	],
+	"/protected/(settings)/sharingpreferences": [
+		"src/routes/+layout.ts",
+		"src/routes/+layout.server.ts"
+	],
 	"/(auth)/register": [
 		"src/routes/(auth)/register/+page.server.ts",
 		"src/routes/+layout.ts",
