@@ -1,33 +1,3 @@
-<!-- <script lang="ts">
-	import { goto } from '$app/navigation';
-	import { signInWithEmailAndPassword } from 'firebase/auth';
-	import { auth, db } from '$lib/firebase';
-	import { authUser } from '$lib/authstore';
-    import { doc, getDoc } from 'firebase/firestore';
-    import type { ActionData } from './$types';
-
-	const errorMessages = [
-		{
-			type: 'auth/user-not-found',
-			message:
-				'This email is not registered. Please register first or try again with a different email.'
-		},
-		{
-			type: 'auth/wrong-password',
-			message: 'The password you entered is incorrect. Please try again.'
-		}
-	];
-
-	let email: string;
-	let password: string;
-	let success: boolean | undefined = undefined;
-
-	let customError = {
-		type: '',
-		message: ''
-	};
-</script> -->
-
 <svelte:head>
 	<title>Login</title>
 </svelte:head>

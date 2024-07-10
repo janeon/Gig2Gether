@@ -1,13 +1,8 @@
-import { initializeApp } from 'firebase/app';
-import { getAuth} from 'firebase/auth';
+import { deleteApp, getApp, getApps, initializeApp } from "firebase/app";
+import { getAuth } from 'firebase/auth';
 import type { FirebaseApp } from 'firebase/app';
 import { getFirestore, type Firestore } from 'firebase/firestore';
 import type { Auth } from 'firebase/auth';
-import { browser } from '$app/environment';
-
-export let db: Firestore;
-export let app: FirebaseApp;
-export let auth: Auth;
 
 const firebaseConfig = {
  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -16,26 +11,17 @@ const firebaseConfig = {
  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID
 };
 
-// Initialize Firebase
-app = initializeApp(firebaseConfig);
+// Initialize Firebase in Sveltekit way
+export let app: FirebaseApp;
+if(!getApps().length){
+    app = initializeApp(firebaseConfig)
+  }
+  else{
+    app = getApp();
+    deleteApp(app);
+    app = initializeApp(firebaseConfig);
+  }
 
 // For authentification
-auth = getAuth(app);
-db = getFirestore(app, "gigshare");
-// export const initializeFirebase = () => {
-//  if (!browser) {
-//   throw new Error("Can't use the Firebase client on the server.");
-//  }
-//  if (!app) {
-//   console.log("NO ERROR WITH FIREBASE")
-//   app = initializeApp(firebaseConfig);
-//   auth = getAuth(app);
-//   db = getFirestore(app, "gigshare")
-//   console.log(app)
-// }
-// else {
-//   console.log("ERROR WITH FIREBASE")
-//   console.log("auth in client ",auth)
-// }
- 
-// };
+export const db:Firestore = getFirestore(app, "gigshare");
+export const auth: Auth = getAuth(app);

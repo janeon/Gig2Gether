@@ -12,6 +12,8 @@ export const load: PageServerLoad = async ({locals}) => {
 }
 
 const login: Action = async ({ cookies,request }) => {
+  console.log('login', request.url);
+  
   const data = await request.formData()
   const email = data.get('email')
   const password = data.get('password')
