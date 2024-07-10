@@ -3,7 +3,9 @@
     import { db } from "$lib/firebase";
     import Sidebar from "$lib/Sidebar.svelte";
     import { collection, doc, setDoc } from "firebase/firestore";
-    import { MultiSelect, Label, NumberInput, Input } from "flowbite-svelte";
+    import MultiSelect from 'svelte-multiselect'
+    import {Label, NumberInput, Input } from "flowbite-svelte";
+    import us_cities from "$lib/us_cities.json"
     //UBER
 
     let uberData = {
@@ -19,16 +21,16 @@
     // work on times
     // let uberServicesProvided : string[] = []
     //TODO: check services
-    const uberServices = [{value: "x", name: "UberX"},
-        {value: "xl", name: "UberXL"},
-        {value: "share", name: "UberX Share"},
-        {value: "comfort", name: "UberX Comfort"},
-        {value: "black", name: "Uber Black"},
-        {value: "black suv", name: "Uber Black SUV"},
-        {value: "WAV", name: "Uber WAV"},
-        {value: "car seat", name: "Uber Car Seat X"},
-        {value: "green", name: "Uber Green"},
-        {value: "taxi", name: "Uber Taxi"}
+    const uberServices = ["UberX",
+        "UberXL",
+        "UberX Share",
+        "UberX Comfort",
+        "Uber Black",
+        "Uber Black SUV",
+        "WAV",
+        "Uber Car Seat X",
+        "Uber Green",
+        "Uber Taxi"
     ]
 
     //ROVER
@@ -36,7 +38,8 @@
     let roverData = {
         rating : 0,
         pets : [],
-        services : []
+        services : [],
+        cities : []
     }
     // // TODO: Available times
     // let roverRating : number
@@ -44,18 +47,19 @@
     // // How do we account for different cities (misspellings?)
     // // What should tenure be measured in?
     // let petsAccepted : string[] = []
-    const pets = [{value:"small dog", name:"Small Dog"}, 
-    {value:"medium dog", name:"Medium Dog"}, 
-    {value:"giant dog", name:"Giant Dog"},
-    {value:"cat", name:"Cat"},
-    {value:"puppy", name:"Puppy"}]
-    let roverServicesProvided : string[] = []
-    const roverServices = [{value: "boarding", name: "Boarding"},
-        {value: "house sitting", name: "House Sitting"},
-        {value: "drop-in", name: "Drop-In Visits"},
-        {value: "day care", name: "Doggy Day Care"},
-        {value: "dog walking", name: "Dog Walking"}
+    const pets = ["Small Dog", 
+    "Medium Dog", 
+    "Giant Dog",
+    "Cat",
+    "Puppy"]
+
+    const roverServices = ["Boarding",
+        "House Sitting",
+        "Drop-In Visits",
+        "Doggy Day Care",
+        "Dog Walking"
     ]
+
     // Cancellation policy?
 
     async function submitProfile() {
@@ -72,7 +76,7 @@
 
 <div class = "flex flex-row">
     <Sidebar/>
-    <div class = "p-8">
+    <div class = "p-8 w-1/2">
         <h1>Worker Information</h1>
         {#if $page.data.user?.platform == "uber"}
             <h1>Uber</h1>
@@ -88,7 +92,7 @@
 
             <div class = "py-5">
                 <Label>Services Provided</Label>
-                <MultiSelect items={uberServices} bind:value={uberData.services}/>
+                <MultiSelect options={uberServices} bind:selected={uberData.services}/>
             </div>
 
         
@@ -103,12 +107,17 @@
 
              <div class = "py-5">
                 <Label>Pets Accepted</Label>
-                <MultiSelect items={pets} bind:value={roverData.pets}/>
+                <MultiSelect options={pets} bind:selected={roverData.pets}/>
              </div>
 
              <div class = "py-5">
                 <Label>Services Offered</Label>
-                <MultiSelect items={roverServices} bind:value={roverData.services}/>
+                <MultiSelect options={roverServices} bind:selected={roverData.services}/>
+             </div>
+
+             <div class = "py-5">
+                <Label>Cities Served</Label>
+                <MultiSelect options={us_cities.cities} bind:selected={roverData.cities}/>
              </div>
         </div>
 

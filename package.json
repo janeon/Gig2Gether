@@ -40,6 +40,7 @@
 	"type": "module",
 	"dependencies": {
 		"@capacitor/ios": "^6.0.0",
-		"firebase": "^10.12.2"
+		"firebase": "^10.12.2",
+		"svelte-multiselect": "^10.3.0"
 	}
 }
