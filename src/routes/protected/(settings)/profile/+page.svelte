@@ -11,7 +11,9 @@
     let uberData = {
         rating : 0,
         car : '',
-        services : []
+        services : [],
+        cities : [],
+        dateJoined : new Date()
     }
     // let uberRating : number = 0
     // let carDriven : string = ''
@@ -39,7 +41,8 @@
         rating : 0,
         pets : [],
         services : [],
-        cities : []
+        cities : [],
+        dateJoined : new Date()
     }
     // // TODO: Available times
     // let roverRating : number
@@ -95,6 +98,16 @@
                 <MultiSelect options={uberServices} bind:selected={uberData.services}/>
             </div>
 
+            <div class = "py-5">
+                <Label>Cities Served</Label>
+                <MultiSelect options={us_cities.cities} bind:selected={uberData.cities}/>
+             </div>
+
+             <div class = "py-5">
+                <Label>Date of Joining Uber</Label>
+                <Input type="date" bind:selected={uberData.dateJoined}/>
+             </div>
+
         
         {:else if $page.data.user?.platform == "rover"}
         <div>
@@ -118,6 +131,11 @@
              <div class = "py-5">
                 <Label>Cities Served</Label>
                 <MultiSelect options={us_cities.cities} bind:selected={roverData.cities}/>
+             </div>
+
+             <div class = "py-5">
+                <Label>Date of Joining Rover</Label>
+                <Input type="date" bind:selected={roverData.dateJoined}/>
              </div>
         </div>
 
