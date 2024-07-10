@@ -4,7 +4,6 @@
     import Sidebar from "$lib/Sidebar.svelte";
     import { collection, doc, setDoc } from "firebase/firestore";
     import { MultiSelect, Label, NumberInput, Input } from "flowbite-svelte";
-    let email = $page.data.user?.email
     //UBER
 
     let uberData = {
@@ -15,6 +14,9 @@
     // let uberRating : number = 0
     // let carDriven : string = ''
     // // TODO:: times, cities served, tenure
+    // options for years and months and days (default to 0)
+    // make a document that holds cities
+    // work on times
     // let uberServicesProvided : string[] = []
     //TODO: check services
     const uberServices = [{value: "x", name: "UberX"},

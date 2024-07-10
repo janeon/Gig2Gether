@@ -4,9 +4,7 @@
     import Sidebar from "$lib/Sidebar.svelte";
     import { collection, doc, setDoc } from "firebase/firestore";
     import { Checkbox } from "flowbite-svelte";
-
-    let email = $page.data.user?.email
-
+    
     let toShare : string[] = []
     const sharingOptions = [{
         value : "me", label: "Me, myself, and I"
@@ -26,7 +24,7 @@
         const collectionRef = collection(db, "users", $page.data.user?.uid, "settings")
         const docRef = doc(collectionRef, "sharing")
         setDoc(docRef, {
-            include: toShare
+            audience: toShare
         }, {merge: true})
     }
 </script>
