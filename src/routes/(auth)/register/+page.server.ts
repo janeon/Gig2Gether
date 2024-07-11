@@ -14,7 +14,7 @@ export const load: PageServerLoad = async ({locals}) => {
 const register: Action = async ({ request, cookies }) => {
   const data = await request.formData()
   let role : string;
-  let platform : string;
+  let platform : FormDataEntryValue | null;
   if (!data.get('platform')) {
     role = "policymaker"
   }
