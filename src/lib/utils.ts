@@ -16,6 +16,7 @@ export const authenticateUser = async(event: RequestEvent) => {
 
 	const userToken = cookies.get("session")
 	if (!auth.currentUser) {
+		console.log("no auth user")
 		return null
 	}
 	const currUser = auth.currentUser!.uid
@@ -35,9 +36,10 @@ export const authenticateUser = async(event: RequestEvent) => {
 			email: docRef.data().email,
 			platform: docRef.data().platform
 		}
+		console.log("has user")
 		return user
 	}
-
+	console.log("null")
 	return null
 }
 

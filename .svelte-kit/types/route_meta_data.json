@@ -28,5 +28,9 @@
 		"src/routes/(auth)/register/+page.server.ts",
 		"src/routes/+layout.ts",
 		"src/routes/+layout.server.ts"
+	],
+	"/(auth)/registrationoptions": [
+		"src/routes/+layout.ts",
+		"src/routes/+layout.server.ts"
 	]
 }

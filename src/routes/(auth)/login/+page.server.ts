@@ -49,6 +49,7 @@ const login: Action = async ({ cookies,request }) => {
     const errorMessage = error.message;
     console.log("help",errorCode,errorMessage)
   })
+  console.log("redirecting")
   redirect(303, '/protected')
 }
 

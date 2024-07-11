@@ -81,7 +81,6 @@ declare module '$env/static/private' {
 	export const HOMEBREW_PREFIX: string;
 	export const LOGNAME: string;
 	export const npm_config_cache: string;
-	export const PNPM_PACKAGE_NAME: string;
 	export const npm_lifecycle_script: string;
 	export const VSCODE_GIT_IPC_HANDLE: string;
 	export const NVM_BIN: string;
@@ -93,6 +92,7 @@ declare module '$env/static/private' {
 	export const COLORTERM: string;
 	export const npm_config_prefix: string;
 	export const npm_node_execpath: string;
+	export const NODE_ENV: string;
 }
 
 /**
@@ -179,7 +179,6 @@ declare module '$env/dynamic/private' {
 		HOMEBREW_PREFIX: string;
 		LOGNAME: string;
 		npm_config_cache: string;
-		PNPM_PACKAGE_NAME: string;
 		npm_lifecycle_script: string;
 		VSCODE_GIT_IPC_HANDLE: string;
 		NVM_BIN: string;
@@ -191,6 +190,7 @@ declare module '$env/dynamic/private' {
 		COLORTERM: string;
 		npm_config_prefix: string;
 		npm_node_execpath: string;
+		NODE_ENV: string;
 		[key: `PUBLIC_${string}`]: undefined;
 		[key: `${string}`]: string | undefined;
 	}
