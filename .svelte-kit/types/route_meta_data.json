@@ -32,10 +32,6 @@
 		"src/routes/+layout.ts",
 		"src/routes/+layout.server.ts"
 	],
-	"/protected/settings": [
-		"src/routes/+layout.ts",
-		"src/routes/+layout.server.ts"
-	],
 	"/protected/(settings)/sharingpreferences": [
 		"src/routes/+layout.ts",
 		"src/routes/+layout.server.ts"

@@ -11,8 +11,7 @@ export const nodes = [
 	() => import('./nodes/7'),
 	() => import('./nodes/8'),
 	() => import('./nodes/9'),
-	() => import('./nodes/10'),
-	() => import('./nodes/11')
+	() => import('./nodes/10')
 ];
 
 export const server_loads = [0];
@@ -25,7 +24,6 @@ export const dictionary = {
 		"/protected/(settings)/account": [7],
 		"/protected/(settings)/demographics": [8],
 		"/protected/(settings)/profile": [9],
-		"/protected/settings": [11],
 		"/protected/(settings)/sharingpreferences": [10],
 		"/(auth)/register": [~5]
 	};
