@@ -24,6 +24,10 @@
 		"src/routes/+layout.ts",
 		"src/routes/+layout.server.ts"
 	],
+	"/protected/welcome": [
+		"src/routes/+layout.ts",
+		"src/routes/+layout.server.ts"
+	],
 	"/(auth)/register": [
 		"src/routes/(auth)/register/+page.server.ts",
 		"src/routes/+layout.ts",

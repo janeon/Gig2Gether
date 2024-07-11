@@ -21,10 +21,10 @@
 </svelte:head>
 
 <div class="flex content-evenly justify-center flex-row">
-	<div class="flex-col items-center ">
+	<div class="flex-col items-center w-1/3">
 		<h1 class=" gap-4 p-8 space-y-4 bg-white">Register as a Gig Worker</h1>
 		<form
-			class="flex flex-col gap-4 p-8 space-y-4 bg-white "
+			class="flex flex-col gap-4 p-8 space-y-4 bg-white"
 			action="?/register" method="POST"
 		>
 			<input
@@ -60,7 +60,7 @@
 			{/if} -->
 		</form>
 	</div>
-	<div class="flex-col items-center ">
+	<div class="flex-col items-center w-1/3">
 		<h1 class=" gap-4 p-8 space-y-4 bg-white">Register as a Policymaker</h1>
 		<form
 			class="flex flex-col gap-4 p-8 space-y-4 bg-white"

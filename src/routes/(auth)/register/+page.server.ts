@@ -41,6 +41,7 @@ const register: Action = async ({ request, cookies }) => {
         cookies.set('session', idToken, { path: '/' })
       } catch (error) {
         console.log('error setting cookies')
+        return
       }
     try {
       const user = userCredential.user
@@ -60,17 +61,19 @@ const register: Action = async ({ request, cookies }) => {
           platform: platform
         })
       }
-
     } catch (error) {
       console.log("there was an error saving the user")
+      return
     }
+
 })
   .catch((error) => {
     const errorCode = error.code;
     const errorMessage = error.message;
     console.log("ERROR:",errorCode,errorMessage)
+    return
   })
-  redirect(303, '/protected')
+  redirect(303, '/protected/welcome')
 }
 
 export const actions: Actions = { register }
