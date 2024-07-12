@@ -130,4 +130,4 @@ dist
 .pnp.*
 
 # svelte 
-.svelte-kit/*
+.svelte-kit/
