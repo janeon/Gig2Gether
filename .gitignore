@@ -130,7 +130,6 @@ dist
 .pnp.*
 
 # svelte 
-<<<<<<< HEAD
 .svelte-kit/*
 
 # misc  
