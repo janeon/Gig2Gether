@@ -1,44 +1,32 @@
 import { fail, redirect } from "@sveltejs/kit"
-import type { Action, Actions, PageServerLoad } from './$types'
-import { signInWithEmailAndPassword } from 'firebase/auth'
-import { auth, db } from '$lib/firebase/authstore'
-import { doc, updateDoc } from 'firebase/firestore'
 import { randomUUID } from 'crypto'
+import type { Actions, PageServerLoad } from './$types'
+// import { loginSetCookie } from "$lib/utils"
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '$lib/firebase/client';
 
-export const actions: Actions = {
-    default: async ( {request} ) => {
-        let form = await request.formData();
-        let email = form.get('email') as string;
-        let password = form.get('password') as string;
-        if (!email || !password) {
-            return fail(400, {formErrors: 'Email and password are required'});
-        }
-    console.log("authenticating soon");
+export const load: PageServerLoad = async ({locals}) => {
+  if (locals.user) {
+    redirect(302, '/')
+  }
+} 
+
+export const actions = {
+    default: async ({ request }) => {
+      const formData = await request.formData();
+      const email = formData.get('email') as string;
+      const password = formData.get('password') as string;
+
+      try {
+        const credential = await signInWithEmailAndPassword(auth, email, password);
+      } catch (error) {
+        return fail(403, { formErrors: (error as Error).message });
+      }
+      
+      redirect(302, '/protected');
+    }
+  } as Actions
+
+
+
     
-  await signInWithEmailAndPassword(auth, email, password)
-//   .then(async(userCredential) => {
-//     const idToken = randomUUID()
-//     try {
-//         cookies.set('session', idToken, { path: '/' })
-//       } catch (error) {
-//         console.log('error setting cookies')
-//       }
-    // try {
-    //   const user = userCredential.user
-    //   const docRef = doc(db, 'users', user.uid)
-    //   await updateDoc(docRef, {
-    //     authToken: idToken
-    //   })
-    //   console.log(idToken)
-    // } catch (error) {
-    //   console.log("there was an error getting the user")
-    // }
-// })
-//   .catch((error) => {
-//     const errorCode = error.code;
-//     const errorMessage = error.message;
-//     console.log("help",errorCode,errorMessage)
-//   })
-  redirect(303, '/')
-}
-};

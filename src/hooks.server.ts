@@ -9,7 +9,7 @@ export const handle: Handle = async ({ event, resolve }) => {
     // if there is no session load page as normal
     return await resolve(event)
   }
-  event.locals.user = await authenticateUser(event)
+  // event.locals.user = await authenticateUser(event)
 
 
   // find the user based on the session

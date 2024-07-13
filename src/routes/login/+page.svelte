@@ -1,17 +1,28 @@
 <script lang="ts">
-    import { enhance } from "$app/forms";
-    import type { ActionData } from "./$types";
-    export let form: ActionData;
+	import { enhance } from '$app/forms';
+	import type { ActionData } from './$types'; 
+	export let form : ActionData;
+	$: console.log(form);
 </script>
 
-<!-- https://www.youtube.com/watch?v=BkkiKuDsfus -->
-<main class="container">
-    {#if form?.formErrors}
-        <div data-theme="Light" class="pico-color-pink-500"> {form.formErrors} </div>
-    {/if}
-    <form method="POST" use:enhance>
-        <input type="email" placeholder="email" name="email">
-        <input type="password" placeholder="password" name="password">
-        <button type="submit">Submit</button>
-    </form>
+<main>
+	 {#if form?.formErrors}
+		<article>
+			<div style="color: red;">
+				{form.formErrors}
+			</div>
+		</article>
+	{/if}
+	<div class="flex flex-col items-center">
+		<form method="POST" use:enhance 
+		class="flex flex-col gap-4 p-8 space-y-4 bg-white sm:w-6/12"
+		>
+			<input type="email" placeholder="email" name="email" 
+			class="px-4 py-2 border border-gray-300 rounded-md"/>
+			<input type="password" placeholder="password" name="password" 
+			class="px-4 py-2 border border-gray-300 rounded-md"/>
+
+			<button type="submit" class="default-action">Login</button>
+		</form>
+	</div>
 </main>
