@@ -1,8 +1,7 @@
 <script>
-
     import { page } from "$app/stores";
     import { authUser } from "$lib/firebase/authstore";
-
+    
 </script>
 
 <svelte:head>

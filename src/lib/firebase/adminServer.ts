@@ -1,7 +1,7 @@
 import admin, { type ServiceAccount } from "firebase-admin";
 
 export function getFirebaseServer():
-    | { error: false; data: typeof admin }
+    | { error: false; data: typeof admin; app: admin.app.App}
     | { error: true; msg: string } {
     try {
         if (!admin.apps.length) {
@@ -9,7 +9,7 @@ export function getFirebaseServer():
             const cert = admin.credential.cert(serviceAccount);
             admin.initializeApp({ credential: cert });
         }
-        return { error: false, data: admin };
+        return { error: false, data: admin, app:admin.apps[0] };
     } catch (error) {
         console.error(error);
         return { error: true, msg: "Error initializing firebase server" };

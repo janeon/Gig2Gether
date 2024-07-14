@@ -1,4 +1,6 @@
 import { writable } from 'svelte/store';
+import { auth } from './client';
+import { onAuthStateChanged } from 'firebase/auth';
 
 interface AuthUser {
 	uid: string;
@@ -6,6 +8,8 @@ interface AuthUser {
 	role: string;
 }
 
-const authUser = writable<AuthUser | undefined>(undefined);
+onAuthStateChanged(auth, (user) => {
+	authUser.set(user);
+  });
 
-export { authUser };
+export const authUser = writable<AuthUser | undefined>(undefined);
