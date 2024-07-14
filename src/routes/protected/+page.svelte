@@ -4,6 +4,7 @@
     import { authUser } from "$lib/firebase/authstore";
 
 </script>
+
 <svelte:head>
 	<title>Protected route</title>
 </svelte:head>

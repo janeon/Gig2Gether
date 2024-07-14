@@ -31,43 +31,30 @@ export const authenticateUser = async(event: RequestEvent) => {
     return null
 }
 
-// export function loginSetCookie(email:string, password:string, idToken:string, cookies:Cookies) {
-//     try { // firebase log
-//       console.log("about to get credential");
+export async function loginSetCookie(email:string, password:string, idToken:string, cookies:Cookies) {
+      // set cookie
+      try { 
+        cookies.set('session', idToken, { path: '/' });
+      } catch (error) {
+        const errorMessage = (error as Error).message;
+        return fail(402, { formErrors: "Error setting cookie: " + errorMessage });
+      }
+      console.log('cookie set');
       
-//     //   const userCredential = signInWithEmailAndPassword(auth, email, password);
-//       console.log("got userCredential");
-//     //   // set cookie
-//     //   try { 
-//     //     cookies.set('session', idToken, { path: '/' });
-//     //   } catch (error) {
-//     //     const errorMessage = (error as Error).message;
-//     //     return fail(402, { formErrors: "Error setting cookie: " + errorMessage });
-//     //   }
-//     //   console.log('cookie set');
-      
-//     //   // update user
-//     //   try { 
-//     //     const user = userCredential.user;
-//     //     const docRef = doc(db, 'users', user.uid);
-//     //     await updateDoc(docRef, {
-//     //       authToken: idToken
-//     //     });
-//     //   } catch (error) {
-//     //     const errorMessage = (error as Error).message;
-//     //     return fail(402, { formErrors: "Error updating user: " + errorMessage });
-//     //   }
-//     //   console.log("user updated");
-      
-//     } catch (error) {
-//       const errorMessage = (error as Error).message;
-//       console.log("Could not log in:", errorMessage);
-//       return fail(402, { formErrors: "Username or password not found" });
-//     }
-//     console.log("logged in");
+      // update user
+      try { 
+        const user = userCredential.user;
+        const docRef = doc(db, 'users', user.uid);
+        await updateDoc(docRef, {
+          authToken: idToken
+        });
+      } catch (error) {
+        const errorMessage = (error as Error).message;
+        return fail(402, { formErrors: "Error updating user: " + errorMessage });
+      }
+      console.log("user updated");
     
-//     return redirect(303, '/protected')
-//   }
+  }
 
 
 

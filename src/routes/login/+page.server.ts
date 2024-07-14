@@ -1,4 +1,4 @@
-import { fail, redirect } from "@sveltejs/kit"
+import { error, fail, redirect } from "@sveltejs/kit"
 import { randomUUID } from 'crypto'
 import type { Actions, PageServerLoad } from './$types'
 // import { loginSetCookie } from "$lib/utils"
@@ -18,12 +18,16 @@ export const actions = {
       const password = formData.get('password') as string;
 
       try {
-        const credential = await signInWithEmailAndPassword(auth, email, password);
-      } catch (error) {
-        return fail(403, { formErrors: (error as Error).message });
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        const idToken = await user.getIdToken();
+        console.log('idToken', idToken);
+        
+      } catch (err) {
+        console.error('Sign-in error:', err);
+        return fail(403, { formErrors: err.code.split('/')[1] });
       }
-      
-      redirect(302, '/protected');
+      redirect(303, '/protected');
     }
   } as Actions
 
