@@ -34,7 +34,11 @@ Hosting setup instructions can be found in src/lib/firebase/Firebase.md
 
 ## Todo 
 
-- [ ] Fix auth so that login doesn't expire at each reload
+- [X] Fix auth so that login doesn't expire at each reload
+
+- [ ] Phone authentication
+
+- [ ] Consider how to adapt for ios interface
 
 - [ ] How to store different types of workers' data, across different apps and work types (what if someone used both Uber and Rover?)
 
@@ -42,7 +46,6 @@ Hosting setup instructions can be found in src/lib/firebase/Firebase.md
 
 - [X] Demographic form - storing individual user backgrounds to database
 
-- [ ] Consider how to adapt for ios interface
 
 ## Outstanding questions 
 -- Whether to have separate interfaces/apps for web and mobile
