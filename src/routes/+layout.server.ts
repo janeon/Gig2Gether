@@ -1,7 +1,8 @@
-import type { LayoutServerLoad } from './$types'
+import { log } from 'firebase-functions/logger';
 
 // get `locals.user` and pass it to the `page` store
-export const load: LayoutServerLoad = async ({ locals }) => {
+export const load = async ({ locals }) => {
+  log("Layout load on main", locals.user, );
   return {
     user: locals.user,
   }
