@@ -13,7 +13,7 @@ export const actions: Actions = {
     default({ cookies }) {
         signOut(auth)
         .then(() => {
-            cookies.delete('session', {path: '/'})
+            cookies.delete('__session', {path: '/'})
             redirect(302, '/');
         })
         .catch((error) => {
