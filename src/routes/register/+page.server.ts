@@ -1,9 +1,6 @@
-import { fail, redirect } from '@sveltejs/kit'
+import { redirect } from '@sveltejs/kit'
 import type { Action, Actions, PageServerLoad } from './$types'
-import { createUserWithEmailAndPassword } from 'firebase/auth'
-import { auth, db } from '$lib/firebase/client'
-import { doc, setDoc } from 'firebase/firestore'
-import { randomUUID } from 'crypto'
+import { getFirebaseServer } from "$lib/firebase/adminServer";
 
 export const load: PageServerLoad = async ({locals}) => {
   if (locals.user) {
@@ -13,44 +10,38 @@ export const load: PageServerLoad = async ({locals}) => {
 
 const register: Action = async ({ request, cookies }) => {
   const data = await request.formData()
-  const email = data.get('email')
-  const password = data.get('password')
-  const role = data.get('role')
+  const token = data.get("token") as string;
 
-  console.log(email, password)
-  if (
-    typeof email !== 'string' ||
-    typeof password !== 'string' ||
-    !email ||
-    !password
-  ) {
-    return fail(400, { invalid: true })
+  const admin = getFirebaseServer();
+  if (admin.error) {
+      console.error("Error getting firebase admin");
+      throw redirect(303, "/register");
   }
-  await createUserWithEmailAndPassword(auth, email, password)
-  .then(async(userCredential) => {
-    const idToken = randomUUID()
-    try {
-        cookies.set('session', idToken, { path: '/' })
-      } catch (error) {
-        console.log('error setting cookies')
-      }
-    try {
-      const user = userCredential.user
-      const docRef = doc(db, 'users', user.uid)
-      await setDoc(docRef, {
-        email: email,
-        authToken: idToken,
-        role: role
-      })
+
+  // Expires in 5 days
+  const expiresIn = 60 * 60 * 24 * 5;
+  let sessionCookie: string;
+  try {
+    const admin_auth = admin.data.auth(admin.app);
+    // persmission to sign blob/create token must be granted on iam
+    // https://stackoverflow.com/questions/57564505/unable-to-assign-iam-serviceaccounts-signblob-permission
+    sessionCookie = await admin_auth.createSessionCookie(token, { expiresIn: expiresIn * 1000 });
     } catch (error) {
-      console.log("there was an error saving the user")
+      console.error("Error creating session cookie", (error as Error).message); 
+      throw redirect(303, "/register");
     }
-})
-  .catch((error) => {
-    const errorCode = error.code;
-    const errorMessage = error.message;
-    console.log("ERROR:",errorCode,errorMessage)
-  })
+
+  // DO NOT RENAME COOKIE 
+  // FIRBASE FUNCTIONS ALLOWS ONLY ONE COOKIE, IT MUST BE NAMED __session
+  // https://stackoverflow.com/questions/76611381/how-to-forwarded-cookies-to-the-clound-function-when-deploying-sveltekit-to-fire
+  cookies.set("__session", sessionCookie, {
+    maxAge: expiresIn,
+    path: "/",
+    httpOnly: true,
+    secure: true,
+    sameSite: "lax",
+  });
+
   redirect(303, '/protected')
 }
 

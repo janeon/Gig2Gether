@@ -1,7 +1,6 @@
 <script>
-    import { page } from "$app/stores";
-    import { authUser } from "$lib/firebase/authstore";
-    
+	import { goto } from '$app/navigation';
+    export let data;
 </script>
 
 <svelte:head>
@@ -10,7 +9,10 @@
 
 <h1 class="text-4xl font-bold">Protected route</h1>
 
-{#if $authUser && $authUser.role == "worker"}
-<a href = "/protected/demographics" class="hover:underline" class:active={$page.url.pathname === '/protected/demographics'}>
-	Change My Demographics</a>
+{#if data.user}
+    <p>Welcome, {data.user.email}</p>
+    <button class="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700"
+    on:click={() => goto("/protected/demographics")}>
+        Edit My Demographics
+    </button>
 {/if}

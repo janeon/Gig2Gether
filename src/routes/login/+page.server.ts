@@ -5,7 +5,6 @@ import { log } from 'firebase-functions/logger';
 
 export const load: PageServerLoad = async ({locals}) => {
   if (locals.user) {
-    log("User is logged in")
     redirect(302, '/')
   }
 } 
