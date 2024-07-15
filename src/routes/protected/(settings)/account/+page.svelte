@@ -1,6 +1,6 @@
 <script lang="ts">
     import { page } from "$app/stores";
-    import Sidebar from "$lib/Sidebar.svelte";
+    import Sidebar from "$lib/components/Sidebar.svelte";
     import { Label } from "flowbite-svelte";
 
     let email = $page.data.user?.email

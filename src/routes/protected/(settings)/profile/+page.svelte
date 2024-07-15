@@ -1,7 +1,7 @@
 <script lang="ts">
     import { page } from "$app/stores";
     import { db } from "$lib/firebase/client";
-    import Sidebar from "$lib/Sidebar.svelte";
+    import Sidebar from "$lib/components/Sidebar.svelte";
     import { collection, doc, setDoc } from "firebase/firestore";
     import MultiSelect from 'svelte-multiselect'
     import {Label, NumberInput, Input } from "flowbite-svelte";
