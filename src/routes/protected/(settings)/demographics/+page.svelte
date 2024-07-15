@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { db } from "$lib/firebase";
+    import { db } from "$lib/firebase/client";
     import { doc, getDoc, setDoc } from "firebase/firestore";
     import {onMount} from 'svelte'
     import { goto } from '$app/navigation';
