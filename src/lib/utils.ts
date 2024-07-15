@@ -3,8 +3,9 @@ import { twMerge } from "tailwind-merge";
 import { cubicOut } from "svelte/easing";
 import type { TransitionConfig } from "svelte/transition";
 import { signOut } from 'firebase/auth';
-import { auth, db } from '$lib/firebase';
+import { auth, db } from '$lib/firebase/client';
 import { doc, getDoc } from 'firebase/firestore';
+
 import type { User } from '../app';
 import type { RequestEvent } from '@sveltejs/kit';
 
@@ -97,3 +98,18 @@ export const flyAndScale = (
 		easing: cubicOut
 	};
 };
+
+export const getUser = async(currUser:string) => {
+    const ref = doc(db, "users", currUser)
+    const docRef = await getDoc(ref)
+    if (docRef.exists()) {
+        const user : User = {
+            uid: currUser,
+            role: docRef.data().role,
+            email: docRef.data().email,
+            platform: docRef.data().platform
+        }
+        return user
+    }
+    return null
+}

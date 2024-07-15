@@ -1,5 +1,5 @@
 import { signOut } from 'firebase/auth';
-import { auth} from '$lib/firebase';
+import { auth } from '$lib/firebase/client';
 import { redirect } from '@sveltejs/kit'
 import type { Actions, PageServerLoad } from './$types'
 
@@ -13,7 +13,7 @@ export const actions: Actions = {
     default({ cookies }) {
         signOut(auth)
         .then(() => {
-            cookies.delete('session', {path: '/'})
+            cookies.delete('__session', {path: '/'})
             redirect(302, '/');
         })
         .catch((error) => {
