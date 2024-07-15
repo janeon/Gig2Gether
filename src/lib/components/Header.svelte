@@ -1,18 +1,37 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { authUser } from '$lib/firebase/authstore';
-	import { goto } from '$app/navigation';
-
+    import WorkerHeader from './WorkerHeader.svelte';
+    import PolicymakerHeader from './PolicymakerHeader.svelte';
 </script>
 
-<header class="flex justify-between items-center p-4 bg-gray-100">
-	<div>
-		<h1 class="text-lg font-bold">GigUnity</h1>
-	</div>
-	<button 
-	class="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700"
-	on:click={() => goto('/login')}
-	>
-		<a href="/login" class="hover:underline">Login</a>
-	</button>
+<header class="space-y-4 flex justify-center">
+	<!-- <a href="/" class="font-bold hover:underline">Home</a> -->
+
+	<nav class="flex gap-4">
+		{#if $page.data.user?.role == "worker"}
+			<WorkerHeader/>
+		{:else if $page.data.user?.role == "policymaker"}
+			<PolicymakerHeader/>
+		<!-- {#if $page.data.user}
+			<h1>{$page.data.user.role}</h1> -->
+		{:else}
+			<a href="/registerworker" class="hover:underline text-4xl" class:active={$page.url.pathname === '/registerworker'}
+				>Worker Registration</a
+			>
+			<a href="/registerpolicymaker" class="hover:underline text-4xl" class:active={$page.url.pathname === '/registerpolicymaker'}
+				>Policymaker Registration</a
+			>
+			<a href="/login" class="hover:underline text-4xl" class:active={$page.url.pathname === '/login'}
+				>Login</a
+			>
+		{/if}
+	</nav>
+
 </header>
+
+<style lang="postcss">
+	nav a.active {
+		@apply font-bold text-indigo-700;
+	}
+</style>

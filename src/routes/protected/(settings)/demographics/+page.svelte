@@ -4,7 +4,7 @@
     import {onMount} from 'svelte'
     import { goto } from '$app/navigation';
     import { page } from "$app/stores";
-    import Sidebar from "$lib/Sidebar.svelte";
+    import Sidebar from "$lib/components/Sidebar.svelte";
     import { Label, NumberInput, Select } from "flowbite-svelte";
 
 

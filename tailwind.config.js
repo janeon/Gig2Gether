@@ -1,4 +1,5 @@
 import flowbitePlugin from 'flowbite/plugin'
+import { fontFamily } from "tailwindcss/defaultTheme";
 
 const config = {
 	darkMode: ["class"],
