@@ -1,11 +1,9 @@
 <script lang="ts">
-    import { db } from "$lib/firebase/client";
-    import { doc, getDoc, setDoc } from "firebase/firestore";
-    import {onMount} from 'svelte'
+    import { db } from "$lib/firebase";
+    import { doc, setDoc, collection } from "firebase/firestore";
     import { goto } from '$app/navigation';
     import { page } from "$app/stores";
-    import Sidebar from "$lib/components/Sidebar.svelte";
-    import { Label, NumberInput, Select } from "flowbite-svelte";
+    import { Checkbox, Label, Select, NumberInput } from "flowbite-svelte";
 
 
     let uid: string;
@@ -36,38 +34,6 @@
     let w2Hours : number = 0;
     let otherGigHours : number = 0;
 
-    let dataToSetToStore;
-
-    // TODO: For prepopulating 
-    async function loadDemographics() {
-        const docRef = doc(db, "demographics", $page.data.user.uid)
-        const docSnap = await getDoc(docRef);
-        if (!docSnap.exists()) {
-            const userRef = doc(db, "demographics", $page.data.user.uid);
-            dataToSetToStore = {
-                // Should check whether we can have undefined values, not zeroes
-                age: 0,
-                race: "",
-                gender: "",
-                ethnicity: "",
-                householdIncome: 0,
-                w2Hours: 0,
-                otherGigHours: 0
-            };
-            await setDoc(userRef,
-            dataToSetToStore), {merge: true}
-        } else {
-            const userData = docSnap.data();
-            dataToSetToStore = userData;
-        }
-        age = dataToSetToStore.age
-        gender = dataToSetToStore.gender
-        race = dataToSetToStore.race
-        ethnicity = dataToSetToStore.ethnicity
-        householdIncome = dataToSetToStore.householdIncome
-        w2Hours = dataToSetToStore.w2Hours
-        otherGigHours = dataToSetToStore.otherGigHours
-    }
     async function submitDemographics() {
         let demographic_information = {
             age: age,
@@ -89,26 +55,53 @@
         goto('/protected')
     }
 
-    onMount(() => {
-        loadDemographics()
-        // const auth = getAuth();
-        // onAuthStateChanged(auth, user => {
-        //     if (user) {
-        //         console.log("here")
-        //         uid = user.uid
-        //         loadDemographics();
-        //     }
-        //     else {
-        //         console.log("bad")
-        //         goto('/login')
-        //     }
-        // })
 
-    })
+    let uploadData = {
+        sharing: [],
+        data_lifespan: "",
+        location_granularity: ""
+    }
+    const sharingOptions = [{
+        value : "me", label: "Me, myself, and I"
+    },
+    {
+        value: "workers", label: "Other workers"
+    },
+    {
+        value: "researchers", label: "Researchers"
+    },
+    {
+        value: "policymakers", label: "Policymakers"
+    }
+    ]
+
+    const lifespanOptions = [
+        {value: "never", label: "Never"},
+        {value: "1 week", label: "1 Week"},
+        {value: "1 month", label: "1 Month"},
+        {value: "6 months", label: "6 Months"},
+        {value: "1 year", label: "1 Year"}
+    ]
+
+    const locationOptions = [
+        {value: "1 mile", label: "1 Mile Radius"},
+        {value: "neighborhood", label: "Neighborhood"},
+        {value: "city", label: "City"},
+        {value: "county", label: "County"}
+    ]
+
+    async function submitPreferences() {
+        const collectionRef = collection(db, "users", $page.data.user?.uid, "settings")
+        const docRef = doc(collectionRef, "sharing")
+        setDoc(docRef, uploadData, {merge: true})
+    }
 </script>
 
-<div class = "flex flex-row">
-    <Sidebar />
+<h1>Welcome to the GigUnity data-sharing platform!</h1>
+<h2>Before you get started, update your demographics and sharing preferences. You can change these at any time!</h2>
+
+<div class = "flex flex-col w-1/2">
+    <div>
     <div class = "p-8">
         <!-- TODO: why does h1 and h2 look the same? -->
         <h1>My Demographics</h1> 
@@ -152,6 +145,29 @@
         </div>
         
         <button on:click = {submitDemographics}>Submit</button></div>
-    
     </div>
     
+
+    <div>
+            <div class = "p-8">
+                <h1>My Sharing Preferences</h1>
+                <div class = "py-5">
+                    <Label>Who Would You Like to Share Your Worker Data With?</Label>
+                    <Checkbox bind:group={uploadData.sharing} choices={sharingOptions} />
+                </div>
+                <h1>Data Options</h1>
+                <div class = "py-5">
+                    <Label>Data Lifespan</Label>
+                    <Select bind:value={uploadData.data_lifespan} choices={lifespanOptions}/>
+                </div>
+                <div>
+                    <Label>Location Granularity</Label>
+                    <Select bind:value={uploadData.location_granularity} choices={locationOptions}/>
+                </div>
+                <button on:click = {submitPreferences} class="py-5">Submit</button>
+            </div>
+        
+    </div>
+</div>
+    
+

@@ -17,6 +17,7 @@ export const actions: Actions = {
             redirect(302, '/');
         })
         .catch((error) => {
+            console.log("here")
             console.log(error);
         });
     }
