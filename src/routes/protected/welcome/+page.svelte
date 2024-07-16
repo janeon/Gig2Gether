@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { db } from "$lib/firebase";
+    import { db } from "$lib/firebase/client";
     import { doc, setDoc, collection } from "firebase/firestore";
     import { goto } from '$app/navigation';
     import { page } from "$app/stores";
