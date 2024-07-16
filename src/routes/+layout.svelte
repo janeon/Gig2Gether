@@ -22,13 +22,29 @@
 				>
 					<a href="/login" class="hover:underline">Login</a>
 				</button>
-			{:else if title==="login"}
+			{:else if title==="registerworker" || title==="registerpolicymaker"}
 				<button 
 				class="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700"
-				on:click={() => goto('/register')}
+				on:click={() => goto('/login')}
 				>
-					<a href="/register" class="hover:underline">Register</a>
+					<a href="/login" class="hover:underline">Login</a>
 				</button>
+            {:else if title==="login"}
+            <div class="flex justify-end space-x-4">
+
+                <button 
+                    class="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700"
+                    on:click={() => goto('/registerworker')}
+                >
+                    <a href="/registerworker" class="hover:underline">Worker Register</a>
+                </button>
+                <button 
+                    class="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700"
+                    on:click={() => goto('/registerpolicymaker')}
+                >
+                    <a href="/registerpolicymaker" class="hover:underline">Policymaker Register</a>
+                </button>
+            </div>
 			{:else} 
 				<form action="/logout" method="POST">
 					<button type="submit">Log out</button>

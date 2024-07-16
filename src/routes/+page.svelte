@@ -1,5 +1,12 @@
 <script lang="ts">
     import "../app.css";
+    import { goto } from '$app/navigation';
+    const registerWorker = () => {
+        goto('/registerworker')
+    }
+    const registerPolicymaker = () => {
+        goto('/registerpolicymaker')
+    }
 </script>
 
 <main class="px-40 py-8 space-y-12 font-sans">
@@ -8,9 +15,12 @@
             <h1 class="text-4xl md:text-6xl font-bold mt-40 mb-10">Welcome to GigUnity</h1>
             <p class="text-lg mb-10">GigUnity is a worker-centered app that empowers gig workers through data sharing and collective action. It enables workers to analyze their work data, connect with peers, and gain valuable insights, while providing policymakers with crucial information to improve work conditions in the gig economy.</p>
             <div class="flex justify-center md:justify-start space-x-4">
-                <button class="px-8 py-4 bg-black text-white rounded-full text-lg">Register As a Gig Worker</button>
-                <button class="px-8 py-4 bg-black text-white rounded-full text-lg">Register As a Gig Policymaker</button>
-                <button class="px-8 py-4 bg-gray-500 text-white rounded-full text-lg">Log In</button>
+                <button on:click={registerWorker} class="px-8 py-4 bg-black text-white rounded-full text-lg">
+                    Register As a Gig Worker
+                </button>
+                <button on:click={registerPolicymaker} class="px-8 py-4 bg-black text-white rounded-full text-lg">
+                    Register As a Gig Policymaker</button>
+                <!-- <button class="px-8 py-4 bg-gray-500 text-white rounded-full text-lg">Log In</button> -->
             </div>
         </div>
     

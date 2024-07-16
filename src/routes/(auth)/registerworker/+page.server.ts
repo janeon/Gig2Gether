@@ -1,7 +1,7 @@
 import { fail, redirect } from '@sveltejs/kit'
 import type { Action, Actions, PageServerLoad } from './$types'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
-import { auth, db } from '$lib/firebase'
+import { auth, db } from '$lib/firebase/client'
 import { doc, setDoc } from 'firebase/firestore'
 import { randomUUID } from 'crypto'
 
