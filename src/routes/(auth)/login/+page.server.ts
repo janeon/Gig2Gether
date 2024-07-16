@@ -13,7 +13,6 @@ export const actions = {
     default: async ({ request, cookies }) => {
       const formData = await request.formData();
       const token = formData.get("token") as string;
-      log("token acquired");
       
       const admin = getFirebaseServer();
       if (admin.error) {
@@ -30,7 +29,7 @@ export const actions = {
         // https://stackoverflow.com/questions/57564505/unable-to-assign-iam-serviceaccounts-signblob-permission
         sessionCookie = await admin_auth.createSessionCookie(token, { expiresIn: expiresIn * 1000 });
       } catch (error) {
-        console.error("Error creating session cookie");
+        console.error("Error creating session cookie: ", (error as Error).message);
         throw redirect(303, "/login");
       }
       

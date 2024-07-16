@@ -37,7 +37,9 @@ export const handle: Handle = async ({ event, resolve }) => {
   // verify the session with admin sdk
   let decodedClaims: DecodedIdToken;
   try {
-      decodedClaims = await admin.data.auth(admin.app).verifySessionCookie(session, false);
+      const admin_auth = admin.data.auth(admin.app);
+      console.log("admin_auth: ", typeof admin_auth)
+      decodedClaims = await admin_auth.verifySessionCookie(session, false);
   } catch (error) {
       console.error(error);
       throw redirect(303, "/login");

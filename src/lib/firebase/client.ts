@@ -1,11 +1,12 @@
 /* eslint-disable prefer-const */
 import { initializeApp, type FirebaseApp } from 'firebase/app';
-import { getAuth, type Auth} from 'firebase/auth';
+import { getAuth, RecaptchaVerifier, signInWithPhoneNumber, type Auth} from 'firebase/auth';
 import { getFirestore, type Firestore } from 'firebase/firestore';
 
-export let db: Firestore;
-export let app: FirebaseApp;
-export let auth: Auth;
+let db: Firestore;
+let app: FirebaseApp;
+let auth: Auth;
+
 
 const firebaseConfig = {
  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -20,3 +21,5 @@ app = initializeApp(firebaseConfig);
 // For authentification
 auth = getAuth(app);
 db = getFirestore(app, "gigshare");
+
+export { RecaptchaVerifier, signInWithPhoneNumber, auth, db, app };

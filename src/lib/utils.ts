@@ -28,7 +28,7 @@ export const authenticateUser = async(event: RequestEvent) => {
         const user : User = {
             uid: currUser,
             role: docRef.data().role,
-            email: docRef.data().email,
+            username: docRef.data().email,
             platform: docRef.data().platform
         }
         return user
@@ -37,17 +37,19 @@ export const authenticateUser = async(event: RequestEvent) => {
     return null
 }
 
-export const getUser = async(currUser:string) => {
-    const ref = doc(db, "users", currUser)
+export const getUser = async(uid:string) => {
+    const ref = doc(db, "users", uid)
     const docRef = await getDoc(ref)
     if (docRef.exists()) {
         const user : User = {
-            uid: currUser,
+            uid: uid,
             role: docRef.data().role,
-            email: docRef.data().email,
+            username: docRef.data().email,
             platform: docRef.data().platform
         }
         return user
     }
+    // It's not always known whether a phone user is registered or not
+    // we'll handle the registration in the phone page
     return null
 }

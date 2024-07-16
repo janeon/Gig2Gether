@@ -1,7 +1,7 @@
 <script lang="ts">
 	import "../app.css";
 	import { goto } from '$app/navigation';
-	export const prerender = false
+	// export const prerender = false
 </script>
   
 <div>

@@ -1,130 +1,63 @@
-  
-<svelte:head>
-	<title>Phone</title>
-</svelte:head>
-
 <script lang="ts">
-    import type { PageData } from "./$types";
+  import { onMount } from 'svelte';
+  import { auth, RecaptchaVerifier, signInWithPhoneNumber } from '$lib/firebase/client';
+  import { type ConfirmationResult, type RecaptchaVerifier, PhoneAuthProvider, signInWithCredential } from "firebase/auth";
+  import type { ActionData } from './$types'; 
+	export let form : ActionData;
   
-    export let data: PageData;
+  let recaptchaVerifier: RecaptchaVerifier;
+  let confirmationResult: ConfirmationResult;
 
-    const {
-      recaptchaValidStore,
-      confirmationResultStore,
-      userStore,
-      phoneSignIn,
-      verifyCode,
-      signOutAsync,
-    } = data.auth;
-  
-    let countryCode: string | null = "";
-    let phoneNumberBody: string | null = "";
-  
-    $: countryCodeValid = countryCode !== null && countryCode.length !== 0;
-    $: phoneNumberBodyValid =
-      phoneNumberBody !== null && phoneNumberBody.length !== 0;
-  
-    $: phoneNumberFormValid =
-      $recaptchaValidStore &&
-      countryCodeValid &&
-      phoneNumberBodyValid;
-  
-    async function handlePhoneSubmit() {
-      if (!phoneNumberFormValid) {
-        return;
+  onMount(() => {
+    recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+      'size': 'invisible',
+      'callback': (response) => {
+        // reCAPTCHA solved, allow signInWithPhoneNumber.
+        console.log('reCAPTCHA solved.');
       }
-  
-  
-      const fullPhoneNumber = `+${countryCode! + phoneNumberBody!}`;
-  
-      await phoneSignIn(fullPhoneNumber);
-  
-    }
-  
-    let OTPCode: string | null = "";
-  
-    $: OTPFormValid =
-      OTPCode !== null &&
-      OTPCode.length === 6 &&
-      $confirmationResultStore !== null;
-  
-    async function handleOTPSubmit() {
-      if (!OTPFormValid) {
-        return;
-      }
-  
-      try {
-        await verifyCode(OTPCode!);
-      } catch (error) {
-        console.log(error);
-      }
-  
-    }
-  </script>
+    });
+  });
 
+  const sendCode = async () => {
+    try {
+      confirmationResult = await signInWithPhoneNumber(auth, '+1'+form.phone.value, recaptchaVerifier);
+      console.log('SMS sent.');
+    } catch (error) {
+      console.error('Error during signInWithPhoneNumber', error);
+    }
+  };
 
-  <main>
-    {#if $userStore}
-      <p>Your logged in!</p>
-  
-      <button on:click={signOutAsync}>Log Out</button>
-    {:else if $confirmationResultStore}
-      <form on:submit|preventDefault={handleOTPSubmit}>
-        <input type="text" bind:value={OTPCode} />
-  
-        <button type="submit" disabled={!OTPFormValid}>Confirm Code</button>
-      </form>
-    {:else}
-      <form on:submit|preventDefault={handlePhoneSubmit}>
-        <!-- <form on:submit> -->
-        <div class="phone-number-form">
-          <input type="text" bind:value={countryCode} placeholder="Country" />
-  
-          <input
-            type="text"
-            bind:value={phoneNumberBody}
-            placeholder="111-222-3333"
-          />
-        </div>
-  
-        <div id="recaptcha-container" />
-  
-        <button
-          id="sign-in-button"
-          type="submit"
-          disabled={!phoneNumberFormValid}
-        >
+  const verifyCode = async (event: Event) => {
+    event.preventDefault(); // Prevent the default form submission
+    try {
+      const credential = PhoneAuthProvider.credential(confirmationResult.verificationId, form.code.value);
+      const userCredential = await signInWithCredential(auth, credential);
+      const token = await userCredential.user.getIdToken();
+      auth.signOut();
+      console.log('User signed in successfully', token);
+      
+      const input = document.createElement("input");
+            input.type = "hidden";
+            input.name = "token";
+            input.value = token;
+            form.appendChild(input);
+            form.submit();
+    } catch (error) {
+      console.error('Error during signInWithCredential', error);
+    }
+  };
+</script>
+<form method="POST" bind:this={form}>
+  <div>
+    <input type="tel" placeholder="Phone Number" name="phone">
+    <button on:click|preventDefault={sendCode}>Send Code</button>
+  </div>
 
-          Sign In with Phone Number
-        </button>
-      </form>
-    {/if}
-  </main>
-  
-  <style>
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-  
-    main {
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-    }
-  
-    input {
-      font-size: 1rem;
-    }
-  
-    .phone-number-form {
-      display: grid;
-      grid-template-columns: 6rem 9rem;
-      gap: 1rem;
-      grid-auto-flow: row;
-    }
-  </style>
-  
+  <div id="recaptcha-container"></div>
+
+  <div>
+    <input type="text" placeholder="Verification Code" name="code">
+      <button on:click|preventDefault={verifyCode}>Verify Code</button>
+    
+  </div>
+</form>
