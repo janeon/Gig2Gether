@@ -7,7 +7,7 @@
 	let token: string;
 	// $: console.log("token", token);
 
-	export const prerender = false
+	// export const prerender = false
 	async function login(event: Event): Promise<void> {
 		event.preventDefault(); // Prevent the default form submission
         try {
