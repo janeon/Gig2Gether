@@ -46,6 +46,7 @@
 		"firebase": "^10.12.2",
 		"firebase-admin": "^12.2.0",
 		"firebase-functions": "^5.0.1",
+		"firebase-storage": "^1.1.4",
 		"flowbite": "^2.4.1",
 		"flowbite-svelte": "^0.46.15",
 		"svelte-multiselect": "^10.3.0",
