@@ -2,6 +2,8 @@
 import { initializeApp, type FirebaseApp } from 'firebase/app';
 import { getAuth, RecaptchaVerifier, signInWithPhoneNumber, type Auth} from 'firebase/auth';
 import { getFirestore, type Firestore } from 'firebase/firestore';
+import { getStorage } from 'firebase/storage';
+
 
 let db: Firestore;
 let app: FirebaseApp;
@@ -21,5 +23,8 @@ app = initializeApp(firebaseConfig);
 // For authentification
 auth = getAuth(app);
 db = getFirestore(app, "gigshare");
+
+export const storage = getStorage(app);
+
 
 export { RecaptchaVerifier, signInWithPhoneNumber, auth, db, app };
