@@ -107,12 +107,12 @@ export const getUser = async(uid:string) => {
         const user : User = {
             uid: uid,
             role: docRef.data().role,
-            username: docRef.data().email,
+            username: docRef.data().username,
             platform: docRef.data().platform
         }
         return user
     }
     // It's not always known whether a phone user is registered or not
-    // we'll handle the registration in the phone page
+    // we'll handle this case in the login by providing error when user not found
     return null
 }

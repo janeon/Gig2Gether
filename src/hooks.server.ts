@@ -7,7 +7,7 @@ import type { DecodedIdToken } from "firebase-admin/auth";
 import { log } from 'firebase-functions/logger';
 
 export const handle: Handle = async ({ event, resolve }) => {
-  log("Running handle in hooks")
+  // log("Running handle in hooks")
   // get cookies from browser
   const session = event.cookies.get("__session") ?? "";
   if (!session) {
@@ -27,18 +27,17 @@ export const handle: Handle = async ({ event, resolve }) => {
   // get the firebase admin instance
   const admin = getFirebaseServer();
   if (admin.error) {
-    log("Error getting firebase admin")
+    // log("Error getting firebase admin")
     console.error("Error getting firebase admin");
     throw redirect(303, "/login");
   }
 
-  log("got firebase admin: ")
+  // log("got firebase admin: ")
   
   // verify the session with admin sdk
   let decodedClaims: DecodedIdToken;
   try {
       const admin_auth = admin.data.auth(admin.app);
-      console.log("admin_auth: ", typeof admin_auth)
       decodedClaims = await admin_auth.verifySessionCookie(session, false);
   } catch (error) {
       console.error(error);

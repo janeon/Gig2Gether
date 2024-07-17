@@ -33,8 +33,8 @@
       const credential = PhoneAuthProvider.credential(confirmationResult.verificationId, form.code.value);
       const userCredential = await signInWithCredential(auth, credential);
       const token = await userCredential.user.getIdToken();
-      auth.signOut();
-      console.log('User signed in successfully', token);
+      await auth.signOut();
+      // console.log('User signed in successfully', token);
       
       const input = document.createElement("input");
             input.type = "hidden";
@@ -51,12 +51,12 @@
   <div>
     <input type="tel" placeholder="Phone Number" name="phone">
     <button on:click|preventDefault={sendCode}>Send Code</button>
-  </div>
 
   <div id="recaptcha-container"></div>
-
+  
   <div>
-    <input type="text" placeholder="Verification Code" name="code">
+  <input type="text" placeholder="Verification Code" name="code">
+    </div>
       <button on:click|preventDefault={verifyCode}>Verify Code</button>
     
   </div>

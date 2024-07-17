@@ -4,9 +4,9 @@ import { getFirebaseServer } from "$lib/firebase/adminServer";
 import { log } from 'firebase-functions/logger';
 
 export const load: PageServerLoad = async ({locals}) => {
-  if (locals.user) {
-    redirect(302, '/')
-  }
+  // if (locals.user) {
+  //   redirect(302, '/')
+  // }
 } 
 
 export const actions = {

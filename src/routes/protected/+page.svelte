@@ -1,6 +1,7 @@
 <script>
 	import { goto } from '$app/navigation';
     export let data;
+    // console.log(data.user)
 </script>
 
 <svelte:head>
