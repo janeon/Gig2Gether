@@ -2,6 +2,8 @@
 import { initializeApp, type FirebaseApp } from 'firebase/app';
 import { getAuth, type Auth} from 'firebase/auth';
 import { getFirestore, type Firestore } from 'firebase/firestore';
+import { getStorage } from 'firebase/storage';
+
 
 export let db: Firestore;
 export let app: FirebaseApp;
@@ -20,3 +22,6 @@ app = initializeApp(firebaseConfig);
 // For authentification
 auth = getAuth(app);
 db = getFirestore(app, "gigshare");
+
+export const storage = getStorage(app);
+

@@ -2,7 +2,7 @@
     import { Button } from 'flowbite-svelte';
     import UploadSidebar from '$lib/UploadSidebar.svelte';
     import { getFirestore, collection, doc, setDoc, writeBatch } from "firebase/firestore";
-    import { db } from '$lib/firebase';
+    import { db } from '$lib/firebase/client';
     import Papa from 'papaparse';
     import { page } from '$app/stores';
 

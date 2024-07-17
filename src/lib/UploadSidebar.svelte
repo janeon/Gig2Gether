@@ -22,7 +22,7 @@
                  <!-- // UpWork -->
             <!-- {#if $page.data.user?.platform == "upwork"} -->
             <SidebarItem label="Jobs" href="/protected/upwork-job"/>
-            <SidebarItem label="Pofile" href="/protected/upwork-profile"/>
+            <SidebarItem label="Profile" href="/protected/upwork-profile"/>
             <!-- {/if} -->
             
             <SidebarItem label="Manual" href="/protected/manual"/>

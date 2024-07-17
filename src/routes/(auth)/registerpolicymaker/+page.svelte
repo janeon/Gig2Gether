@@ -1,7 +1,7 @@
 <!-- <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { createUserWithEmailAndPassword } from 'firebase/auth';
-	import { auth, db } from '$lib/firebase';
+	import { auth, db } from '$lib/firebase/client';
     import { authUser } from '$lib/authstore';
     import { doc, setDoc } from 'firebase/firestore';
 	import Switch from '$lib/Switch.svelte';
