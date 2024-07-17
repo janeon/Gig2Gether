@@ -135,3 +135,6 @@ dist
 # misc  
 .npmrc
 .prettier*
+
+# firebase
+.firebase/*
