@@ -24,6 +24,13 @@ You can preview the production build with `npm run preview`.
 
 This authentication portion of this repo was created using a combination of [sveltekit-auth-firebase](https://github.com/JustinyAhin/okupter-repos/tree/5e9403e30a49ce5e314f311cffb057d922d2c737/apps/sveltekit-auth-firebase), [sveltekit-firebase-auth-example](https://github.com/eraygundogmus/sveltekit-firebase-auth-example), [svelte-examples](https://github.com/JavoByte/svelte-examples/tree/firebase-auth-ssr) for Admin server
 
+A few other relevant repos: https://github.com/jthegedus/svelte-adapter-firebase, https://github.com/consultingninja/authTalk/tree/main, https://github.com/huntabyte/shadcn-svelte, https://github.com/partner0831/sveltekit-shadcn-auth
+
+## Logging ✨✨✨
+[Reasons to log](https://firebase.google.com/docs/hosting/web-request-logs-and-metrics?hl=en&authuser=0), if not only to debug
+
+And [logger viewer](https://console.cloud.google.com/logs/query;query=resource.type%3D%22cloud_run_revision%22%0Aresource.labels.service_name%3D%22ssrgigshare%22;) filtered by our project
+
 To host and test, use 
 ```bash
 npm exec firebase deploy
