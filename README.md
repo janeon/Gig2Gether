@@ -36,7 +36,7 @@ Hosting setup instructions can be found in src/lib/firebase/Firebase.md
 
 - [X] Fix auth so that login doesn't expire at each reload
 
-- [ ] Phone authentication
+- [X] Phone authentication
 
 - [ ] Consider how to adapt for ios interface
 
