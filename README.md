@@ -22,7 +22,8 @@ npm run dev -- --open
 
 You can preview the production build with `npm run preview`.
 
-This authentication portion of this repo was created using a combination of [sveltekit-auth-firebase](https://github.com/JustinyAhin/okupter-repos/tree/5e9403e30a49ce5e314f311cffb057d922d2c737/apps/sveltekit-auth-firebase) and [sveltekit-firebase-auth-example](https://github.com/eraygundogmus/sveltekit-firebase-auth-example)
+This authentication portion of this repo was created using a combination of [sveltekit-auth-firebase](https://github.com/JustinyAhin/okupter-repos/tree/5e9403e30a49ce5e314f311cffb057d922d2c737/apps/sveltekit-auth-firebase), [sveltekit-firebase-auth-example](https://github.com/eraygundogmus/sveltekit-firebase-auth-example)
+and [firebase-auth-ssr](https://github.com/JavoByte/svelte-examples/tree/firebase-auth-ssr)
 
 To host and test, use 
 ```bash
