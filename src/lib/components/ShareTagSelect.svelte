@@ -70,7 +70,8 @@
     }
 </script>
 
-<h1>What issue would you like to share?</h1>
+<h1>What tags would you like to use?</h1>
+<p>Tags make your content more easily searchable!</p>
 {#if platform == "rover"}
 <Checkbox bind:group={tags} choices={roverTags}/>
 {:else if platform == "uber"}
