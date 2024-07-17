@@ -9,6 +9,13 @@
           "gigshare"
         ]
       }
+    },
+    "gigshare": {
+      "hosting": {
+        "datasharing": [
+          "gigshare"
+        ]
+      }
     }
   },
   "etags": {},
