@@ -130,12 +130,13 @@ dist
 .pnp.*
 
 # svelte 
-<<<<<<< HEAD
 .svelte-kit/*
 
 # misc  
 .npmrc
 .prettier*
 
+
 # firebase
 .firebase/*
+
