@@ -41,6 +41,8 @@ Hosting setup instructions can be found in src/lib/firebase/Firebase.md
 
 ## Todo 
 
+- [ ] Debug login page with upload on deploy 
+
 - [X] Fix auth so that login doesn't expire at each reload
 
 - [X] Phone authentication
