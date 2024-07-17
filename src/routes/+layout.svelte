@@ -1,11 +1,58 @@
 <script lang="ts">
 	import "../app.css";
-	import Header from '$lib/Header.svelte';
+	import { goto } from '$app/navigation';
+	import { page } from '$app/stores'
+	let title: string = ($page.url.pathname === "/") ? "GigUnity" : $page.url.pathname.split('/').filter(Boolean).pop() as string;
+	$: (title = ($page.url.pathname === "/") ? "GigUnity" : $page.url.pathname.split('/').filter(Boolean).pop() as string);
+	$: console.log(title);
+
 </script>
-  
-<main class="p-8 space-y-12 font-serif">
-	<div class="p-4 rounded-lg">
-	<Header />
-	<slot />
-	</div>
-</main>
+{#key $page.url.pathname} 
+	<main> 
+		<header class="flex justify-between items-center p-4 bg-gray-100">
+			
+			<div>
+				<h1 class="text-lg font-bold">{title}</h1>
+			</div>
+			
+			{#if title==="register" || title==="GigUnity"}
+				<button 
+				class="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700"
+				on:click={() => goto('/login')}
+				>
+					<a href="/login" class="hover:underline">Login</a>
+				</button>
+			{:else if title==="registerworker" || title==="registerpolicymaker"}
+				<button 
+				class="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700"
+				on:click={() => goto('/login')}
+				>
+					<a href="/login" class="hover:underline">Login</a>
+				</button>
+            {:else if title==="login"}
+            <div class="flex justify-end space-x-4">
+
+                <button 
+                    class="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700"
+                    on:click={() => goto('/registerworker')}
+                >
+                    <a href="/registerworker" class="hover:underline">Worker Register</a>
+                </button>
+                <button 
+                    class="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700"
+                    on:click={() => goto('/registerpolicymaker')}
+                >
+                    <a href="/registerpolicymaker" class="hover:underline">Policymaker Register</a>
+                </button>
+            </div>
+			{:else} 
+				<form action="/logout" method="POST">
+					<button type="submit">Log out</button>
+				</form>
+			{/if}
+			
+
+		</header>
+		<slot />
+	</main>
+{/key}
