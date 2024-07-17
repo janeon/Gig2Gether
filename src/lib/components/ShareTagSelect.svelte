@@ -1,8 +1,17 @@
 <script lang="ts">
     import { page } from "$app/stores";
     import { Checkbox } from "flowbite-svelte";
+    import Button from "./ui/button/button.svelte";
+    import { addDoc, collection, doc } from "firebase/firestore";
+    import { db } from "$lib/firebase/client";
     export let tags : string[]
     export let platform : string
+    export let title : string
+    export let description : string
+    export let url : string
+    export let tagSelection : boolean
+    export let type : string
+
     const uberTags = [
         {value: "safety", label: "Safety"},
         {value: "fair pay", label: "Fair Pay"},
@@ -27,8 +36,37 @@
         {value: "other", label: "Other"}
     ]
 
-    function saveTags(method:string) {
-        
+    async function uploadContent() {
+        if (url) {
+            try {
+            await addDoc(collection(db, 'stories', type, platform), {
+            title,
+            description,
+            uid: $page.data.user.uid,
+            url,
+            date: new Date(),
+            tags
+
+        })
+        } catch {
+            console.log("error with adding document")
+        }
+        }
+        else {
+            try {
+                await addDoc(collection(db, 'stories', type, platform), {
+                title,
+                description,
+                uid: $page.data.user.uid,
+                date: new Date(),
+                tags
+
+            })
+        } catch {
+            console.log("error with adding document")
+            }
+        }
+        tagSelection = false
     }
 </script>
 
@@ -38,5 +76,4 @@
 {:else if platform == "uber"}
 <Checkbox bind:group={tags} choices={uberTags}/>
 {/if}
-
-<p>From component {tags}</p>
+<Button on:click={uploadContent}>Upload Content</Button>
