@@ -23,6 +23,4 @@ app = initializeApp(firebaseConfig);
 // For authentification
 auth = getAuth(app);
 db = getFirestore(app, "gigshare");
-
-export { RecaptchaVerifier, signInWithPhoneNumber, auth, db, app };
 export let storage = getStorage(app);
