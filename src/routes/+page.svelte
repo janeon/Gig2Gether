@@ -125,20 +125,3 @@
         </div>
     </div>
 </main>
-
-<style>
-    .intro {
-        padding-left: 2rem;
-        padding-right: 2rem;
-    }
-
-    .intro h1 {
-        color: #2c3e50;
-    }
-
-
-    .intro p {
-        color: #000000;
-    }
-
-</style>
