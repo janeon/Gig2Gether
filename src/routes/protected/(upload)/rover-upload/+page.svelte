@@ -1,6 +1,6 @@
 <script lang="ts">
     import { Button } from 'flowbite-svelte';
-    import UploadSidebar from '$lib/UploadSidebar.svelte';
+    import UploadSidebar from '$lib/components/UploadSidebar.svelte';
 </script>
 
 <link

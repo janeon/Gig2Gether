@@ -1,6 +1,6 @@
 <script lang="ts">
     import { Button } from 'flowbite-svelte';
-    import UploadSidebar from '$lib/UploadSidebar.svelte';
+    import UploadSidebar from '$lib/components/UploadSidebar.svelte';
     import { getFirestore, collection, doc, setDoc, writeBatch } from "firebase/firestore";
     import { db } from '$lib/firebase/client';
     import Papa from 'papaparse';

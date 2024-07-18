@@ -57,7 +57,11 @@ const config = {
 			},
 			fontFamily: {
 				sans: [...fontFamily.sans]
-			}
+			},
+			screens: {
+				'xs': '250px',  // Custom breakpoint for 350px
+				'sm': '300px',  // Custom breakpoint for slightly larger width
+			  },
 		}
 	},
 };
