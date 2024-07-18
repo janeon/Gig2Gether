@@ -54,6 +54,7 @@
 		"papaparse": "^5.4.1",
 		"svelte-multiselect": "^10.3.0",
 		"tailwind-merge": "^2.4.0",
-		"tailwind-variants": "^0.2.1"
+		"tailwind-variants": "^0.2.1",
+		"papaparse": "^5.4.1"
 	}
 }
