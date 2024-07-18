@@ -5,6 +5,10 @@
     import { collection, doc, setDoc } from "firebase/firestore";
     import { Label, NumberInput } from "flowbite-svelte";
 
+
+    let successMessage = '';
+    let errorMessage = '';
+
     // Uber Expenses
     let tripData = {
         fare: 0,
@@ -19,6 +23,7 @@
         const collectionRef = collection(db, "users", $page.data.user?.uid, "upload");
         const docRef = doc(collectionRef, "Manual Trips"); // Separate by gig work manual inputs?
         setDoc(docRef, tripData, { merge: true });
+        successMessage = 'Input Submitted Successfully!';
     }
 </script>
 
@@ -64,6 +69,12 @@
                     on:click={submitManualTrip}>
                     Submit
                 </button>
+                {#if successMessage}
+                    <p class="text-green-600 mt-2">{successMessage}</p>
+                {/if}
+                {#if errorMessage}
+                    <p class = "text-red-600 mt-2">{errorMessage}</p>
+                {/if}
             </div>
         </div>
     </div>
