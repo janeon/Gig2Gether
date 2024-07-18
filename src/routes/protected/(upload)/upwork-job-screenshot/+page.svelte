@@ -1,7 +1,7 @@
 
 <script lang="ts">
     import { Button } from 'flowbite-svelte';
-    import UploadSidebar from '$lib/UploadSidebar.svelte';
+    import UploadSidebar from '$lib/components/UploadSidebar.svelte';
     import { Gallery, Label } from 'flowbite-svelte';
     import { getFirestore, collection, doc, setDoc } from "firebase/firestore";
     import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
