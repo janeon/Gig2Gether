@@ -4,12 +4,14 @@
     import { Gallery, Label } from 'flowbite-svelte';
     import { getFirestore, collection, doc, setDoc } from "firebase/firestore";
     import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-    import { db, storage } from '$lib/firebase'; 
+    import { db, storage } from '$lib/firebase/client'; 
     import { page } from '$app/stores';
 
     let fileuploadprops = {
         id: 'service_screenshot'
     };
+
+    let selectedDate = new Date().toISOString().substring(0, 10); // Default to today's date in YYYY-MM-DD format
 
     const images = [
         { alt: 'Profile Screenshot example 1', src: '../rover1.jpg' },
@@ -55,15 +57,16 @@
         }
 
         const collectionRef = collection(db, "users", user.uid, "uploads");
-        const docRef = doc(collectionRef, "screenshots");
+        const docRef = doc(collectionRef, `service_${new Date().getTime()}`);
 
         const fileData = {
             name: fileName,
             url: downloadURL,
-            timestamp: new Date()
+            timestamp: new Date(),
+            date: new Date(selectedDate) // Include the selected date
         };
 
-        await setDoc(docRef, fileData, { merge: true });
+        await setDoc(docRef, fileData);
         console.log("File metadata saved to Firestore:", fileData);
     }
 </script>

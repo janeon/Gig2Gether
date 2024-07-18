@@ -2,6 +2,7 @@ import { writable } from 'svelte/store';
 import { auth } from './client';
 import { onAuthStateChanged } from 'firebase/auth';
 
+
 interface AuthUser {
 	uid: string;
 	email: string;

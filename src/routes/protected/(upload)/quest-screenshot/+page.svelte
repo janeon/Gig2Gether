@@ -4,7 +4,7 @@
     import { Gallery, Label } from 'flowbite-svelte';
     import { getFirestore, collection, doc, setDoc } from "firebase/firestore";
     import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-    import { db, storage } from '$lib/firebase'; 
+    import { db, storage } from '$lib/firebase/client'; 
     import { page } from '$app/stores';
 
     let fileuploadprops = {
@@ -57,15 +57,16 @@
         }
 
         const collectionRef = collection(db, "users", user.uid, "uploads");
-        const docRef = doc(collectionRef, "screenshots");
+        const docRef = doc(collectionRef, `quest_${new Date().getTime()}`);
 
         const fileData = {
             name: fileName,
             url: downloadURL,
-            timestamp: new Date()
+            timestamp: new Date(),
+            date: new Date() // Assign the current date
         };
 
-        await setDoc(docRef, fileData, { merge: true });
+        await setDoc(docRef, fileData);
         console.log("File metadata saved to Firestore:", fileData);
     }
 </script>
@@ -85,7 +86,6 @@
             Upload screenshots related to quest options, progress, and details/criteria. Below are a few examples:
         </p>
 
-        <!-- Add images -->
         <Gallery class="gap-2 grid grid-cols-4">
             {#each images as { alt, src }}
                 <div class="w-full h-70 overflow-hidden">
@@ -107,6 +107,3 @@
         </div>
     </div>
 </div>
-
-
-

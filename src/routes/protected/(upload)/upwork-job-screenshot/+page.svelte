@@ -1,16 +1,17 @@
-
 <script lang="ts">
     import { Button } from 'flowbite-svelte';
     import UploadSidebar from '$lib/UploadSidebar.svelte';
     import { Gallery, Label } from 'flowbite-svelte';
     import { getFirestore, collection, doc, setDoc } from "firebase/firestore";
     import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-    import { db, storage } from '$lib/firebase'; 
+    import { db, storage } from '$lib/firebase/client'; 
     import { page } from '$app/stores';
 
     let fileuploadprops = {
         id: 'job_screenshot'
     };
+
+    let selectedDate = new Date().toISOString().substring(0, 10); // Default to today's date
 
     const images = [
         { alt: 'Job Screenshot example 1', src: '../job1.jpg' },
@@ -57,15 +58,16 @@
         }
 
         const collectionRef = collection(db, "users", user.uid, "uploads");
-        const docRef = doc(collectionRef, "screenshots");
+        const docRef = doc(collectionRef, `screenshot_${new Date().getTime()}`);
 
         const fileData = {
             name: fileName,
             url: downloadURL,
-            timestamp: new Date()
+            timestamp: new Date(),
+            date: new Date(selectedDate)
         };
 
-        await setDoc(docRef, fileData, { merge: true });
+        await setDoc(docRef, fileData);
         console.log("File metadata saved to Firestore:", fileData);
     }
 </script>
@@ -89,7 +91,6 @@
             Here are a couple examples:
         </p>
 
-        <!-- Add images -->
         <Gallery class="gap-2 grid grid-cols-4">
             {#each images as { alt, src }}
                 <div class="w-full h-100 overflow-hidden">
@@ -111,4 +112,3 @@
         </div>
     </div>
 </div>
-

@@ -4,12 +4,15 @@
     import { Gallery, Label } from 'flowbite-svelte';
     import { getFirestore, collection, doc, setDoc } from "firebase/firestore";
     import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-    import { db, storage } from '$lib/firebase'; 
+    import { db, storage } from '$lib/firebase/client'; 
     import { page } from '$app/stores';
 
     let fileuploadprops = {
         id: 'trip_screenshot'
     };
+
+        // / Default to today's date in YYYY-MM-DD format
+    let selectedDate = new Date().toISOString().substring(0, 10); 
 
     const images = [
         { alt: 'Uber Trip Screenshot example 1', src: '../trip1.jpg' },
@@ -56,15 +59,16 @@
         }
 
         const collectionRef = collection(db, "users", user.uid, "uploads");
-        const docRef = doc(collectionRef, "Files");
+        const docRef = doc(collectionRef, `trip_${new Date().getTime()}`);
 
         const fileData = {
             name: fileName,
             url: downloadURL,
-            timestamp: new Date()
+            timestamp: new Date(),
+            date: new Date(selectedDate) // Include the selected date
         };
 
-        await setDoc(docRef, fileData, { merge: true });
+        await setDoc(docRef, fileData);
         console.log("File metadata saved to Firestore:", fileData);
     }
 </script>
@@ -92,6 +96,8 @@
             <div class="flex flex-col items-center space-y-4 ml-56">
                 <Label class="pb-2" for={fileuploadprops.id}>Upload file</Label>
                 <input id={fileuploadprops.id} type="file" on:change={handleFileInputChange} autocomplete="off" class="mt-1" />
+                <label class="pb-2 mt-4" for="date_input">Select Date</label>
+                <input id="date_input" type="date" bind:value={selectedDate} class="mt-1" />
             </div>
         </div>
 

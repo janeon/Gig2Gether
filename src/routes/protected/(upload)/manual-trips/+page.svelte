@@ -1,6 +1,6 @@
 <script lang="ts">
     import { page } from "$app/stores";
-    import { db } from "$lib/firebase";
+    import { db } from "$lib/firebase/client";
     import UploadSidebar from "$lib/UploadSidebar.svelte";
     import { collection, doc, setDoc } from "firebase/firestore";
     import { Label, NumberInput } from "flowbite-svelte";
