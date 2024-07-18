@@ -11,7 +11,7 @@
             <SidebarItem label="My Account" href="/protected/account"/>
             <SidebarItem label="My Worker Profile" href="/protected/profile"/>
             <SidebarItem label="Demographics" href="/protected/demographics"/>
-            <SidebarItem label="Sharing Preferences" href="/protected/sharingpreferences"/>
+            <SidebarItem label="Sharing Preferences" href="/protected/sharing_preferences"/>
             <SidebarItem label="Withdraw Data"/>
             <SidebarItem label="Notification"/>
           </SidebarGroup>
