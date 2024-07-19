@@ -57,7 +57,7 @@ const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
     default: () => {
       return `Upload file`;
     }
-  })} ${validate_component(Fileupload, "Fileupload").$$render($$result, Object.assign({}, fileuploadprops, { autocomplete: "off" }), {}, {})}</div></div> <div class="flex items-center mt-4 ml-49 text-black cursor-pointer" data-svelte-h="svelte-mc04fn"><i class="fas fa-play fa-2x mr-2"></i> <span>Learn more on how to add files or enter details</span></div></div></div>`;
+  })} ${validate_component(Fileupload, "Fileupload").$$render($$result, Object.assign({}, fileuploadprops, { autocomplete: "off" }), {}, {})} ${``} ${``}</div></div> <div class="flex items-center mt-4 ml-49 text-black cursor-pointer" data-svelte-h="svelte-mc04fn"><i class="fas fa-play fa-2x mr-2"></i> <span>Learn more on how to add files or enter details</span></div></div></div>`;
 });
 export {
   Page as default

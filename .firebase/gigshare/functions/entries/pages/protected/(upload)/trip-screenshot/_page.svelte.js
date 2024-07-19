@@ -10,7 +10,6 @@ const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let $$unsubscribe_page;
   $$unsubscribe_page = subscribe(page, (value) => value);
   let fileuploadprops = { id: "trip_screenshot" };
-  let selectedDate = /* @__PURE__ */ (/* @__PURE__ */ new Date()).toISOString().substring(0, 10);
   const images = [
     {
       alt: "Uber Trip Screenshot example 1",
@@ -36,7 +35,7 @@ const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
     default: () => {
       return `Upload file`;
     }
-  })} <input${add_attribute("id", fileuploadprops.id, 0)} type="file" autocomplete="off" class="mt-1"> <label class="pb-2 mt-4" for="date_input" data-svelte-h="svelte-71nmup">Select Date</label> <input id="date_input" type="date" class="mt-1"${add_attribute("value", selectedDate, 0)}></div></div> <div class="flex items-center mt-4 ml-49 text-black cursor-pointer" data-svelte-h="svelte-11tx84z"><i class="fas fa-play fa-2x mr-2"></i> <span>Learn more on how to add files or enter details</span></div></div></div>`;
+  })} <input${add_attribute("id", fileuploadprops.id, 0)} type="file" autocomplete="off" class="mt-1"> ${``} ${``}</div></div> <div class="flex items-center mt-4 ml-49 text-black cursor-pointer" data-svelte-h="svelte-11tx84z"><i class="fas fa-play fa-2x mr-2"></i> <span>Learn more on how to add files or enter details</span></div></div></div>`;
 });
 export {
   Page as default

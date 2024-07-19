@@ -13,7 +13,7 @@ const UploadSidebar = create_ssr_component(($$result, $$props, $$bindings, slots
         default: () => {
           return `${validate_component(SidebarGroup, "SidebarGroup").$$render($$result, {}, {}, {
             default: () => {
-              return `  ${validate_component(SidebarItem, "SidebarItem").$$render(
+              return ` ${$page.data.user?.platform == "uber" ? `${validate_component(SidebarItem, "SidebarItem").$$render(
                 $$result,
                 {
                   label: "Quests",
@@ -21,7 +21,7 @@ const UploadSidebar = create_ssr_component(($$result, $$props, $$bindings, slots
                 },
                 {},
                 {}
-              )} ${validate_component(SidebarItem, "SidebarItem").$$render($$result, { label: "Trips", href: "/protected/trips" }, {}, {})}    ${validate_component(SidebarItem, "SidebarItem").$$render(
+              )} ${validate_component(SidebarItem, "SidebarItem").$$render($$result, { label: "Trips", href: "/protected/trips" }, {}, {})}` : ``}  ${$page.data.user?.platform == "rover" ? `${validate_component(SidebarItem, "SidebarItem").$$render(
                 $$result,
                 {
                   label: "Screenshot",
@@ -29,7 +29,7 @@ const UploadSidebar = create_ssr_component(($$result, $$props, $$bindings, slots
                 },
                 {},
                 {}
-              )}    ${validate_component(SidebarItem, "SidebarItem").$$render(
+              )}` : ``}  ${$page.data.user?.platform == "upwork" ? `${validate_component(SidebarItem, "SidebarItem").$$render(
                 $$result,
                 {
                   label: "Jobs",
@@ -45,7 +45,7 @@ const UploadSidebar = create_ssr_component(($$result, $$props, $$bindings, slots
                 },
                 {},
                 {}
-              )}  ${validate_component(SidebarItem, "SidebarItem").$$render(
+              )}` : ``} ${validate_component(SidebarItem, "SidebarItem").$$render(
                 $$result,
                 {
                   label: "Manual",

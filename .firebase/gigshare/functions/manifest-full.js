@@ -7,10 +7,10 @@ function __memo(fn) {
 return {
 	appDir: "_app",
 	appPath: "_app",
-	assets: new Set([".DS_Store","Boost-Earnings.png","Community.png","Connect-&-Thrive.png","Data-Control.png","Data-Uploading.png","Instant-Insights.png","NSF.png","Planner.png","Platform.png","Registration.png","Sharing-Settings.png","Smarter-Policies.png","Trends.png","Work-Smarter.png","favicon.ico","job1.jpg","job2.jpg","job3.jpg","quest1.png","quest2.jpg","quest3.jpg","quest4.jpg","rover1.jpg","rover2.jpg","trip1.jpg","trip2.jpg","trip3.jpg","up-profile1.jpg","up-profile2.jpg"]),
+	assets: new Set([".DS_Store","Boost-Earnings 2.png","Boost-Earnings.png","Community 2.png","Community.png","Connect-&-Thrive 2.png","Connect-&-Thrive.png","Data-Control 2.png","Data-Control.png","Data-Uploading 2.png","Data-Uploading.png","Instant-Insights 2.png","Instant-Insights.png","NSF 2.png","NSF.png","Planner 2.png","Planner.png","Platform 2.png","Platform.png","Registration 2.png","Registration.png","Sharing-Settings 2.png","Sharing-Settings.png","Smarter-Policies 2.png","Smarter-Policies.png","Trends 2.png","Trends.png","Work-Smarter 2.png","Work-Smarter.png","favicon.png","job1 2.jpg","job1.jpg","job2 2.jpg","job2.jpg","job3 2.jpg","job3.jpg","quest1 2.jpg","quest1.png","quest2 2.jpg","quest2.jpg","quest3 2.jpg","quest3.jpg","quest4 2.jpg","quest4.jpg","rover1 2.jpg","rover1.jpg","rover2 2.jpg","rover2.jpg","trip1 2.jpg","trip1.jpg","trip2 2.jpg","trip2.jpg","trip3 2.jpg","trip3.jpg","up-profile1 2.jpg","up-profile1.jpg","up-profile2 2.jpg","up-profile2.jpg"]),
 	mimeTypes: {".png":"image/png",".jpg":"image/jpeg"},
 	_: {
-		client: {"start":"_app/immutable/entry/start._EQJpWl9.js","app":"_app/immutable/entry/app.DePDZ1Qr.js","imports":["_app/immutable/entry/start._EQJpWl9.js","_app/immutable/chunks/entry.Ddf6s1Sl.js","_app/immutable/chunks/scheduler.Tn1ca7fi.js","_app/immutable/entry/app.DePDZ1Qr.js","_app/immutable/chunks/scheduler.Tn1ca7fi.js","_app/immutable/chunks/index.CSvEDU_A.js"],"stylesheets":[],"fonts":[],"uses_env_dynamic_public":false},
+		client: {"start":"_app/immutable/entry/start.B8Ua9Hc2.js","app":"_app/immutable/entry/app.BOcBHVEp.js","imports":["_app/immutable/entry/start.B8Ua9Hc2.js","_app/immutable/chunks/entry.-dPbBPsr.js","_app/immutable/chunks/scheduler.Tn1ca7fi.js","_app/immutable/entry/app.BOcBHVEp.js","_app/immutable/chunks/scheduler.Tn1ca7fi.js","_app/immutable/chunks/index.CSvEDU_A.js"],"stylesheets":[],"fonts":[],"uses_env_dynamic_public":false},
 		nodes: [
 			__memo(() => import('./nodes/0.js')),
 			__memo(() => import('./nodes/1.js')),

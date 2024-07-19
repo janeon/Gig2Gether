@@ -27,7 +27,7 @@ const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
     default: () => {
       return `Upload file`;
     }
-  })} <input${add_attribute("id", fileuploadprops.id, 0)} type="file" autocomplete="off" class="mt-1"></div></div> <div class="flex items-center mt-4 ml-49 text-black cursor-pointer" data-svelte-h="svelte-11tx84z"><i class="fas fa-play fa-2x mr-2"></i> <span>Learn more on how to add files or enter details</span></div></div></div>`;
+  })} <input${add_attribute("id", fileuploadprops.id, 0)} type="file" autocomplete="off" class="mt-1"> ${``} ${``}</div></div> <div class="flex items-center mt-4 ml-49 text-black cursor-pointer" data-svelte-h="svelte-11tx84z"><i class="fas fa-play fa-2x mr-2"></i> <span>Learn more on how to add files or enter details</span></div></div></div>`;
 });
 export {
   Page as default

@@ -112,7 +112,7 @@ const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
         }
       },
       {}
-    )}</div> <div class="flex justify-center mt-6"><button class="bg-black text-white py-2 px-4 rounded" data-svelte-h="svelte-1mi59km">Submit</button></div></div></div></div>`;
+    )}</div> <div class="flex justify-center mt-6"><button class="bg-black text-white py-2 px-4 rounded" data-svelte-h="svelte-1mi59km">Submit</button> ${``} ${``}</div></div></div></div>`;
   } while (!$$settled);
   $$unsubscribe_page();
   return $$rendered;

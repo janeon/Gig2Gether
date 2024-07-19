@@ -45,14 +45,6 @@ const Sidebar_1 = create_ssr_component(($$result, $$props, $$bindings, slots) =>
                 },
                 {},
                 {}
-              )} ${validate_component(SidebarItem, "SidebarItem").$$render(
-                $$result,
-                {
-                  label: "Worker Test",
-                  href: "/protected/upwork-profile"
-                },
-                {},
-                {}
               )} ${validate_component(SidebarItem, "SidebarItem").$$render($$result, { label: "Withdraw Data" }, {}, {})} ${validate_component(SidebarItem, "SidebarItem").$$render($$result, { label: "Notification" }, {}, {})}`;
             }
           })}`;
