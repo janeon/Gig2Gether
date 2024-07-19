@@ -26,7 +26,7 @@ This authentication portion of this repo was created using a combination of [sve
 
 A few other relevant repos: https://github.com/jthegedus/svelte-adapter-firebase, https://github.com/consultingninja/authTalk/tree/main, https://github.com/huntabyte/shadcn-svelte, https://github.com/partner0831/sveltekit-shadcn-auth
 
-## Logging ✨✨✨
+## Logging ✨✨✨ and hosting
 [Reasons to log](https://firebase.google.com/docs/hosting/web-request-logs-and-metrics?hl=en&authuser=0), if not only to debug
 
 And [logger viewer](https://console.cloud.google.com/logs/query;query=resource.type%3D%22cloud_run_revision%22%0Aresource.labels.service_name%3D%22ssrgigshare%22;) filtered by our project
