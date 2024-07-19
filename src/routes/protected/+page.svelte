@@ -29,7 +29,7 @@
         iconClass="fa-cog"
         title="Settings"
         description="Manage your worker profile, sharing preferences, and more."
-        route="/protected/account" 
+        route="/protected/settings/account" 
       />
 
       <HomeCard
