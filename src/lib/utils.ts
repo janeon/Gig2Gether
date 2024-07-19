@@ -15,30 +15,31 @@ export const authenticateUser = async(event: RequestEvent) => {
 	const {cookies} = event
 	let verifytoken : string
 
-	const userToken = cookies.get("session")
-	if (!auth.currentUser) {
-		return null
-	}
-	const currUser = auth.currentUser!.uid
-	const ref = doc(db, "users", currUser)
-	const docRef = await getDoc(ref)
-	if (docRef.exists()) {
-		verifytoken = docRef.data().authToken
-		console.log("token",verifytoken)
-		if (verifytoken != userToken) {
-			cookies.delete('session', {path: '/'})
-			signOut(auth)
-			console.log("tokens not equal")
-		}
-		const user : User = {
-			uid: currUser,
-			role: docRef.data().role,
-			email: docRef.data().email,
-			platform: docRef.data().platform
-		}
-		return user
-	}
-	return null
+    const userToken = cookies.get("session")
+    if (!auth.currentUser) {
+        return null
+    }
+    const currUser = auth.currentUser!.uid
+    const ref = doc(db, "users", currUser)
+    const docRef = await getDoc(ref)
+    if (docRef.exists()) {
+        verifytoken = docRef.data().authToken
+        console.log("token",verifytoken)
+        if (verifytoken != userToken) {
+            cookies.delete('session', {path: '/'})
+            signOut(auth)
+            console.log("tokens not equal")
+        }
+        const user : User = {
+            uid: currUser,
+            role: docRef.data().role,
+            username: docRef.data().email,
+            platform: docRef.data().platform
+        }
+        return user
+    }
+
+    return null
 }
 
 export function cn(...inputs: ClassValue[]) {
@@ -99,17 +100,19 @@ export const flyAndScale = (
 	};
 };
 
-export const getUser = async(currUser:string) => {
-    const ref = doc(db, "users", currUser)
+export const getUser = async(uid:string) => {
+    const ref = doc(db, "users", uid)
     const docRef = await getDoc(ref)
     if (docRef.exists()) {
         const user : User = {
-            uid: currUser,
+            uid: uid,
             role: docRef.data().role,
-            email: docRef.data().email,
+            username: docRef.data().username,
             platform: docRef.data().platform
         }
         return user
     }
+    // It's not always known whether a phone user is registered or not
+    // we'll handle this case in the login by providing error when user not found
     return null
 }

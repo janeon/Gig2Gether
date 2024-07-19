@@ -2,10 +2,10 @@
     import "../app.css";
     import { goto } from '$app/navigation';
     const registerWorker = () => {
-        goto('/registerworker')
+        goto('/register_worker')
     }
     const registerPolicymaker = () => {
-        goto('/registerpolicymaker')
+        goto('/register_policymaker')
     }
 </script>
 
