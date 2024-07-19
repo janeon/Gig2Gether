@@ -1,7 +1,7 @@
 <script lang="ts">
     import { page } from "$app/stores";
     import { db } from "$lib/firebase/client";
-    import Sidebar from "$lib/components/Sidebar.svelte";
+    import Sidebar from "$lib/components/SettingsSidebar.svelte";
     import { stringLength } from "@firebase/util";
     import { collection, doc, setDoc } from "firebase/firestore";
     import { Checkbox, Label, Select } from "flowbite-svelte";
@@ -47,23 +47,17 @@
     }
 </script>
 
-<div class = "flex flex-row">
-    <Sidebar/>
-    <div class = "p-8 w-1/2">
-        <div class = "py-5">
-            <Label>Who Would You Like to Share Your Worker Data With?</Label>
-            <Checkbox bind:group={uploadData.sharing} choices={sharingOptions} />
-        </div>
-        <h1>Data Options</h1>
-        <div class = "py-5">
-            <Label>Data Lifespan</Label>
-            <Select bind:value={uploadData.data_lifespan} choices={lifespanOptions}/>
-        </div>
-        <div>
-            <Label>Location Granularity</Label>
-            <Select bind:value={uploadData.location_granularity} choices={locationOptions}/>
-        </div>
-        <button on:click = {submitPreferences} class="py-5">Submit</button>
-    </div>
-
+<div class = "py-5">
+    <Label>Who Would You Like to Share Your Worker Data With?</Label>
+    <Checkbox bind:group={uploadData.sharing} choices={sharingOptions} />
 </div>
+<h1>Data Options</h1>
+<div class = "py-5">
+    <Label>Data Lifespan</Label>
+    <Select bind:value={uploadData.data_lifespan} choices={lifespanOptions}/>
+</div>
+<div>
+    <Label>Location Granularity</Label>
+    <Select bind:value={uploadData.location_granularity} choices={locationOptions}/>
+</div>
+<button on:click = {submitPreferences} class="py-5">Submit</button>
