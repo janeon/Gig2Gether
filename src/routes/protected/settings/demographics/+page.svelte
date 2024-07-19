@@ -4,7 +4,6 @@
     import {onMount} from 'svelte'
     import { goto } from '$app/navigation';
     import { page } from "$app/stores";
-    import Sidebar from "$lib/components/Sidebar.svelte";
     import { Label, NumberInput, Select } from "flowbite-svelte";
 
 
@@ -107,9 +106,6 @@
     })
 </script>
 
-<div class = "flex flex-row">
-    <Sidebar />
-    <div class = "p-8">
         <!-- TODO: why does h1 and h2 look the same? -->
         <h1>My Demographics</h1> 
         <div class="py-5">
@@ -151,7 +147,4 @@
             <NumberInput class = "border-2" bind:value={otherGigHours} type = "number"/>
         </div>
         
-        <button on:click = {submitDemographics}>Submit</button></div>
-    
-    </div>
-    
+        <button on:click = {submitDemographics}>Submit</button>
