@@ -8,9 +8,8 @@
 <Sidebar {activeUrl}>
     <SidebarWrapper>
         <SidebarGroup>
-            <SidebarItem label="Share Strategy" href="/protected/stories/share_strategy"/>
-            <SidebarItem label="Share Issue" href="/protected/stories/share_issue"/>
-            <SidebarItem label="Community Stories" />
+            <SidebarItem label="Story Feed" href="/protected/stories/story_feed"/>
+            <SidebarItem label="Share Story" href="/protected/stories/share_story"/>
           </SidebarGroup>
     </SidebarWrapper>
 </Sidebar>
