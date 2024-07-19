@@ -6,6 +6,7 @@ Make sure you have .env file added to the root of the folder (under /datasharing
 ## Developing
 
 Installi dependencies with `npm install`, `npm i` (or `pnpm install` or `yarn`)
+(possibly also `npm i @fortawesome/fontawesome-free`)
 
 Install tailwind with `npm install -D tailwindcss postcss autoprefixer`
 
