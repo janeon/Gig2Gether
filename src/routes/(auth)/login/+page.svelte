@@ -3,15 +3,15 @@
 	import { auth, RecaptchaVerifier, signInWithPhoneNumber } from '$lib/firebase/client';
 	import { type ConfirmationResult, PhoneAuthProvider, signInWithCredential, signInWithEmailAndPassword } from "firebase/auth";
 	import type { ActionData } from './$types'; 
-	export let form : ActionData;
 	import { getUser } from '$lib/utils'
 	import { enhance } from '$app/forms';
-	import { goto } from '$app/navigation';
+	export let form : ActionData;
 	let token: string;
 	// $: console.log("token", token);
 	
 	let recaptchaVerifier: RecaptchaVerifier;
 	let confirmationResult: ConfirmationResult;
+	let signInMethod : string;
   
 	onMount(() => {
 	  recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
@@ -32,8 +32,6 @@
 	  }
 	};
 	
-	let signInMethod : string;
-	
 	const emailOrPhone = async () => {
 		if (form.username.value.includes('@')) {
 			signInMethod = 'email';
@@ -51,7 +49,7 @@
 				if (signInMethod == 'email') {
 					cred = await signInWithEmailAndPassword(auth, form.username.value, form.password.value);
 				}
-				if (signInMethod == 'phone') {
+				else if (signInMethod == 'phone') {
 					const credential = PhoneAuthProvider.credential(confirmationResult.verificationId, form.code.value);
 					cred = await signInWithCredential(auth, credential);
 				}
