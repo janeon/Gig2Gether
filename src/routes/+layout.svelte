@@ -2,13 +2,29 @@
 	import "../app.css";
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores'
-	let title: string = ($page.url.pathname === "/") ? "GigUnity" : $page.url.pathname.split('/').filter(Boolean).pop() as string;
-	$: (title = ($page.url.pathname === "/") ? "GigUnity" : $page.url.pathname.split('/').filter(Boolean).pop() as string);
-	$: console.log(title);
+	import { Card } from 'flowbite-svelte';
+	
+	// this page mainly does title management
+	function parsePageNameFromUrl(url: string) {
+		let lastSegment = url.split('/').filter(Boolean).pop() as string
+		lastSegment = lastSegment.split('_')          // Split the string by underscores
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))  // Capitalize each word
+            .join(' ');          // Join the words with spaces
+		return (lastSegment === 'Protected') ? 'Home' : lastSegment;
+	}
+
+	let title: string;
+	$: (title = ($page.url.pathname === "/") ? "GigUnity" 
+		: parsePageNameFromUrl($page.url.pathname));
+	// $: console.log(title);
 
 </script>
+
+<svelte:head>
+    <title>{title}</title> 
+</svelte:head>
+
 {#key $page.url.pathname} 
-	<main> 
 		<header class="flex justify-between items-center p-4 bg-gray-100">
 			
 			<div>
@@ -31,7 +47,6 @@
 				</button>
             {:else if title==="login" || title==="phone"}
             <div class="flex justify-end space-x-4">
-
                 <button 
                     class="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700"
                     on:click={() => goto('/register_worker')}
@@ -47,14 +62,11 @@
             </div>
 			
 			{:else} 
-			
 				<form action="/logout" method="POST">
 					<button type="submit">Log out</button>
 				</form>
 			{/if}
-			
-
 		</header>
-		<slot />
-	</main>
 {/key}
+
+<slot/>
