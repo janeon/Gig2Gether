@@ -6,6 +6,7 @@ import { redirect } from '@sveltejs/kit'
 import type { DecodedIdToken } from "firebase-admin/auth";
 import { log } from 'firebase-functions/logger';
 
+
 export const handle: Handle = async ({ event, resolve }) => {
   // log("Running handle in hooks")
   // get cookies from browser

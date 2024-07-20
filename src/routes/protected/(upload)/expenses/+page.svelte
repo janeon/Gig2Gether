@@ -1,9 +1,13 @@
 <script lang="ts">
     import { page } from "$app/stores";
     import { db } from "$lib/firebase/client";
-    import UploadSidebar from "$lib/UploadSidebar.svelte";
+    import UploadSidebar from "$lib/components/UploadSidebar.svelte";
     import { collection, doc, setDoc } from "firebase/firestore";
     import { MultiSelect, Label, NumberInput, Input } from "flowbite-svelte";
+
+
+    let successMessage = '';
+    let errorMessage = '';
 
     // Uber Expenses
     let uberData = {
@@ -55,15 +59,19 @@
     async function submitExpenses() {
         const collectionRef = collection(db, "users", $page.data.user?.uid, "upload")
         const docRef = doc(collectionRef, "Expenses") // Separate by gig work manual inputs?
+        successMessage = "Input Submitted Successfully!"
 
         if ($page.data.user?.platform == "uber") {
             setDoc(docRef, uberData, { merge: true })
+            // successMessage = "Input Submitted Successfully!" - useful when roles work
         }
         else if ($page.data.user?.platform == "rover") {
             setDoc(docRef, roverData, { merge: true })
+            // successMessage = "Input Submitted Successfully!"  - useful when roles work
         }
         else if ($page.data.user?.platform == "upwork") {
             setDoc(docRef, upworkData, { merge: true })
+            // successMessage = "Input Submitted Successfully!"   - useful when roles work
         }
     }
 </script>
@@ -166,6 +174,12 @@
                 on:click={submitExpenses}>
                 Submit
             </button>
+            {#if successMessage}
+            <p class="text-green-600 mt-2">{successMessage}</p>
+            {/if}
+            {#if errorMessage}
+             <p class = "text-red-600 mt-2">{errorMessage}</p>
+            {/if}
         </div>
     </div>
 </div>

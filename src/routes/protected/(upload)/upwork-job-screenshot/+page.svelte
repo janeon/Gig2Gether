@@ -1,7 +1,6 @@
-
 <script lang="ts">
     import { Button } from 'flowbite-svelte';
-    import UploadSidebar from '$lib/UploadSidebar.svelte';
+    import UploadSidebar from '$lib/components/UploadSidebar.svelte';
     import { Gallery, Label } from 'flowbite-svelte';
     import { getFirestore, collection, doc, setDoc } from "firebase/firestore";
     import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
@@ -11,6 +10,13 @@
     let fileuploadprops = {
         id: 'job_screenshot'
     };
+
+    
+
+    let selectedDate = new Date().toISOString().substring(0, 10); // Default to today's date
+
+    let successMessage = '';
+    let errorMessage ='';
 
     const images = [
         { alt: 'Job Screenshot example 1', src: '../job1.jpg' },
@@ -22,6 +28,14 @@
         const fileInput = event.target;
         if (fileInput.files.length > 0) {
             const file = fileInput.files[0];
+
+            if (!['image/png', 'image/jpeg'].includes(file.type)) {
+                errorMessage = 'Only PNG or JPEG files are allowed.';
+                successMessage = '';
+                return;
+            }
+
+            errorMessage = '';
             await handleFileUpload(file);
         }
     }
@@ -41,11 +55,16 @@
                 await saveFileMetadata(downloadURL, file.name);
 
                 console.log('File uploaded and metadata saved:', file.name);
+                successMessage = 'File uploaded successfully!'; 
             } catch (error) {
                 console.error('Error uploading file:', error);
+                successMessage = '';
+                errorMessage = 'Error uploading file.';
             }
         } else {
             console.error('No file selected');
+            errorMessage = "No file selected"
+            successMessage='';
         }
     }
 
@@ -57,15 +76,16 @@
         }
 
         const collectionRef = collection(db, "users", user.uid, "uploads");
-        const docRef = doc(collectionRef, "screenshots");
+        const docRef = doc(collectionRef, `screenshot_${new Date().getTime()}`);
 
         const fileData = {
             name: fileName,
             url: downloadURL,
-            timestamp: new Date()
+            timestamp: new Date(),
+            date: new Date(selectedDate)
         };
 
-        await setDoc(docRef, fileData, { merge: true });
+        await setDoc(docRef, fileData);
         console.log("File metadata saved to Firestore:", fileData);
     }
 </script>
@@ -89,7 +109,6 @@
             Here are a couple examples:
         </p>
 
-        <!-- Add images -->
         <Gallery class="gap-2 grid grid-cols-4">
             {#each images as { alt, src }}
                 <div class="w-full h-100 overflow-hidden">
@@ -102,7 +121,14 @@
             <div class="flex flex-col items-center space-y-4 ml-56">
                 <Label class="pb-2" for={fileuploadprops.id}>Upload file</Label>
                 <input id={fileuploadprops.id} type="file" on:change={handleFileInputChange} autocomplete="off" class="mt-1" />
+                {#if successMessage}
+                    <p class="text-green-600 mt-2">{successMessage}</p>
+                {/if}
+               {#if errorMessage}
+                     <p class = "text-red-600 mt-2">{errorMessage}</p>
+               {/if}
             </div>
+
         </div>
 
         <div class="flex items-center mt-4 ml-49 text-black cursor-pointer">
@@ -111,4 +137,3 @@
         </div>
     </div>
 </div>
-

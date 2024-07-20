@@ -1,8 +1,9 @@
 <script lang="ts">
     import { Button } from 'flowbite-svelte';
-    import UploadSidebar from '$lib/UploadSidebar.svelte';
-    import { getFirestore, collection, doc, setDoc, writeBatch } from "firebase/firestore";
-    import { db } from '$lib/firebase/client';
+    import UploadSidebar from '$lib/components/UploadSidebar.svelte';
+    import { getFirestore, collection, doc, setDoc, writeBatch, Timestamp } from "firebase/firestore";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+    import { db, storage } from '$lib/firebase/client';
     import Papa from 'papaparse';
     import { page } from '$app/stores';
 
@@ -10,20 +11,52 @@
         id: 'trip_csv'
     };
 
+    let selectedDate = new Date().toISOString().substring(0, 10); // Default to today's date
+    let successMessage = '';
+    let errorMessage ='';
+
     async function handleFileInputChange(event) {
         const fileInput = event.target;
         if (fileInput.files.length > 0) {
             const file = fileInput.files[0];
-            await parseAndUploadCSV(file);
+            await uploadCSVFile(file);
         }
     }
 
-    async function parseAndUploadCSV(file) {
+    async function uploadCSVFile(file) {
+        if (file) {
+            console.log("File selected for upload:", file.name);
+            try {
+                const storageRef = ref(storage, `uploads/${file.name}`);
+                await uploadBytes(storageRef, file);
+                console.log("File uploaded to storage:", file.name);
+
+                const downloadURL = await getDownloadURL(storageRef);
+                console.log("File download URL:", downloadURL);
+
+                // Parse and upload CSV data to Firestore
+                await parseAndUploadCSV(file, downloadURL);
+
+                console.log('File uploaded and metadata saved:', file.name);
+                successMessage = 'File uploaded successfully!'; 
+            } catch (error) {
+                console.error('Error uploading file:', error);
+                successMessage = '';
+                errorMessage = 'Error uploading file.';
+            }
+        } else {
+            console.error('No file selected');
+            errorMessage = "No file selected"
+            successMessage='';
+        }
+    }
+
+    async function parseAndUploadCSV(file, downloadURL) {
         Papa.parse(file, {
             header: true,
             complete: async function(results) {
                 console.log("Parsed CSV data:", results.data);
-                await uploadCSVDataToFirestore(results.data);
+                await uploadCSVDataToFirestore(results.data, downloadURL);
             },
             error: function(error) {
                 console.error("Error parsing CSV file:", error);
@@ -31,19 +64,32 @@
         });
     }
 
-    async function uploadCSVDataToFirestore(data) {
+    async function uploadCSVDataToFirestore(data, downloadURL) {
         const user = $page.data.user;
         if (!user || !user.uid) {
             console.error("User is not logged in");
             return;
         }
 
-        const batch = writeBatch(db);
-        const tripDataDocRef = doc(db, "users", user.uid, "uploads", "tripData");
+        const currentDate = Timestamp.fromDate(new Date(selectedDate));
+        const uniqueDocId = doc(collection(db, "users", user.uid, "uploads")).id;
+        const csvDocRef = doc(db, "users", user.uid, "uploads", uniqueDocId);
 
+        await setDoc(csvDocRef, {
+            name: fileuploadprops.id,
+            url: downloadURL,
+            date: currentDate
+        });
+
+        const batch = writeBatch(db);
         data.forEach((row, index) => {
-            const subDocRef = doc(collection(tripDataDocRef, "trips"), `trip_${index}`);
-            batch.set(subDocRef, row);
+            const subDocRef = doc(collection(csvDocRef, "trips"), `trip_${index}`);
+            const rowData = {
+                ...row,
+                date: currentDate,
+                csvDownloadURL: downloadURL
+            };
+            batch.set(subDocRef, rowData);
         });
 
         try {
@@ -74,6 +120,12 @@
             <div class="flex flex-col items-center space-y-4 ml-56">
                 <label class="pb-2" for={fileuploadprops.id}>Upload CSV</label>
                 <input id={fileuploadprops.id} type="file" accept=".csv" on:change={handleFileInputChange} autocomplete="off" class="mt-1" />
+                {#if successMessage}
+                <p class="text-green-600 mt-2">{successMessage}</p>
+                 {/if}
+                {#if errorMessage}
+                 <p class = "text-red-600 mt-2">{errorMessage}</p>
+                {/if}
                 <Button class="bg-black text-white rounded px-6 py-3" size="xl" href="/protected/trip-screenshot">Upload Screenshots</Button>
                 <Button class="bg-black text-white rounded px-6 py-3" size="xl" href="/protected/manual-trips">Manual Upload</Button>
             </div>
@@ -85,3 +137,4 @@
         </div>
     </div>
 </div>
+
