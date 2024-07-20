@@ -11,6 +11,12 @@
         id: 'trip_screenshot'
     };
 
+        // / Default to today's date in YYYY-MM-DD format
+    let selectedDate = new Date().toISOString().substring(0, 10); 
+
+    let successMessage = '';
+    let errorMessage ='';
+
     const images = [
         { alt: 'Uber Trip Screenshot example 1', src: '../trip1.jpg' },
         { alt: 'Uber Trip Screenshot example 2', src: '../trip2.jpg' },
@@ -21,6 +27,14 @@
         const fileInput = event.target;
         if (fileInput.files.length > 0) {
             const file = fileInput.files[0];
+
+            if (!['image/png', 'image/jpeg'].includes(file.type)) {
+                errorMessage = 'Only PNG or JPEG files are allowed.';
+                successMessage = '';
+                return;
+            }
+
+            errorMessage = '';
             await handleFileUpload(file);
         }
     }
@@ -40,11 +54,16 @@
                 await saveFileMetadata(downloadURL, file.name);
 
                 console.log('File uploaded and metadata saved:', file.name);
+                successMessage = 'File uploaded successfully!'; 
             } catch (error) {
                 console.error('Error uploading file:', error);
+                successMessage = '';
+                errorMessage = 'Error uploading file.';
             }
         } else {
             console.error('No file selected');
+            errorMessage = "No file selected"
+            successMessage='';
         }
     }
 
@@ -56,15 +75,16 @@
         }
 
         const collectionRef = collection(db, "users", user.uid, "uploads");
-        const docRef = doc(collectionRef, "Files");
+        const docRef = doc(collectionRef, `trip_${new Date().getTime()}`);
 
         const fileData = {
             name: fileName,
             url: downloadURL,
-            timestamp: new Date()
+            timestamp: new Date(),
+            date: new Date(selectedDate) // Include the selected date
         };
 
-        await setDoc(docRef, fileData, { merge: true });
+        await setDoc(docRef, fileData);
         console.log("File metadata saved to Firestore:", fileData);
     }
 </script>
@@ -92,6 +112,12 @@
             <div class="flex flex-col items-center space-y-4 ml-56">
                 <Label class="pb-2" for={fileuploadprops.id}>Upload file</Label>
                 <input id={fileuploadprops.id} type="file" on:change={handleFileInputChange} autocomplete="off" class="mt-1" />
+                {#if successMessage}
+                    <p class="text-green-600 mt-2">{successMessage}</p>
+                {/if}
+                {#if errorMessage}
+                    <p class = "text-red-600 mt-2">{errorMessage}</p>
+                {/if}
             </div>
         </div>
 

@@ -9,21 +9,21 @@
     <SidebarWrapper>
         <SidebarGroup>
                 <!-- // Uber -->
-            <!-- {#if $page.data.user?.platform == "uber"} -->
+            {#if $page.data.user?.platform == "uber"}
             <SidebarItem label="Quests" href="/protected/quests"/>
             <SidebarItem label="Trips" href="/protected/trips"/>
-            <!-- {/if} -->
+            {/if}
             
                  <!-- // Rover -->
-            <!-- {#if $page.data.user?.platform == "rover"} -->
+            {#if $page.data.user?.platform == "rover"}
             <SidebarItem label="Screenshot" href="/protected/rover-upload"/>
-            <!-- {/if} -->
+            {/if}
 
                  <!-- // UpWork -->
-            <!-- {#if $page.data.user?.platform == "upwork"} -->
+            {#if $page.data.user?.platform == "upwork"}
             <SidebarItem label="Jobs" href="/protected/upwork-job"/>
-            <SidebarItem label="Profile" href="/protected/upwork-profile"/>
-            <!-- {/if} -->
+            <SidebarItem label="Pofile" href="/protected/upwork-profile"/>
+            {/if}
             
             <SidebarItem label="Manual" href="/protected/manual"/>
             <SidebarItem label="Expenses" href="/protected/expenses"/>

@@ -9,6 +9,9 @@
             let fileuploadprops = {
                 id: 'user_avatar'
             };
+
+            let successMessage = '';
+            let errorMessage ='';
         
             const images = [
                 { alt: 'Profile Screenshot example 1', src: '../up-profile1.jpg' },
@@ -19,6 +22,12 @@
                 const fileInput = event.target;
                 if (fileInput.files.length > 0) {
                     const file = fileInput.files[0];
+                    if (!['image/png', 'image/jpeg'].includes(file.type)) {
+                            errorMessage = 'Only PNG or JPEG files are allowed.';
+                            successMessage = '';
+                            return;
+                    }
+                    errorMessage = '';
                     handleFileUpload({ detail: { file } });
                 }
             }
@@ -39,12 +48,18 @@
                         await saveFileMetadata(downloadURL, file.name);
         
                         console.log('File uploaded and metadata saved:', file.name);
+                        successMessage = 'File uploaded successfully!'; 
                     } catch (error) {
                         console.error('Error uploading file:', error);
+                        successMessage = '';
+                        errorMessage = 'Error uploading file.';
                     }
                 } else {
                     console.error('No file selected');
+                    errorMessage = "No file selected"
+                    successMessage='';
                 }
+
             }
         
             async function saveFileMetadata(downloadURL, fileName) {
@@ -99,6 +114,12 @@
                     <div class="flex flex-col items-center space-y-4 ml-56">
                         <Label class="pb-2" for={fileuploadprops.id}>Upload file</Label>
                         <Fileupload {...fileuploadprops} on:change={handleFileInputChange} autocomplete="off" />
+                        {#if successMessage}
+                        <p class="text-green-600 mt-2">{successMessage}</p>
+                        {/if}
+                       {#if errorMessage}
+                        <p class = "text-red-600 mt-2">{errorMessage}</p>
+                       {/if}
                     </div>
                 </div>
         
