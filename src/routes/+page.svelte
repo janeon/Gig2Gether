@@ -46,7 +46,6 @@
           <Button on:click={() => goto('register_policymaker')} color="dark" size="lg">
             Register As a Gig Policymaker
           </Button>
-          <!-- <Button color="gray" size="lg">Log In</Button> -->
         </div>
       </div>
   
