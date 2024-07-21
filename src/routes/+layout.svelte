@@ -9,6 +9,11 @@
 
 	import { ChevronDownOutline } from 'flowbite-svelte-icons';
 	$: activeUrl = $page.url.pathname;
+			  
+	// Utility function to check if the URL is active
+	function isActive(href) {
+		return activeUrl === href;
+	}
 	
 	// this page mainly does title and auth management
 	function parsePageNameFromUrl(url: string) {
@@ -65,52 +70,24 @@
 			<div>
 				<a href="/protected" class="text-lg font-bold">{"GigUnity"}</a>
 			</div>
-			
+
 			<div class="flex justify-center w-7/8">
-				<Navbar class="border-gray-200 dark:bg-gray-900 dark:border-gray-700 bg-transparent h-10 flex items-center">
-				  <NavHamburger />
-			  
-				  <NavUl {activeUrl}>
+				<Navbar class="border-gray-200 dark:bg-gray-900 dark:border-gray-700 bg-transparent h-10 flex items-center w-full max-w-screen-lg mx-auto">
+				  <NavUl>
 					{#each [
-					  { label: 'Upload', items: [
-						{ text: 'Screenshot', href: '/protected/upload' },
-						{ text: 'Manual', href: '/protected/manual' },
-						{ text: 'Expenses', href: '/protected/expenses' }
-					  ]},
-					  { label: 'Stories', items: [
-						{ text: 'Share Strategy', href: '/protected/stories/share_strategy' },
-						{ text: 'Share Issue', href: '/protected/stories/share_issue' },
-						{ text: 'Community Stories', href: '/protected/stories' }
-					  ]},
-					  { label: 'Trends', items: [
-						{ text: 'My Trends', href: '/protected/trends/personal' },
-						{ text: 'Collective Insights', href: '/protected/trends/collective' }
-					  ]},
-					  { label: 'Settings', items: [
-						{ text: 'Account', href: '/protected/settings/account' },
-						{ text: 'Profile', href: '/protected/settings/profile' },
-						{ text: 'Demographics', href: '/protected/settings/demographics' },
-						{ text: 'Sharing Preferences', href: '/protected/settings/sharing_preferences' }
-					  ]},
-					  { label: 'Planner', items: [
-						{ text: 'Taxes', href: '/protected/planner/taxes' },
-						{ text: 'Work', href: '/protected/planner/work' }
-					  ]}
-					] as { label, items }}
-					  <NavLi class="cursor-pointer text-lg">
-						{label}
-						<ChevronDownOutline class="w-6 h-6 ms-2 text-primary-800 dark:text-white inline" />
-					  </NavLi>
-					  <Dropdown class="w-44 z-20">
-						{#each items as { text, href }}
-						  <DropdownItem href={href}>{text}</DropdownItem>
-						{/each}
-					  </Dropdown>
+					  { label: 'Upload', href: '/protected/upload' },
+					  { label: 'Stories', href: '/protected/stories/share_strategy' },
+					  { label: 'Trends', href: '/protected/trends/personal' },
+					  { label: 'Settings', href: '/protected/settings/account' },
+					  { label: 'Planner', href: '/protected/planner/taxes' }
+					] as { label, href }}
+					<NavLi class={`cursor-pointer text-lg ${isActive(href) ? 'text-blue-700 dark:text-blue-500 dark:bg-gray-800' : 'text-gray-900 dark:text-gray-400'}`} href={href}>
+						<a href={href} class={href === activeUrl ? 'text-blue-700' : ''}>{label}</a>
+					</NavLi>
 					{/each}
 				  </NavUl>
 				</Navbar>
 			  </div>
-			  
 			
 			<form action="/logout" method="POST">
 				<BlueButton buttonText="Log out" type="submit"/>
