@@ -3,7 +3,7 @@
 	import type { ActionData } from './$types'; 
 	import { onMount } from 'svelte';
 	
-	import { type ConfirmationResult, PhoneAuthProvider, signInWithCredential, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
+	import { type ConfirmationResult, PhoneAuthProvider, signInWithCredential, createUserWithEmailAndPassword } from "firebase/auth";
 	import { auth, RecaptchaVerifier, db, signInWithPhoneNumber } from '$lib/firebase/client';
 	import { doc, setDoc } from 'firebase/firestore';
 
@@ -124,10 +124,10 @@
 		
 		{#if signInMethod == 'email'}
 		<Input type="password" placeholder="Password" name="password" class="px-4 py-2 border border-gray-300 rounded-md" />
-		<BlueButton onclick={register} type="submit" buttonText="Register" href="/protected"></BlueButton>
+		<BlueButton onclick={register} type="submit" buttonText="Register" href="/protected"/>
 		{:else if signInMethod == 'phone'}
 		<Input type="text" placeholder="Verification Code" name="code" class="px-4 py-2 border border-gray-300 rounded-md" required />
-		<BlueButton onclick={register} type="submit" buttonText="Register" href="/protected"></BlueButton>
+		<BlueButton onclick={register} type="submit" buttonText="Register" href="/protected"/>
 		{/if}
 	
 		{#if form?.formErrors}
