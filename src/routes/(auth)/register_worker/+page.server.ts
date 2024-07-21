@@ -1,5 +1,5 @@
 import { redirect } from '@sveltejs/kit'
-import type { Action, Actions, PageServerLoad } from './$types'
+import type { Actions, PageServerLoad } from './$types'
 import { getFirebaseServer } from "$lib/firebase/adminServer";
 import { log } from 'firebase-functions/logger';
 
@@ -10,7 +10,8 @@ export const load: PageServerLoad = async ({locals}) => {
   }
 }
 
-const register: Action = async ({ request, cookies }) => {
+export const actions = {
+  default: async ({ request, cookies }) => {
   const data = await request.formData()
   const token = data.get("token") as string;
 
@@ -45,6 +46,6 @@ const register: Action = async ({ request, cookies }) => {
   });
 
   redirect(303, '/protected')
-}
-
-export const actions: Actions = { register }
+  }
+} satisfies Actions
+  
