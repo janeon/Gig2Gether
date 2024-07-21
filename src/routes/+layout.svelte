@@ -43,7 +43,7 @@
 			<DropdownItem href="/register_policymaker">Policymaker</DropdownItem>
 			</Dropdown>
 			
-			<!-- when logged in -->
+			
 			{:else} 
 				<form action="/logout" method="POST">
 					<BlueButton buttonText="Log out" type="submit"/>

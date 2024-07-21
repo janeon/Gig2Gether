@@ -5,13 +5,15 @@
 	import type { ActionData } from './$types'; 
 	import { getUser } from '$lib/utils'
 	import { enhance } from '$app/forms';
+	import { Button, Input, Label, Alert } from 'flowbite-svelte';
+	import BlueButton from '$lib/components/BlueButton.svelte';
 	export let form : ActionData;
 	let token: string;
 	// $: console.log("token", token);
 	
 	let recaptchaVerifier: RecaptchaVerifier;
 	let confirmationResult: ConfirmationResult;
-	let signInMethod : string;
+	let signInMethod : string = "";
   
 	onMount(() => {
 	  recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
@@ -79,35 +81,40 @@
 			console.error(err);
 		}
     }
+
+	function go(event) {
+		if (event.key === 'Enter')	{
+			event.preventDefault();
+			emailOrPhone();
+		}
+	}	
   </script>
   
-  <form method="POST" use:enhance bind:this={form}
-  class="flex flex-col gap-4 p-8 space-y-4 bg-white sm:w-6/12"
-  >	
-  <div class="relative inline-block">
-	<input type="text" placeholder="Email or Phone Number" name="username" 
-	class="px-4 py-2 border border-gray-300 rounded-md" required/>
-	<button on:click|preventDefault={emailOrPhone}
-	class="absolute top-0 right-0 h-full px-4 py-2 bg-blue-500 text-white rounded-r-md"
-	>Go</button>
+<div class="flex justify-center min-h-screen pt-16">
+
+	<form method="POST" use:enhance bind:this={form} class="flex flex-col gap-4 p-8 space-y-4 bg-white rounded-md w-full max-w-md">
+		<div class="relative inline-block">
+			<Input type="text" placeholder="Email or Phone Number" name="username" class="px-4 py-2 border border-gray-300 rounded-md" on:keypress={go} required />
+			<Button on:click={emailOrPhone} class="absolute top-0 right-0 h-full px-4 py-2 bg-blue-500 text-white rounded-r-md">Go</Button>
+		</div>
+	
+		<div id="recaptcha-container"></div>
+	
+		{#if signInMethod == 'email'}
+		<Input type="password" placeholder="Password" name="password" class="px-4 py-2 border border-gray-300 rounded-md" />
+		<BlueButton onclick={login} type="submit" buttonText="Login"></BlueButton>
+		{:else if signInMethod == 'phone'}
+		<Input type="text" placeholder="Verification Code" name="code" class="px-4 py-2 border border-gray-300 rounded-md" required />
+		<BlueButton onclick={login} type="submit" buttonText="Login"></BlueButton>
+		{/if}
+	
+		{#if form?.formErrors}
+		<Alert type="danger" class="text-red-500">
+			{form.formErrors}
+		</Alert>
+		{/if}
+	
+		
+	</form>
+
   </div>
-  
-	<div id="recaptcha-container"></div>
-	{#if signInMethod == 'email'}
-		<input type="password" placeholder="password" name="password" 
-		class="px-4 py-2 border border-gray-300 rounded-md"/>
-	{:else if signInMethod == 'phone'}
-		<input type="text" placeholder="Verification Code" name="code"
-		class="px-4 py-2 border border-gray-300 rounded-md" required>
-	{/if}
-
-	{#if form?.formErrors}
-		<article>
-			<div style="color: red;">
-				{form.formErrors}
-			</div>
-		</article>
-	{/if}
-
-	<button on:click={login} type="submit" class="default-action">Login</button>
-  </form>
