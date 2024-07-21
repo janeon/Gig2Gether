@@ -91,14 +91,11 @@
   </script>
   
 <div class="flex justify-center min-h-screen pt-16">
-
 	<form method="POST" use:enhance bind:this={form} class="flex flex-col gap-4 p-8 space-y-4 bg-white rounded-md w-full max-w-md">
 		<div class="relative inline-block">
 			<Input type="text" placeholder="Email or Phone Number" name="username" class="px-4 py-2 border border-gray-300 rounded-md" on:keypress={go} required />
 			<Button on:click={emailOrPhone} class="absolute top-0 right-0 h-full px-4 py-2 bg-blue-500 text-white rounded-r-md">Go</Button>
 		</div>
-	
-		<div id="recaptcha-container"></div>
 	
 		{#if signInMethod == 'email'}
 		<Input type="password" placeholder="Password" name="password" class="px-4 py-2 border border-gray-300 rounded-md" />
@@ -113,8 +110,6 @@
 			{form.formErrors}
 		</Alert>
 		{/if}
-	
-		
 	</form>
-
+	<div id="recaptcha-container"></div>
   </div>
