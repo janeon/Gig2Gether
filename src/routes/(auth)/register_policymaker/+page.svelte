@@ -46,7 +46,7 @@
 
 <div class="flex justify-center min-h-screen pt-16">
 	<form
-	  class="flex flex-col gap-4 p-8 space-y-4 bg-white sm:w-6/12"
+	  class="flex flex-col gap-4 p-8 space-y-4 bg-white rounded-md w-full max-w-md"
 	  action="?/register"
 	  method="POST"
 	  use:enhance
