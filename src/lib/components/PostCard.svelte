@@ -10,7 +10,9 @@
     <div class="w-1/2">
         <div class="flex items-center text-xs text-gray-500 gap-1">
             <h3 class="capitalize text-sm font-semibold">{postData.uid}</h3>
-            <p>{dayNames[postData.date.getDay()]} {postData.date.getMonth() +1}/{postData.date.getDate()}/{postData.date.getFullYear()} {postData.date.getHours()}:{postData.date.getMinutes()}</p>
+            <!-- {postData.date.getHours()}:{postData.date.getMinutes()} -->
+            <!-- {dayNames[postData.date.getDay()]} {postData.date.getMonth() +1}/{postData.date.getDate()}/{postData.date.getFullYear()} -->
+            <p>{postData.date.toLocaleDateString('en-US', {dateStyle:'full'})} {postData.date.toLocaleTimeString('en-US', {timeStyle:'short'})}</p>
         </div>
         <p class="text-lg flex flex-wrap break-words mb-2">
 			{postData.title}
