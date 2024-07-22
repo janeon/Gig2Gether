@@ -150,7 +150,6 @@
 <Input placeholder="Untitled Video Post" bind:value={title}/>
 <Input placeholder="Write a description here" bind:value={description}/>
 <input type="file" id="video" accept = "video/* image/*" on:change={(e) =>{video = e?.target?.files[0]}}/>
-<Checkbox bind:group={postSharing} choices={sharingSettings}/>
 <div>
     <Button on:click={uploadContent}>Upload Content</Button>
 </div>
