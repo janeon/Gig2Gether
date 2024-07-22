@@ -75,7 +75,8 @@
 
             if (url) {
                 try {
-                await addDoc(collection(db, 'stories', type, $page.data.user.platform), {
+                await addDoc(collection(db, 'stories', $page.data.user.platform, "posts"), {
+                type,
                 title,
                 description,
                 uid: $page.data.user.uid,
@@ -92,7 +93,8 @@
                 try {
                     console.log(type)
                     console.log(title, description, $page.data.user.uid, tags)
-                    await addDoc(collection(db, 'stories', type, $page.data.user.platform), {
+                    await addDoc(collection(db, 'stories', $page.data.user.platform, "posts"), {
+                    type,
                     title,
                     description,
                     uid: $page.data.user.uid,
