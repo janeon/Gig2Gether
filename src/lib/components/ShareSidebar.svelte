@@ -5,11 +5,13 @@
     $: activeUrl = $page.url.pathname;
 </script>
 
-<Sidebar {activeUrl}>
-    <SidebarWrapper>
-        <SidebarGroup>
-            <SidebarItem label="Story Feed" href="/protected/stories/story_feed"/>
-            <SidebarItem label="Share Story" href="/protected/stories/share_story"/>
-          </SidebarGroup>
-    </SidebarWrapper>
-</Sidebar>
+<div class="w-1/4">
+    <Sidebar {activeUrl}>
+        <SidebarWrapper>
+            <SidebarGroup>
+                <SidebarItem label="Story Feed" href="/protected/stories/story_feed"/>
+                <SidebarItem label="Share Story" href="/protected/stories/share_story"/>
+              </SidebarGroup>
+        </SidebarWrapper>
+    </Sidebar>
+</div>
