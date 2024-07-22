@@ -6,9 +6,9 @@ Make sure you have .env file added to the root of the folder (under /datasharing
 ## Developing
 
 Installi dependencies with `npm install`, `npm i` (or `pnpm install` or `yarn`)
+(possibly also `npm i @fortawesome/fontawesome-free`)
 
 Install tailwind with `npm install -D tailwindcss postcss autoprefixer`
-
 
 ## Local dev
 
@@ -21,65 +21,41 @@ npm run dev
 npm run dev -- --open
 ```
 
-
-
 You can preview the production build with `npm run preview`.
 
-This authentication portion of this repo was created using a combination of [sveltekit-auth-firebase](https://github.com/JustinyAhin/okupter-repos/tree/5e9403e30a49ce5e314f311cffb057d922d2c737/apps/sveltekit-auth-firebase) and [sveltekit-firebase-auth-example](https://github.com/eraygundogmus/sveltekit-firebase-auth-example)
+This authentication portion of this repo was created using a combination of [sveltekit-auth-firebase](https://github.com/JustinyAhin/okupter-repos/tree/5e9403e30a49ce5e314f311cffb057d922d2c737/apps/sveltekit-auth-firebase), [sveltekit-firebase-auth-example](https://github.com/eraygundogmus/sveltekit-firebase-auth-example), [svelte-examples](https://github.com/JavoByte/svelte-examples/tree/firebase-auth-ssr) for Admin server
 
+A few other relevant repos: https://github.com/jthegedus/svelte-adapter-firebase, https://github.com/consultingninja/authTalk/tree/main, https://github.com/huntabyte/shadcn-svelte, https://github.com/partner0831/sveltekit-shadcn-auth
 
-## Hosting
-(The following steps will require that you have nvm installed)
+## Logging ✨✨✨ and hosting
+[Reasons to log](https://firebase.google.com/docs/hosting/web-request-logs-and-metrics?hl=en&authuser=0), if not only to debug
 
-Make sure your CLI has firebase installed, if not run 
+And [logger viewer](https://console.cloud.google.com/logs/query;query=resource.type%3D%22cloud_run_revision%22%0Aresource.labels.service_name%3D%22ssrgigshare%22;) filtered by our project
 
+To host and test, use 
 ```bash
-npm install -g firebase-tools
+npm exec firebase deploy
 ```
+optionally preceded with `time` to see how long it takes to host
 
-
-Sign in to firebase via the cli, and the following project id 'robert-kraut-1234' should become available
-
-```bash
-firebase projects:list
-``` 
-
-If so, add it as the active project via
-
-```bash
-firebase use --add
-```
-
-Next, target gigshare as hosting target
-
-```bash
-firebase target:apply hosting datasharing gigshare
-```
-
-Create build assets:
-```
-npm run build
-```
-
-Deploy to domain using
-```bash
-firebase deploy --only hosting
-```
-
-And see it live at [gigshare.web.app](https://gigshare.web.app/)
-
+Hosting setup instructions can be found in src/lib/firebase/Firebase.md
 
 ## Todo 
 
-- [ ] Fix auth so that login doesn't expire at each reload
+- [ ] Debug login page with upload on deploy 
+
+- [ ] Consider how to adapt for mobile
 
 - [ ] How to store different types of workers' data, across different apps and work types (what if someone used both Uber and Rover?)
 
 - [ ] Tailwind
 
+- [X] Fix auth so that login doesn't expire at each reload
+
+- [X] Phone authentication
+
 - [X] Demographic form - storing individual user backgrounds to database
 
-- [ ] Consider how to adapt for ios interface
 
 ## Outstanding questions 
 -- Whether to have separate interfaces/apps for web and mobile

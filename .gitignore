@@ -131,3 +131,12 @@ dist
 
 # svelte 
 .svelte-kit/*
+
+# misc  
+.npmrc
+.prettier*
+
+
+# firebase
+.firebase/*
+

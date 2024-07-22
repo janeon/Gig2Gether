@@ -1,16 +1,44 @@
 <script>
+    import HomeCard from "$lib/components/HomeCard.svelte";
+  </script>
+  
+<div class="flex flex-col items-center justify-center min-h-screen px-4">
+    <div class="grid grid-cols-1 xs:grid-cols-1 sm:grid-cols-2 gap-4 max-w-4xl w-full">
+      <HomeCard
+        iconClass="fa-upload"
+        title="Upload"
+        description="Upload your daily rates and hours, etc."
+        route="/protected/upload"
+      />
+  
+      <HomeCard
+        iconClass="fa-book"
+        title="Stories"
+        description="Share your strategies and issues with others, etc."
+        route="/protected/stories"
+      />
+  
+      <HomeCard
+        iconClass="fa-chart-line"
+        title="Trends"
+        description="Here are some visualizations of your and others' work/earning trends."
+        route="/protected" 
+      />
+  
+      <HomeCard
+        iconClass="fa-cog"
+        title="Settings"
+        description="Manage your worker profile, sharing preferences, and more."
+        route="/protected/settings/account" 
+      />
 
-    import { page } from "$app/stores";
-    import { authUser } from "$lib/authstore";
+      <HomeCard
+        iconClass="fa-calendar"
+        title="Planner"
+        description="Plan work schedules, locations, long-term earnings, etc."
+        route="/protected" 
+      />
 
-</script>
-<svelte:head>
-	<title>Protected route</title>
-</svelte:head>
-
-<h1 class="text-4xl font-bold">Protected route</h1>
-
-{#if $authUser && $authUser.role == "worker"}
-<a href = "/protected/demographics" class="hover:underline" class:active={$page.url.pathname === '/protected/demographics'}>
-	Change My Demographics</a>
-{/if}
+    </div>
+  </div>
+  
