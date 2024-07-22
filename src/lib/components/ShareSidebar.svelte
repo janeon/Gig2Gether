@@ -5,7 +5,7 @@
     $: activeUrl = $page.url.pathname;
 </script>
 
-<div class="w-1/4">
+<div class=" flex w-1/4">
     <Sidebar {activeUrl}>
         <SidebarWrapper>
             <SidebarGroup>
