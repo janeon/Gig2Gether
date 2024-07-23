@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { onMount } from 'svelte';
     import { page } from '$app/stores';
     import { Sidebar, SidebarGroup, SidebarItem, SidebarWrapper, Drawer, CloseButton, Button } from 'flowbite-svelte';
 
@@ -6,6 +7,12 @@
     import { sineIn } from 'svelte/easing';
     import '@fortawesome/fontawesome-free/css/all.min.css';
 
+    let mobile: boolean;
+    onMount(() => {
+      mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(window.navigator.userAgent);
+      console.log("mobile", mobile)
+      ;
+    });
     let hidden2 = true;
     let transitionParams = {
         x: -320,
@@ -24,14 +31,14 @@
           ]
     
 </script>
-
-<div class="block md:hidden">
+<div class={mobile ? 'block md:hidden' : 'hidden'}>
     <Button on:click={() => (hidden2 = false)} 
       class="bg-transparent text-black !outline-none shadow-none">
-        <i class="fas fa-bars"></i> 
+        <i class="fas fa-bars"/> 
     </Button>
 </div>
-<div class="hidden md:block">
+
+<div class={mobile ? 'hidden md:block': 'block'}>
   <Sidebar {activeUrl} class="w-64 bg-gray-100">
       <SidebarWrapper>
         <SidebarGroup>

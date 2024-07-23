@@ -9,13 +9,11 @@
 	import { Navbar, NavLi, NavUl, Dropdown, DropdownItem, BottomNav, BottomNavItem} from 'flowbite-svelte';
 
 	import { ChevronDownOutline } from 'flowbite-svelte-icons';
-	import { log } from 'firebase-functions/logger';
 	$: activeUrl = $page.url.pathname;
 	
 	let mobile: boolean;
 	onMount(() => {
 		mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(window.navigator.userAgent);
-		console.log("mobile", mobile)
 		;
 	});
 			  
@@ -54,7 +52,7 @@
 </svelte:head>
 
 {#key title} 
-	<div class={mobile ? 'block' : 'hidden md:block'}>
+	<div class={mobile ? 'hidden md:block' : 'block'}>
 		<header class="flex justify-between items-center p-4 bg-gray-100">
 			{#if ["register", "Register Worker", "Register Policymaker"].includes(title)}
 			<div>
@@ -111,7 +109,7 @@
 		</header>
 	</div>
 
-	<div class="fixed bottom-0 w-full md:hidden">
+	<div class={mobile ? 'fixed bottom-0 w-full md:hidden' : 'hidden'}>
 		<BottomNav position="absolute" classInner="grid-cols-5">
 			{#each navItems as item}
 			  <BottomNavItem href={item.href}>
