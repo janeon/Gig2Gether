@@ -1,6 +1,8 @@
 <script lang="ts">
     import { page } from "$app/stores";
     import { Checkbox, Radio } from "flowbite-svelte";
+    import ToggleGroupItem from "$lib/components/ui/toggle-group/toggle-group-item.svelte";
+    import ToggleGroup from "$lib/components/ui/toggle-group/toggle-group.svelte";
     import {Button} from "$lib/components/ui/button";
     import { addDoc, collection, doc, getDoc } from "firebase/firestore";
     import { db, storage } from "$lib/firebase/client";
@@ -14,9 +16,9 @@
     let description : string = ""
     let url : string
     let type : string
-    $: error = false
-    let postSharing = []
-    let errorMessage : string = " "
+    $: postSharing = []
+    $: sharePrivate = false
+    $: errorMessage = " "
 
     const uberTags = [
         {value: "safety", label: "Safety"},
@@ -67,54 +69,66 @@
             errorMessage = "Please select a type"
             return
         }
-        else {
-            errorMessage = " "
-            if (video) {
-                try {
-                    const storageRef = ref(storage, 'stories/strategy/'+$page.data.user.uid+'/'+video.name)
-                    const result = await uploadBytes(storageRef, video)
-                    url = await getDownloadURL(result.ref)
-                    console.log(url)
-                } catch (error) {
-                    console.log("error with video upload")
-                }
+        errorMessage = " "
+        if (postSharing.includes('private')) {
+            postSharing = ['private']
+        }
+        if (video) {
+            try {
+                const storageRef = ref(storage, 'stories/strategy/'+$page.data.user.uid+'/'+video.name)
+                const result = await uploadBytes(storageRef, video)
+                url = await getDownloadURL(result.ref)
+                console.log(url)
+            } catch (error) {
+                console.log("error with video upload")
             }
+        }
 
-            if (url) {
-                try {
+        if (url) {
+            try {
+            await addDoc(collection(db, 'stories', $page.data.user.platform, "posts"), {
+            type,
+            title,
+            description,
+            uid: $page.data.user.uid,
+            url,
+            date: new Date(),
+            tags,
+            sharing: postSharing
+
+        })
+        } catch {
+            console.log("error with adding document")
+        }
+        }
+        else {
+            try {
+                console.log(type)
+                console.log(title, description, $page.data.user.uid, tags)
                 await addDoc(collection(db, 'stories', $page.data.user.platform, "posts"), {
                 type,
                 title,
                 description,
                 uid: $page.data.user.uid,
-                url,
                 date: new Date(),
                 tags,
                 sharing: postSharing
 
             })
-            } catch {
-                console.log("error with adding document")
+        } catch {
+            console.log("error with adding document here")
             }
-            }
-            else {
-                try {
-                    console.log(type)
-                    console.log(title, description, $page.data.user.uid, tags)
-                    await addDoc(collection(db, 'stories', $page.data.user.platform, "posts"), {
-                    type,
-                    title,
-                    description,
-                    uid: $page.data.user.uid,
-                    date: new Date(),
-                    tags,
-                    sharing: postSharing
+        }
+    }
 
-                })
-            } catch {
-                console.log("error with adding document here")
-                }
-            }
+    function changeSharingPreferencesSingle() {
+        postSharing = []
+        sharePrivate = false
+    }
+
+    function changeSharingPreferencesMultiple(item:String[]) {
+        if (item.includes("private")) {
+            sharePrivate = true
         }
     }
 
@@ -127,6 +141,9 @@
             //     .push({value: option, label: (option.charAt(0).toUpperCase() + option.slice(1))})
             // }
             postSharing = docSnap.data().sharing
+        }
+        if (postSharing.includes('private')) {
+            sharePrivate = false
         }
     })
 
@@ -150,7 +167,24 @@
 <Input placeholder="Untitled Video Post" bind:value={title}/>
 <Input placeholder="Write a description here" bind:value={description}/>
 <input type="file" id="video" accept = "video/* image/*" on:change={(e) =>{video = e?.target?.files[0]}}/>
-<Checkbox bind:group={postSharing} choices={sharingSettings}/>
+<div class = "py-5">
+    <Label>Who Would You Like to Share Your Worker Data With?</Label>
+    {#if sharePrivate}
+    <ToggleGroup type="single" onValueChange={changeSharingPreferencesSingle}>
+        <ToggleGroupItem value="private" data-state='on'>Private</ToggleGroupItem>
+        <ToggleGroupItem value="workers" disabled>Workers</ToggleGroupItem>
+        <ToggleGroupItem value="policymakers" disabled>Policymakers</ToggleGroupItem>
+        <ToggleGroupItem value="advocates" disabled>Advocates</ToggleGroupItem>
+    </ToggleGroup>
+    {:else}
+    <ToggleGroup type="multiple" bind:value={postSharing} onValueChange={changeSharingPreferencesMultiple}>
+        <ToggleGroupItem value="private" data-state='off'>Private</ToggleGroupItem>
+        <ToggleGroupItem value="workers">Workers</ToggleGroupItem>
+        <ToggleGroupItem value="policymakers">Policymakers</ToggleGroupItem>
+        <ToggleGroupItem value="advocates">Advocates</ToggleGroupItem>
+    </ToggleGroup>
+    {/if}
+</div>
 <div>
     <Button on:click={uploadContent}>Upload Content</Button>
 </div>
