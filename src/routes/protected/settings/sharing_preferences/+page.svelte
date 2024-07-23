@@ -14,7 +14,6 @@
     }
 
     $: sharePrivate = false
-    $: privateString = ''
     const sharingOptions = [{
         value : "me", label: "Me, myself, and I"
     },
@@ -71,7 +70,7 @@
 <div class = "py-5">
     <Label>Who Would You Like to Share Your Worker Data With?</Label>
     {#if sharePrivate}
-    <ToggleGroup type="single" bind:value={privateString} onValueChange={changeSharingPreferencesSingle}>
+    <ToggleGroup type="single" onValueChange={changeSharingPreferencesSingle}>
         <ToggleGroupItem value="private" data-state='on'>Private</ToggleGroupItem>
         <ToggleGroupItem value="workers" disabled>Workers</ToggleGroupItem>
         <ToggleGroupItem value="policymakers" disabled>Policymakers</ToggleGroupItem>
@@ -85,22 +84,6 @@
         <ToggleGroupItem value="advocates">Advocates</ToggleGroupItem>
     </ToggleGroup>
     {/if}
-    <!-- <ToggleGroup type="multiple" bind:value={sharingData}>
-        <ToggleGroupItem value="private" on:change={changeSharingPreferences}>Private</ToggleGroupItem>
-    </ToggleGroup> -->
-        <!-- {#if sharePrivate}
-            <Toggle class="py-2" color={"red"} on:click={changeSharingPreferences}>Private</Toggle>
-            <Toggle class="py-2" color={"red"} disabled>Workers</Toggle>
-            <Toggle class="py-2" color={"red"} disabled>Policymakers</Toggle>
-            <Toggle class="py-2" color={"red"} disabled>Advocates</Toggle>
-        {:else}
-            <Toggle class="py-2" color={"red"} on:click={changeSharingPreferences}>Private</Toggle>
-            <Toggle class="py-2" color={"red"} value={"workers"} group={uploadData.sharing}>Workers</Toggle>
-            <Toggle class="py-2" color={"red"} value={"policymakers"} group={uploadData.sharing}>Policymakers</Toggle>
-            <Toggle class="py-2" color={"red"} value={"advocates"} group={uploadData.sharing}>Advocates</Toggle>
-        {/if} -->
-        <p>{sharingData} HERE</p>
-    <!-- <Checkbox bind:group={uploadData.sharing} choices={sharingOptions} /> -->
 </div>
 <h1>Data Options</h1>
 <div class = "py-5">
