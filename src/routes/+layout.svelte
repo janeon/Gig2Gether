@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import "../app.css";
 	import { page } from '$app/stores'
 	/** @type {import('./$types').LayoutData} */
@@ -8,11 +9,21 @@
 	import { Navbar, NavLi, NavUl, Dropdown, DropdownItem, BottomNav, BottomNavItem} from 'flowbite-svelte';
 
 	import { ChevronDownOutline } from 'flowbite-svelte-icons';
+	import { log } from 'firebase-functions/logger';
 	$: activeUrl = $page.url.pathname;
+	
+	let mobile: boolean;
+	onMount(() => {
+		mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(window.navigator.userAgent);
+		console.log("mobile", mobile)
+		;
+	});
 			  
 	// Utility function to check if the URL is active
 	function isActive(href) {
-		return activeUrl === href;
+		const segments = href.split('/').filter(Boolean);
+    	const base = '/' + segments.slice(0, 2).join('/');
+		return activeUrl.startsWith(base);
 	}
 	
 	// this page mainly does title and auth management
@@ -28,6 +39,14 @@
 	$: (title = ($page.url.pathname === "/") ? "GigUnity" 
 		: parsePageNameFromUrl(activeUrl));
 
+	const navItems = [
+		{ label: "Upload", icon: "fas fa-upload", href: '/protected/upload' },
+		{ label: "Stories", icon: "fas fa-book", href: '/protected/stories/share_strategy' },
+		{ label: "Trends", icon: "fas fa-chart-line", href: '/protected/trends/personal' },
+		{ label: "Settings", icon: "fas fa-cog", href: '/protected/settings/account' },
+		{ label: "Planner", icon: "fas fa-calendar", href: '/protected/planner/taxes' }
+  	];
+
 </script>
 
 <svelte:head>
@@ -35,7 +54,7 @@
 </svelte:head>
 
 {#key title} 
-	<div class="hidden md:block">
+	<div class={mobile ? 'block' : 'hidden md:block'}>
 		<header class="flex justify-between items-center p-4 bg-gray-100">
 			{#if ["register", "Register Worker", "Register Policymaker"].includes(title)}
 			<div>
@@ -76,20 +95,14 @@
 				<Navbar 
 				class="border-gray-200 dark:bg-gray-900 dark:border-gray-700 bg-transparent h-10 flex items-center w-full max-w-screen-lg mx-auto">
 				  <NavUl>
-					{#each [
-					  { label: 'Upload', href: '/protected/upload' },
-					  { label: 'Stories', href: '/protected/stories/share_strategy' },
-					  { label: 'Trends', href: '/protected/trends/personal' },
-					  { label: 'Settings', href: '/protected/settings/account' },
-					  { label: 'Planner', href: '/protected/planner/taxes' }
-					] as { label, href }}
+					{#each navItems as { label, href }}
 					<NavLi class={`cursor-pointer text-lg ${isActive(href) ? 'text-blue-700 dark:text-blue-500 dark:bg-gray-800' : 'text-gray-900 dark:text-gray-400'}`} href={href}>
 						<a href={href} class={href === activeUrl ? 'text-blue-700' : ''}>{label}</a>
 					</NavLi>
 					{/each}
 				  </NavUl>
 				</Navbar>
-			  </div>
+			</div>
 			
 			<form action="/logout" method="POST">
 				<BlueButton buttonText="Log out" type="submit"/>
@@ -97,22 +110,16 @@
 			{/if}
 		</header>
 	</div>
-	<div class="block md:hidden">
-		<BottomNav position="absolute" classInner="grid-cols-4">
-			<BottomNavItem btnName="Home">
-				<i class="fas fa-upload w-6 h-6 mb-1 text-gray-500 dark:text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-500" />
-				<!-- <HomeSolid class="w-6 h-6 mb-1 text-gray-500 dark:text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-500" /> -->
-			</BottomNavItem>
-			<BottomNavItem btnName="Wallet">
-			<!-- <WalletSolid class="w-6 h-6 mb-1 text-gray-500 dark:text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-500" /> -->
-			</BottomNavItem>
-			<BottomNavItem btnName="Settings">
-			<!-- <AdjustmentsVerticalOutline class="w-6 h-6 mb-1 text-gray-500 dark:text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-500" /> -->
-			</BottomNavItem>
-			<BottomNavItem btnName="Profile">
-			<!-- <UserCircleSolid class="w-6 h-6 mb-1 text-gray-500 dark:text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-500" /> -->
-			</BottomNavItem>
-		</BottomNav>
+
+	<div class="fixed bottom-0 w-full md:hidden">
+		<BottomNav position="absolute" classInner="grid-cols-5">
+			{#each navItems as item}
+			  <BottomNavItem href={item.href}>
+				  <i class={item.icon + " w-4 h-4 text-gray-500 dark:text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-500 " + (isActive(item.href) ? 'text-primary-600 dark:text-primary-500 font-bold text-blue-500 hover:text-blue-900 dark:hover:text-blue-700 dark:text-blue-300' : '')}></i>
+				  <span class={"text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl 2xl:text-2xl " + (isActive(item.href) ? 'font-bold text-blue-500 hover:text-blue-900 dark:hover:text-blue-700 dark:text-blue-300' : '')}>{item.label}</span>
+			  </BottomNavItem>
+			{/each}
+		  </BottomNav>
 	</div>
 {/key}
 
