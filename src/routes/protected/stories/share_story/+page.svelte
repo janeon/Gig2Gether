@@ -143,7 +143,7 @@
             postSharing = docSnap.data().sharing
         }
         if (postSharing.includes('private')) {
-            sharePrivate = false
+            sharePrivate = true
         }
     })
 
