@@ -6,8 +6,8 @@
     const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 </script>
 
-<div class="border-t p-3">
-    <div class="w-1/2">
+<div class="border-t p-3 justify-items-center">
+    <div class="">
         <div class="flex items-center text-xs text-gray-500 gap-1">
             <h3 class="capitalize text-sm font-semibold">{postData.uid}</h3>
             <!-- {postData.date.getHours()}:{postData.date.getMinutes()} -->
@@ -21,7 +21,7 @@
 			{postData.description}
 		</p>
         {#if postData.url}
-            <img src={postData.url} class="rounded-sm mt-2 object-contain w-full" alt="" />
+            <img src={postData.url} class="rounded-sm mt-2 object-contain w-1/2" alt="" />
         {/if}
     </div>
 </div>
