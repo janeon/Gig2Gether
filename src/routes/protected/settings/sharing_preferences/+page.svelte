@@ -1,8 +1,6 @@
 <script lang="ts">
     import { page } from "$app/stores";
     import { db } from "$lib/firebase/client";
-    import Sidebar from "$lib/components/SettingsSidebar.svelte";
-    import { stringLength } from "@firebase/util";
     import { collection, doc, setDoc } from "firebase/firestore";
     import { Checkbox, Label, Select } from "flowbite-svelte";
 
