@@ -3,7 +3,7 @@
     export let data
 
 </script>
-<div>
+<div class="justify-items-center">
     {#if data.posts.length > 0}
         {#each data.posts as post}
             <PostCard postData={post}/>
