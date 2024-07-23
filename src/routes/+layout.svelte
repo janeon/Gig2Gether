@@ -1,3 +1,4 @@
+<!-- Home page layouts -->
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import "../app.css";
@@ -24,7 +25,7 @@
     	const base = '/' + segments.slice(0, 2).join('/');
 		return activeUrl.startsWith(base);
 	}
-	
+
 	function parsePageNameFromUrl(url: string) {
 		let lastSegment = url.split('/').filter(Boolean).pop() as string
 		lastSegment = lastSegment.split('_')          // Split the string by underscores

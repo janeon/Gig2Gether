@@ -18,6 +18,7 @@
         </div>
     </div>
 {:else}
+
     <div class="flex flex-row">
         <SettingsSidebar/>
         <div class="p-8">

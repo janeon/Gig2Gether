@@ -35,14 +35,17 @@
 <!-- <div class={mobile ? 'block md:hidden' : 'hidden'}> -->
   <header class={'block md:hidden'}>
     <Button on:click={() => (hidden2 = false)} 
-      class="bg-transparent text-black !outline-none shadow-none">
-        <i class="fas fa-bars"/> 
+      class="bg-transparent text-black !outline-none shadow-none p-2 text-lg">
+        <i class="fas fa-bars text-xl"/> 
     </Button>
+    <!-- <div>
+      <h1 class="text-lg font-bold"></h1>
+    </div> -->
   </header>
   <!-- mobile version -->
-<div class={mobile ? 'hidden md:block': 'block'}>
+<!-- <div class={mobile ? 'hidden md:block': 'block'}> -->
   <!-- web testing version -->
-  <!-- <div class={'hidden md:block'}> -->
+  <div class={'hidden md:block'}>
     <Sidebar {activeUrl} class="w-64 bg-gray-100">
         <SidebarWrapper>
           <SidebarGroup>
