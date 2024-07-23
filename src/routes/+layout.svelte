@@ -12,9 +12,10 @@
 	$: activeUrl = $page.url.pathname;
 	
 	let mobile: boolean;
+	let protected_urls: boolean;
 	onMount(() => {
 		mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(window.navigator.userAgent);
-		;
+		protected_urls = activeUrl.startsWith('/protected');
 	});
 			  
 	// Utility function to check if the URL is active
@@ -52,7 +53,7 @@
 </svelte:head>
 
 {#key title} 
-	<div class={mobile ? 'hidden md:block' : 'block'}>
+	<div class={(mobile && protected_urls) ? 'hidden md:block' : 'block'}>
 		<header class="flex justify-between items-center p-4 bg-gray-100">
 			{#if ["register", "Register Worker", "Register Policymaker"].includes(title)}
 			<div>
@@ -109,7 +110,7 @@
 		</header>
 	</div>
 
-	<div class={mobile ? 'fixed bottom-0 w-full md:hidden' : 'hidden'}>
+	<div class={mobile && protected_urls ? 'fixed bottom-0 w-full md:hidden' : 'hidden'}>
 		<BottomNav position="absolute" classInner="grid-cols-5">
 			{#each navItems as item}
 			  <BottomNavItem href={item.href}>
