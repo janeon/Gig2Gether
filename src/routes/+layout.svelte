@@ -25,7 +25,6 @@
 		return activeUrl.startsWith(base);
 	}
 	
-	// this page mainly does title and auth management
 	function parsePageNameFromUrl(url: string) {
 		let lastSegment = url.split('/').filter(Boolean).pop() as string
 		lastSegment = lastSegment.split('_')          // Split the string by underscores

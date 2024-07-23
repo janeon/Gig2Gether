@@ -31,37 +31,41 @@
           ]
     
 </script>
-<div class={mobile ? 'block md:hidden' : 'hidden'}>
+
+<!-- <div class={mobile ? 'block md:hidden' : 'hidden'}> -->
+  <header class={'block md:hidden'}>
     <Button on:click={() => (hidden2 = false)} 
       class="bg-transparent text-black !outline-none shadow-none">
         <i class="fas fa-bars"/> 
     </Button>
-</div>
-
+  </header>
+  <!-- mobile version -->
 <div class={mobile ? 'hidden md:block': 'block'}>
-  <Sidebar {activeUrl} class="w-64 bg-gray-100">
-      <SidebarWrapper>
-        <SidebarGroup>
-          {#each settings as { label, href }}
-            <SidebarItem label={label} href={href} on:click={closeDrawer} />
-          {/each}
-        </SidebarGroup>
-      </SidebarWrapper>
-    </Sidebar>
-</div>
-<Drawer transitionType="fly" {transitionParams} bind:hidden={hidden2} id="sidebar2">
-    <div class="flex items-center">
-      <h5 id="drawer-navigation-label-3" class="text-base font-semibold text-gray-500 uppercase dark:text-gray-400">Settings</h5>
-      <CloseButton on:click={() => (hidden2 = true)} class="mb-4 dark:text-white" />
-    </div>
-    <!-- Sidebar for medium and large screens -->
+  <!-- web testing version -->
+  <!-- <div class={'hidden md:block'}> -->
     <Sidebar {activeUrl} class="w-64 bg-gray-100">
-      <SidebarWrapper>
-        <SidebarGroup>
-          {#each settings as { label, href }}
-            <SidebarItem label={label} href={href} on:click={closeDrawer} />
-          {/each}
-        </SidebarGroup>
-      </SidebarWrapper>
-    </Sidebar>
-</Drawer>
+        <SidebarWrapper>
+          <SidebarGroup>
+            {#each settings as { label, href }}
+              <SidebarItem label={label} href={href} on:click={closeDrawer} />
+            {/each}
+          </SidebarGroup>
+        </SidebarWrapper>
+      </Sidebar>
+  </div>
+  <Drawer transitionType="fly" {transitionParams} bind:hidden={hidden2} id="sidebar2">
+      <div class="flex items-center">
+        <h5 id="drawer-navigation-label-3" class="text-base font-semibold text-gray-500 uppercase dark:text-gray-400">Settings</h5>
+        <CloseButton on:click={() => (hidden2 = true)} class="mb-4 dark:text-white" />
+      </div>
+      <!-- Sidebar for medium and large screens -->
+      <Sidebar {activeUrl} class="w-64 bg-gray-100">
+        <SidebarWrapper>
+          <SidebarGroup>
+            {#each settings as { label, href }}
+              <SidebarItem label={label} href={href} on:click={closeDrawer} />
+            {/each}
+          </SidebarGroup>
+        </SidebarWrapper>
+      </Sidebar>
+  </Drawer>
