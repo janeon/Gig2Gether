@@ -13,7 +13,7 @@ export const handle: Handle = async ({ event, resolve }) => {
   const session = event.cookies.get("__session") ?? "";
   if (!session) {
     // if there is no session load page as normal
-    log("No session found")
+    // log("No session found")
     return await resolve(event)
   }
 
@@ -47,7 +47,7 @@ export const handle: Handle = async ({ event, resolve }) => {
   
   // find the user based on the session
   event.locals.user = await getUser(decodedClaims.uid)
-  log("setting user at end of hook: ", event.locals.user)
+  // log("setting user at end of hook: ")
 
   // load page as normal
   const response = await resolve(event)

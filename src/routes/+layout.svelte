@@ -5,7 +5,7 @@
 	export let data;
 
 	import BlueButton from "$lib/components/BlueButton.svelte";
-	import { Navbar, NavLi, NavUl, NavHamburger, Dropdown, DropdownItem, DropdownDivider } from 'flowbite-svelte';
+	import { Navbar, NavLi, NavUl, Dropdown, DropdownItem, BottomNav, BottomNavItem} from 'flowbite-svelte';
 
 	import { ChevronDownOutline } from 'flowbite-svelte-icons';
 	$: activeUrl = $page.url.pathname;
@@ -35,6 +35,7 @@
 </svelte:head>
 
 {#key title} 
+	<div class="hidden md:block">
 		<header class="flex justify-between items-center p-4 bg-gray-100">
 			{#if ["register", "Register Worker", "Register Policymaker"].includes(title)}
 			<div>
@@ -72,7 +73,8 @@
 			</div>
 
 			<div class="flex justify-center w-7/8">
-				<Navbar class="border-gray-200 dark:bg-gray-900 dark:border-gray-700 bg-transparent h-10 flex items-center w-full max-w-screen-lg mx-auto">
+				<Navbar 
+				class="border-gray-200 dark:bg-gray-900 dark:border-gray-700 bg-transparent h-10 flex items-center w-full max-w-screen-lg mx-auto">
 				  <NavUl>
 					{#each [
 					  { label: 'Upload', href: '/protected/upload' },
@@ -94,6 +96,24 @@
 			</form>
 			{/if}
 		</header>
+	</div>
+	<div class="block md:hidden">
+		<BottomNav position="absolute" classInner="grid-cols-4">
+			<BottomNavItem btnName="Home">
+				<i class="fas fa-upload w-6 h-6 mb-1 text-gray-500 dark:text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-500" />
+				<!-- <HomeSolid class="w-6 h-6 mb-1 text-gray-500 dark:text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-500" /> -->
+			</BottomNavItem>
+			<BottomNavItem btnName="Wallet">
+			<!-- <WalletSolid class="w-6 h-6 mb-1 text-gray-500 dark:text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-500" /> -->
+			</BottomNavItem>
+			<BottomNavItem btnName="Settings">
+			<!-- <AdjustmentsVerticalOutline class="w-6 h-6 mb-1 text-gray-500 dark:text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-500" /> -->
+			</BottomNavItem>
+			<BottomNavItem btnName="Profile">
+			<!-- <UserCircleSolid class="w-6 h-6 mb-1 text-gray-500 dark:text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-500" /> -->
+			</BottomNavItem>
+		</BottomNav>
+	</div>
 {/key}
 
 <slot/>
