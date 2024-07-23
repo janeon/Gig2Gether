@@ -2,11 +2,12 @@
     import { page } from "$app/stores";
     import { Checkbox, Radio } from "flowbite-svelte";
     import {Button} from "$lib/components/ui/button";
-    import { addDoc, collection } from "firebase/firestore";
+    import { addDoc, collection, doc, getDoc } from "firebase/firestore";
     import { db, storage } from "$lib/firebase/client";
     import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
     import {Input} from '$lib/components/ui/input'
     import {Label} from "$lib/components/ui/label";
+    import { onMount } from "svelte";
     let tags : string[] = []
     let video: File
     let title : string = "Untitled Story"
@@ -14,7 +15,6 @@
     let url : string
     let type : string
     $: error = false
-    let sharingSettings = $page.data.sharingSettings
     let postSharing = []
     let errorMessage : string = " "
 
@@ -55,6 +55,13 @@
         {value: "other", label: "Other"}
     ]
 
+    const sharingSettings = [
+        {value: "me", label: "Me"},
+        {value: "workers", label: "Workers"},
+        {value: "researchers", label: "Researchers"},
+        {value: "policymakers", label: "Policymakers"}
+    ]
+
     async function uploadContent() {
         if (!type) {
             errorMessage = "Please select a type"
@@ -82,7 +89,8 @@
                 uid: $page.data.user.uid,
                 url,
                 date: new Date(),
-                tags
+                tags,
+                sharing: postSharing
 
             })
             } catch {
@@ -99,7 +107,8 @@
                     description,
                     uid: $page.data.user.uid,
                     date: new Date(),
-                    tags
+                    tags,
+                    sharing: postSharing
 
                 })
             } catch {
@@ -108,6 +117,18 @@
             }
         }
     }
+
+    onMount(async()=>{
+        let collectionRef = collection(db, "users", $page.data.user.uid, "settings")
+        let docRef = doc(collectionRef, "sharing")
+        let docSnap = await getDoc(docRef)
+        if (docSnap.exists()) {
+            // for (let option of docSnap.data().sharing) {
+            //     .push({value: option, label: (option.charAt(0).toUpperCase() + option.slice(1))})
+            // }
+            postSharing = docSnap.data().sharing
+        }
+    })
 
 </script>
 <p class="text-red-500">{errorMessage}</p>
@@ -129,7 +150,7 @@
 <Input placeholder="Untitled Video Post" bind:value={title}/>
 <Input placeholder="Write a description here" bind:value={description}/>
 <input type="file" id="video" accept = "video/* image/*" on:change={(e) =>{video = e?.target?.files[0]}}/>
-<!-- <Checkbox bind:group={postSharing} choices={sharingSettings}/> -->
+<Checkbox bind:group={postSharing} choices={sharingSettings}/>
 <div>
     <Button on:click={uploadContent}>Upload Content</Button>
 </div>
