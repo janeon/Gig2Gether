@@ -102,7 +102,7 @@
             try {
             await addDoc(collection(db, 'stories', $page.data.user.platform, "posts"), 
             { type, title, description, uid: $page.data.user.uid,
-            url, date: new Date(), tags,
+            url, date: new Date(), tags, platform: $page.data.user.platform,
             sharing: postSharing
 
         })
@@ -121,6 +121,7 @@
                 uid: $page.data.user.uid,
                 date: new Date(),
                 tags,
+                platform: $page.data.user.platform,
                 sharing: postSharing
 
             })
