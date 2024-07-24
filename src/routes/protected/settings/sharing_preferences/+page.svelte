@@ -34,12 +34,7 @@
     ]
 
     async function submitPreferences() {
-        if (sharingData.includes('private')) {
-            uploadData.sharing = ['private']
-        }
-        else {
-            uploadData.sharing = sharingData
-        }
+        uploadData.sharing = sharingData.includes('private') ? ['private'] : sharingData
         const collectionRef = collection(db, "users", $page.data.user?.uid, "settings")
         const docRef = doc(collectionRef, "sharing")
         setDoc(docRef, uploadData, {merge: true})
