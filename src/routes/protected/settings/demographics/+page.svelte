@@ -5,9 +5,11 @@
     import { goto } from '$app/navigation';
     import { page } from "$app/stores";
     import { Label, NumberInput, Select } from "flowbite-svelte";
+    import { updateTitle } from "$lib/stores/title";
+    import BlueButton from "$lib/components/BlueButton.svelte";
+    
+    updateTitle("My Demographics");
 
-
-    let uid: string;
     let age: number = 0;
     let gender: string = '';
     let genders = [
@@ -79,6 +81,7 @@
         }
         try {
             const userRef = doc(db, "demographics", $page.data.user.uid);
+            console.log("submitting", demographic_information);
             await setDoc(userRef,
             demographic_information,
              {merge: true})
@@ -90,24 +93,9 @@
 
     onMount(() => {
         loadDemographics()
-        // const auth = getAuth();
-        // onAuthStateChanged(auth, user => {
-        //     if (user) {
-        //         console.log("here")
-        //         uid = user.uid
-        //         loadDemographics();
-        //     }
-        //     else {
-        //         console.log("bad")
-        //         goto('/login')
-        //     }
-        // })
-
     })
-</script>
 
-        <!-- TODO: why does h1 and h2 look the same? -->
-        <h1>My Demographics</h1> 
+</script>
         <div class="py-5">
             <Label>Age</Label>
             <NumberInput class = "border-2" bind:value={age} type = "number"/>
@@ -116,25 +104,11 @@
         <div class="py-5">
             <Label>Gender</Label>
             <Select items={genders} bind:value={gender}/>
-            <!-- <select bind:value={gender} class = "border-2">
-                {#each genders as g}
-                    <option value = {g}>
-                        {g}
-                    </option>
-                {/each}
-            </select> -->
         </div>
         
         <div class="py-5">
             <Label>Race</Label>
             <Select items={races} bind:value={race}/>
-            <!-- <select bind:value={race} class = "border-2" placeholder = 'Please Select'>
-                {#each races as r}
-                    <option value = {r}>
-                        {r}
-                    </option>
-                {/each}
-            </select> -->
         </div>
         
         <div class="py-5">
@@ -147,4 +121,4 @@
             <NumberInput class = "border-2" bind:value={otherGigHours} type = "number"/>
         </div>
         
-        <button on:click = {submitDemographics}>Submit</button>
+        <BlueButton onclick={submitDemographics} buttonText="Submit"/>

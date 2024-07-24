@@ -1,17 +1,15 @@
 <script lang="ts">
     import { page } from "$app/stores";
     import { Label } from "flowbite-svelte";
-
+    import { capitalize } from "$lib/utils";
+    import { updateTitle } from "$lib/stores/title";
+    updateTitle("My Account");
     let username = $page.data.user?.username
-    export const title = "My Account"
+    let platform = capitalize($page.data.user?.platform)
+    
 </script>
 
-<h1>{title}</h1>
 <div>
-    <Label>My Email/Phone</Label>
-    <p>{username}</p>
+    <Label>My Email/Phone: {username}</Label> 
+    <Label>Platform: {platform}</Label> 
 </div>
-<!-- <div>
-    <Label>My Phone</Label>
-    <p>{email}</p>
-</div> -->
