@@ -5,7 +5,8 @@ export const createFilterStore = (data) => {
     const {subscribe, set, update} = writable({
         data,
         filtered: data,
-        filter: ''
+        platform_filter: '',
+        type_filter: ''
     })
 
     return {
@@ -17,7 +18,6 @@ export const createFilterStore = (data) => {
 
 export const filterHandler = (store) => {
     store.filtered = store.data.filter((item) => {
-        return item.platform.includes(store.filter)
+        return (item.platform.includes(store.platform_filter) && item.type.includes(store.type_filter))
     })
-    console.log(store.filtered)
 }

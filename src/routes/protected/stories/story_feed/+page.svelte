@@ -23,16 +23,16 @@
         oldButton.style.backgroundColor = '#000000'
         currentFilter = filter
         if (filter == "rover") {
-            $filterStore.filter = "rover"
+            $filterStore.platform_filter = "rover"
         }
         else if (filter == "uber") {
-            $filterStore.filter = "uber"
+            $filterStore.platform_filter = "uber"
         }
         else if (filter == "upwork") {
-            $filterStore.filter = "upwork"
+            $filterStore.platform_filter = "upwork"
         }
         else if (filter == "all") {
-            $filterStore.filter = ""
+            $filterStore.platform_filter = ""
         }
     }
 </script>
@@ -48,7 +48,7 @@
         {/if}
     </div>
     <div class="w-1/7 justify-end">
-        <div class="border-t justify-items-center flex flex-col space-y-2">
+        <div class="border-b justify-items-center flex flex-col space-y-2 py-2 ">
             <Button id="all" class = "bg-red-700" on:click={()=>{filterContent("all")}}>All</Button>
             <Button id= "rover" on:click={()=>{filterContent("rover")}}>Rover</Button>
             <Button id = "uber" on:click={()=>{filterContent("uber")}}>Uber</Button>
