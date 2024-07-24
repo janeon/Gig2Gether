@@ -29,39 +29,42 @@
             { label: "Withdraw Data" },
             { label: "Notification" }
           ]
+
+    export let title: string;
     
 </script>
 
-<!-- <div class={mobile ? 'block md:hidden' : 'hidden'}> -->
-  <header class={'block md:hidden'}>
-    <Button on:click={() => (hidden2 = false)} 
-      class="bg-transparent text-black !outline-none shadow-none p-2 text-lg">
-        <i class="fas fa-bars text-xl"/> 
+  <!-- Hamburger button for smaller screensize -->
+    <Button 
+      on:click={() => (hidden2 = false)} 
+      class="text-center font-medium focus-within:ring-4 focus-within:outline-none flex flex-col items-center pl-5 pr-3 py-3 text-sm hover:bg-primary-800 dark:bg-primary-600 dark:hover:bg-primary-700 focus-within:ring-primary-300 dark:focus-within:ring-primary-800 rounded-lg bg-transparent text-black block md:hidden h-12">
+      <div class="flex items-center space-x-4">
+        <i class="fas fa-bars text-2xl mb-2"></i>
+        {#if mobile}
+        <h1 class="text-lg font-bold">{title}</h1>
+        {/if}
+      </div>
     </Button>
-    <!-- <div>
-      <h1 class="text-lg font-bold"></h1>
-    </div> -->
-  </header>
-  <!-- mobile version -->
-<!-- <div class={mobile ? 'hidden md:block': 'block'}> -->
-  <!-- web testing version -->
-  <div class={'hidden md:block'}>
-    <Sidebar {activeUrl} class="w-64 bg-gray-100">
-        <SidebarWrapper>
-          <SidebarGroup>
-            {#each settings as { label, href }}
-              <SidebarItem label={label} href={href} on:click={closeDrawer} />
-            {/each}
-          </SidebarGroup>
-        </SidebarWrapper>
-      </Sidebar>
-  </div>
+    
+  <!-- Sidebar for medium and large screens -->
+    <Sidebar {activeUrl} class="w-64 bg-gray-100 hidden md:block">
+      <SidebarWrapper>
+        <SidebarGroup>
+          {#each settings as { label, href }}
+            <SidebarItem label={label} href={href} on:click={closeDrawer} />
+          {/each}
+        </SidebarGroup>
+      </SidebarWrapper>
+    </Sidebar>
+
+  <!-- mobile version drawer only -->
   <Drawer transitionType="fly" {transitionParams} bind:hidden={hidden2} id="sidebar2">
       <div class="flex items-center">
-        <h5 id="drawer-navigation-label-3" class="text-base font-semibold text-gray-500 uppercase dark:text-gray-400">Settings</h5>
+        <h5 id="drawer-navigation-label-3" class="text-base font-semibold text-gray-500 uppercase dark:text-gray-400">
+          Settings
+        </h5>
         <CloseButton on:click={() => (hidden2 = true)} class="mb-4 dark:text-white" />
       </div>
-      <!-- Sidebar for medium and large screens -->
       <Sidebar {activeUrl} class="w-64 bg-gray-100">
         <SidebarWrapper>
           <SidebarGroup>

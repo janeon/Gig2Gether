@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { authUser } from '$lib/firebase/authstore';
+	import { authUser } from '$lib/stores/authstore';
     import WorkerHeader from './WorkerHeader.svelte';
     import PolicymakerHeader from './PolicymakerHeader.svelte';
 </script>

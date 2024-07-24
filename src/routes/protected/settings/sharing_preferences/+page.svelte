@@ -5,8 +5,11 @@
     import { db } from "$lib/firebase/client";
     import { collection, doc, getDoc, setDoc } from "firebase/firestore";
     import { Label, Select} from "flowbite-svelte";
-    import { onMount } from "svelte";
+    import { updateTitle } from "$lib/stores/title";
+	import BlueButton from "$lib/components/BlueButton.svelte";
+        import { onMount } from "svelte";
 
+    updateTitle("Sharing Preferences");
     $: sharingData = []
     let uploadData = {
         sharing: [],
@@ -95,4 +98,4 @@
     <Label>Location Granularity</Label>
     <Select bind:value={uploadData.location_granularity} items={locationOptions}/>
 </div>
-<button on:click = {submitPreferences} class="py-5">Submit</button>
+<BlueButton onclick={submitPreferences} buttonText="Submit"/>

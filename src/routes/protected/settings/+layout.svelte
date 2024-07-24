@@ -1,28 +1,34 @@
 <script lang="ts">
     import SettingsSidebar from "$lib/components/SettingsSidebar.svelte";
-    import { onMount } from 'svelte';
+    import { title as titleStore } from "$lib/stores/title";
+    import { onMount, onDestroy } from 'svelte';
 
     let mobile: boolean;
     onMount(() => {
-      mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(window.navigator.userAgent);
-      console.log("mobile", mobile)
-      ;
+        mobile = window.navigator.userAgent.match(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i) !== null;
+        console.log("mobile", mobile);
     });
+
+    let title:string;
+
+    const unsubscribe = titleStore.subscribe(val => {
+        title = val;
+    });
+
+    onDestroy(() => {
+        unsubscribe();
+    });
+
 </script>
 
-{#if mobile}
-    <SettingsSidebar/>
-    <div class="min-h-screen flex flex-col items-center p-4">
-        <div class="w-full max-w-sm p-6">
-            <slot/>
-        </div>
+<div class={mobile ? '' : 'flex'}>
+    <SettingsSidebar title={title}/>
+    <div class="p-3 flex-1">
+        <header>
+            {#if !mobile}
+            <h1 class="text-lg font-bold">{title}</h1>
+            {/if}
+        </header>
+        <slot/>
     </div>
-{:else}
-
-    <div class="flex flex-row">
-        <SettingsSidebar/>
-        <div class="p-8">
-            <slot/>
-        </div>
-    </div>
-{/if}
+</div>
