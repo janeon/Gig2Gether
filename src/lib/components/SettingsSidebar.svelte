@@ -10,7 +10,7 @@
     let mobile: boolean;
     onMount(() => {
       mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(window.navigator.userAgent);
-      console.log("mobile", mobile)
+      // console.log("mobile", mobile)
       ;
     });
     let hidden2 = true;
