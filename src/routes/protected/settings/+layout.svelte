@@ -6,7 +6,7 @@
     let mobile: boolean;
     onMount(() => {
         mobile = window.navigator.userAgent.match(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i) !== null;
-        console.log("mobile", mobile);
+        // console.log("mobile", mobile);
     });
 
     let title:string;
