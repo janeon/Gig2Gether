@@ -94,6 +94,7 @@
             url,
             date: new Date(),
             tags,
+            platform: $page.data.user.platform,
             sharing: postSharing
 
         })
@@ -112,6 +113,7 @@
                 uid: $page.data.user.uid,
                 date: new Date(),
                 tags,
+                platform: $page.data.user.platform,
                 sharing: postSharing
 
             })
