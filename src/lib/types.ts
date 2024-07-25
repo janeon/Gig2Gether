@@ -5,17 +5,7 @@ export interface Post {
     uid: string,
     date: Date,
     tags: string[],
-    type: string,
-    likes: string[],
-    platform: string,
-    id: string
-}
-
-export interface Data {
-    type: string,
-    date: Date,
-    title: string,
-    id: string
+    type: string
 }
 
 export interface Data {
