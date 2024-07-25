@@ -5,21 +5,27 @@
 
     export let iconClass = '';
     export let title = '';
-    export let description = '';
-    export let route = '';
-  
-  </script>
-  
-  <Card
-    class="flex flex-col items-center justify-center p-4 text-center border border-gray-300 dark:border-gray-700 min-h-[200px] w-full max-w-sm cursor-pointer"
-    on:click={() => goto(route)}
-  >
-    <i class={`fas ${iconClass} text-2xl sm:text-3xl md:text-4xl lg:text-5xl mb-2 sm:mb-3 md:mb-4 lg:mb-5 text-gray-900 dark:text-white`}></i>
-    <h5 class="text-base sm:text-lg md:text-xl lg:text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+    export let route = '';  
+    export let mobile = false;
+
+    const descriptions = [
+      {"Upload": 'Share daily rates, hours, expenses'},
+      {"Stories": 'Exchange strategies and issues'},
+      {"Trends":'Visualizations of work/earning trends'},
+      {"Settings":'Manage worker profile, account, sharing preferences'},
+      {"Planner":'Schedule future work hours, long-term earnings.'}
+    ]
+    // console.log(mobile);
+    
+
+</script>
+  <Card padding= {mobile? "xs": "lg"} class="flex flex-col items-center justify-center text-center border border-gray-300 dark:border-gray-700 min-h-[100px] w-full max-w-sm cursor-pointer !important"
+    on:click={() => goto(route)}>
+    <i class={`fas ${iconClass} text-lg sm:text-xl md:text-2xl lg:text-3xl mb-1 sm:mb-1.5 md:mb-2 lg:mb-2.5 text-gray-900 dark:text-white`}></i>
+    <h5 class="text-xs sm:text-sm md:text-base lg:text-lg font-bold tracking-tight text-gray-900 dark:text-white">
       {title}
     </h5>
-    <p class="text-xs sm:text-sm md:text-base lg:text-base text-gray-700 dark:text-gray-400 mt-1 sm:mt-2">
-      {description}
+    <p class="text-xs sm:text-xs md:text-sm lg:text-sm text-gray-700 dark:text-gray-400 mt-0 sm:mt-0.5 md:mt-1 lg:mt-1.5">
+      {descriptions.find(d => d[title])?.[title]}
     </p>
   </Card>
-  

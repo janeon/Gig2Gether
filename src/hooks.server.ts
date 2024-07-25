@@ -4,7 +4,6 @@ import { getFirebaseServer } from '$lib/firebase/adminServer'
 import { getUser } from '$lib/utils' 
 import { redirect } from '@sveltejs/kit'
 import type { DecodedIdToken } from "firebase-admin/auth";
-import { log } from 'firebase-functions/logger';
 
 
 export const handle: Handle = async ({ event, resolve }) => {
@@ -13,7 +12,7 @@ export const handle: Handle = async ({ event, resolve }) => {
   const session = event.cookies.get("__session") ?? "";
   if (!session) {
     // if there is no session load page as normal
-    log("No session found")
+    // log("No session found")
     return await resolve(event)
   }
 
@@ -21,7 +20,7 @@ export const handle: Handle = async ({ event, resolve }) => {
   const isAuth: boolean = event.url.pathname === "/login";
     if (isAuth || building) {
       event.cookies.set("__session", "", { path: "/" });
-      log("User is on login page or site is building")
+      console.log("User is on login page or site is building")
       return await resolve(event);
     }
   
@@ -47,7 +46,7 @@ export const handle: Handle = async ({ event, resolve }) => {
   
   // find the user based on the session
   event.locals.user = await getUser(decodedClaims.uid)
-  log("setting user at end of hook: ", event.locals.user)
+  // log("setting user at end of hook: ")
 
   // load page as normal
   const response = await resolve(event)
