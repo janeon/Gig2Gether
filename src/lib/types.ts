@@ -7,3 +7,10 @@ export interface Post {
     tags: string[],
     type: string
 }
+
+export interface Data {
+    type: string,
+    date: Date,
+    title: string,
+    id: string
+}
