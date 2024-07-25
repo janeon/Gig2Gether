@@ -32,7 +32,5 @@
             {/if}
         </header>
         <slot/>
-    </div>    
-    </div>
     </div>
 </div>
