@@ -112,6 +112,7 @@
                 description,
                 uid: $page.data.user.uid,
                 date: new Date(),
+                likes: [],
                 tags,
                 platform: $page.data.user.platform,
                 sharing: postSharing
