@@ -17,3 +17,10 @@ export interface Data {
     title: string,
     id: string
 }
+
+export interface Data {
+    type: string,
+    date: Date,
+    title: string,
+    id: string
+}
