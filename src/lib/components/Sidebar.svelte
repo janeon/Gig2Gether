@@ -6,6 +6,7 @@
     $: activeUrl = $page.url.pathname;
     import { sineIn } from 'svelte/easing';
     import '@fortawesome/fontawesome-free/css/all.min.css';
+	  import UploadSidebar from './UploadSidebar.svelte';
 
     let mobile: boolean;
     onMount(() => {
@@ -21,7 +22,7 @@
     };
     const closeDrawer = () => hidden2 = true;
 
-    let settings = [
+    const settings = [
             { label: "My Account", href: "/protected/settings/account" },
             { label: "My Worker Profile", href: "/protected/settings/profile" },
             { label: "Demographics", href: "/protected/settings/demographics" },
@@ -29,7 +30,13 @@
             { label: "Withdraw Data" },
             { label: "Notification" }
           ]
-
+    const sharing = [
+      { label: "Story Feed", href: "/protected/stories/story_feed" },
+      { label: "Share Story", href: "/protected/stories/share_story" }
+    ]
+    
+    const options = {"settings": settings, "sharing": sharing};
+    export let option: string;
     export let title: string;
     
 </script>
@@ -47,16 +54,19 @@
     </Button>
     
   <!-- Sidebar for medium and large screens -->
-    <Sidebar {activeUrl} class="w-64 bg-gray-100 hidden md:block">
-      <SidebarWrapper>
-        <SidebarGroup>
-          {#each settings as { label, href }}
-            <SidebarItem label={label} href={href} on:click={closeDrawer} />
-          {/each}
-        </SidebarGroup>
-      </SidebarWrapper>
-    </Sidebar>
-
+    {#if option == "upload"}
+      <UploadSidebar/>
+    {:else}
+      <Sidebar {activeUrl} class="w-64 bg-gray-100 hidden md:block">
+        <SidebarWrapper>
+          <SidebarGroup>
+            {#each options[option] as { label, href }}
+              <SidebarItem label={label} href={href} on:click={closeDrawer} />
+            {/each}
+          </SidebarGroup>
+        </SidebarWrapper>
+      </Sidebar>
+    {/if }
   <!-- mobile version drawer only -->
   <Drawer transitionType="fly" {transitionParams} bind:hidden={hidden2} id="sidebar2">
       <div class="flex items-center">
@@ -65,13 +75,18 @@
         </h5>
         <CloseButton on:click={() => (hidden2 = true)} class="mb-4 dark:text-white" />
       </div>
+      {#if option == "upload"}
+      <UploadSidebar/>
+      {:else}
+
       <Sidebar {activeUrl} class="w-64 bg-gray-100">
         <SidebarWrapper>
           <SidebarGroup>
-            {#each settings as { label, href }}
+            {#each options[option] as { label, href }}
               <SidebarItem label={label} href={href} on:click={closeDrawer} />
             {/each}
           </SidebarGroup>
         </SidebarWrapper>
       </Sidebar>
+      {/if }
   </Drawer>

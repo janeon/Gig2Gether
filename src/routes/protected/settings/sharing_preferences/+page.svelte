@@ -7,7 +7,7 @@
     import { Label, Select} from "flowbite-svelte";
     import { updateTitle } from "$lib/stores/title";
 	import BlueButton from "$lib/components/BlueButton.svelte";
-        import { onMount } from "svelte";
+    import { onMount } from "svelte";
 
     updateTitle("Sharing Preferences");
     $: sharingData = []

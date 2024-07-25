@@ -1,15 +1,15 @@
 <script lang="ts">
     import { page } from "$app/stores";
-    import { Checkbox, Radio } from "flowbite-svelte";
-    import ToggleGroupItem from "$lib/components/ui/toggle-group/toggle-group-item.svelte";
-    import ToggleGroup from "$lib/components/ui/toggle-group/toggle-group.svelte";
-    import {Button} from "$lib/components/ui/button";
+    import { Checkbox, Radio, Button, Input, Label } from "flowbite-svelte";
+    import { ToggleGroupItem, ToggleGroup } from "$lib/components/ui/toggle-group";
     import { addDoc, collection, doc, getDoc } from "firebase/firestore";
     import { db, storage } from "$lib/firebase/client";
     import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-    import {Input} from '$lib/components/ui/input'
-    import {Label} from "$lib/components/ui/label";
     import { onMount } from "svelte";
+    
+    import { updateTitle } from "$lib/stores/title";
+    updateTitle("Share Story");
+    
     let tags : string[] = []
     let video: File
     let title : string = "Untitled Story"
@@ -20,49 +20,36 @@
     $: sharePrivate = false
     $: errorMessage = " "
 
-    const uberTags = [
-        {value: "safety", label: "Safety"},
+    const commonTags = [
         {value: "fair pay", label: "Fair Pay"},
         {value: "discrimination", label: "Discrimination"},
         {value: "ratings", label: "Ratings"},
         {value: "working time", label: "Working Time"},
-        {value: "care-giving", label: "Care-giving"},
         {value: "stress", label: "Stress (e.g. from precarity)"},
-        {value: "understanding algorithms", label: "Understanding Algorithms"},
         {value: "other", label: "Other"}
-    ]
+    ];
+
+    const uberTags = [
+        {value: "safety", label: "Safety"},
+        {value: "care-giving", label: "Care-giving"},
+        {value: "understanding algorithms", label: "Understanding Algorithms"},
+        ...commonTags
+    ];
 
     const roverTags = [
         {value: "safety", label: "Safety"},
-        {value: "fair pay", label: "Fair Pay"},
-        {value: "discrimination", label: "Discrimination"},
-        {value: "ratings", label: "Ratings"},
-        {value: "working time", label: "Working Time"},
         {value: "care-giving", label: "Care-giving"},
-        {value: "stress", label: "Stress (e.g. from precarity)"},
         {value: "understanding algorithms", label: "Understanding Algorithms"},
-        {value: "other", label: "Other"}
-    ]
+        ...commonTags
+    ];
 
     const upworkTags = [
         {value: "scams", label: "Scams"},
         {value: "getting started", label: "Getting Started"},
         {value: "algorithm functionality", label: "Algorithm Functionality"},
         {value: "customers", label: "Customers"},
-        {value: "stress", label: "Stress (e.g. from precarity)"},
-        {value: "fair pay", label: "Fair Pay"},
-        {value: "discrimination", label: "Discrimination"},
-        {value: "working time", label: "Working Time"},
-        {value: "ratings", label: "Ratings"},
-        {value: "other", label: "Other"}
-    ]
-
-    const sharingSettings = [
-        {value: "me", label: "Me"},
-        {value: "workers", label: "Workers"},
-        {value: "researchers", label: "Researchers"},
-        {value: "policymakers", label: "Policymakers"}
-    ]
+        ...commonTags
+    ];
 
     async function uploadContent() {
         if (!type) {

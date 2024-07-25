@@ -1,11 +1,34 @@
-<script>
-    import ShareSidebar from "$lib/components/ShareSidebar.svelte";
+<script lang="ts">
+	import Sidebar from "$lib/components/Sidebar.svelte";
+    import { title as titleStore } from "$lib/stores/title";
+    import { onMount, onDestroy } from 'svelte';
+
+    let mobile: boolean;
+    onMount(() => {
+        mobile = window.navigator.userAgent.match(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i) !== null;
+        // console.log("mobile", mobile);
+    });
+
+    let title:string;
+
+    const unsubscribe = titleStore.subscribe(val => {
+        title = val;
+    });
+
+    onDestroy(() => {
+        unsubscribe();
+    });
 
 </script>
 
-<div class = "flex flex-row">
-    <ShareSidebar/>
-    <div class = "p-8">
+<div class={mobile ? '' : 'flex'}>
+    <Sidebar title={title} option="sharing"/>
+    <div class="p-3 flex-1">
+        <header>
+            {#if !mobile}
+            <h1 class="text-lg font-bold">{title}</h1>
+            {/if}
+        </header>
         <slot/>
     </div>
 </div>

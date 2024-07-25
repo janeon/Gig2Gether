@@ -1,7 +1,6 @@
 <script lang="ts">
     import { page } from "$app/stores";
     import { db } from "$lib/firebase/client";
-    import UploadSidebar from "$lib/components/UploadSidebar.svelte";
     import { collection, doc, setDoc } from "firebase/firestore";
     import { MultiSelect, Label, NumberInput, Input } from "flowbite-svelte";
 
@@ -87,7 +86,6 @@
 </script>
 
 <div class="flex flex-row">
-    <UploadSidebar />
     <div class="p-8 flex flex-col items-center w-full">
         <h1 class="text-2xl font-bold mb-6">Manual Upload</h1>
         {#if $page.data.user?.platform == "uber"}

@@ -9,9 +9,6 @@
 />
 
 <div class="flex flex-row">
-    <div class="w-1/4">
-        <UploadSidebar/>
-    </div>
 
     <div class="w-3/4 rounded-md p-6">
         <p class="mb-3">

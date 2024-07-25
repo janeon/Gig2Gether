@@ -6,7 +6,6 @@
     let mobile: boolean;
     onMount(() => {
         mobile = window.navigator.userAgent.match(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i) !== null;
-        // console.log("mobile", mobile);
     });
 
     let title:string;
@@ -21,8 +20,9 @@
 
 </script>
 
+
 <div class={mobile ? '' : 'flex'}>
-    <Sidebar title={title} option="settings"/>
+    <Sidebar title={title} option="upload"/>
     <div class="p-3 flex-1">
         <header>
             {#if !mobile}
