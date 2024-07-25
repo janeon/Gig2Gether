@@ -18,7 +18,9 @@
     let type : string
     $: postSharing = []
     $: sharePrivate = false
-    $: errorMessage = " "
+    $: errorMessageType = " "
+    $: errorMessageTags = " "
+    $: errorMessageSharing = " "
 
     const uberTags = [
         {value: "safety", label: "Safety"},
@@ -57,19 +59,33 @@
         {value: "other", label: "Other"}
     ]
 
-    const sharingSettings = [
-        {value: "me", label: "Me"},
-        {value: "workers", label: "Workers"},
-        {value: "researchers", label: "Researchers"},
-        {value: "policymakers", label: "Policymakers"}
-    ]
-
     async function uploadContent() {
+        //error catching
         if (!type) {
-            errorMessage = "Please select a type"
+            errorMessageType = "Please select a type"
+        }
+        else {
+            errorMessageType = ""
+        }
+
+        if (tags.length == 0) {
+            errorMessageTags = "Please select at least one tag"
+        }
+        else {
+            errorMessageTags = ""
+        }
+
+        if (postSharing.length == 0) {
+            errorMessageSharing = "Please choose a sharing preference"
+        }
+        else {
+            errorMessageSharing = ""
+        }
+
+        if (errorMessageSharing != "" || errorMessageTags != "" || errorMessageType != "") {
             return
         }
-        errorMessage = " "
+
         if (postSharing.includes('private')) {
             postSharing = ['private']
         }
@@ -151,7 +167,7 @@
     })
 
 </script>
-<p class="text-red-500">{errorMessage}</p>
+<p class="text-red-500">{errorMessageType}</p>
 <div class="flex flex-row space-x-2">
     <Label> Story Type: </Label>
     <Radio name="type" bind:group={type} value="issue" >Issue</Radio>
@@ -159,6 +175,7 @@
 </div>
 <h1>What tags would you like to use?</h1>
 <p>Tags make your content more easily searchable!</p>
+<p class="text-red-500">{errorMessageTags}</p>
 {#if $page.data.user.platform == "rover"}
 <Checkbox bind:group={tags} choices={roverTags}/>
 {:else if $page.data.user.platform == "uber"}
@@ -172,6 +189,7 @@
 <input type="file" id="video" accept = "video/* image/*" on:change={(e) =>{video = e?.target?.files[0]}}/>
 <div class = "py-5">
     <Label>Who Would You Like to Share Your Worker Data With?</Label>
+    <p class="text-red-500">{errorMessageSharing}</p>
     {#if sharePrivate}
     <ToggleGroup type="single" onValueChange={changeSharingPreferencesSingle}>
         <ToggleGroupItem value="private" data-state='on'>Private</ToggleGroupItem>
