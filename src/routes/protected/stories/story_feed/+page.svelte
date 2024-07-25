@@ -42,7 +42,7 @@
                 <PostCard postData={post}/>
             {/each}
             {:else}
-                <p>There are no posts yet!</p>
+                <p class="text-center">There are no posts yet!</p>
         {/if}
     </div>
     <div class="w-1/7 justify-end">
