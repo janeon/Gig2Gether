@@ -23,7 +23,7 @@
 
 <div class={mobile ? '' : 'flex'}>
     <SettingsSidebar title={title}/>
-    <div class="p-3 flex-1">
+    <div class="p-3 flex-1 h-[80vh] overflow-y-scroll">
         <header>
             {#if !mobile}
             <h1 class="text-lg font-bold">{title}</h1>
