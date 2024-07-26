@@ -26,7 +26,7 @@
             { label: "My Worker Profile", href: "/protected/settings/profile" },
             { label: "Demographics", href: "/protected/settings/demographics" },
             { label: "Sharing Preferences", href: "/protected/settings/sharing_preferences" },
-            { label: "Withdraw Data", href="/protected/settings/withdraw" },
+            { label: "Withdraw Data", href:"/protected/settings/withdraw" },
             { label: "Notification" }
           ]
 
