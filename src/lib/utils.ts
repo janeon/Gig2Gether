@@ -10,10 +10,6 @@ export function capitalize(string: string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> main
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
 }
