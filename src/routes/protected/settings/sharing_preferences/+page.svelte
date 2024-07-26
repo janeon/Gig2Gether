@@ -79,31 +79,46 @@
 </script>
 
 <div class = "py-5">
-    <h2 class="font-medium whitespace-nowrap mb-5">Who Would You Like to Share Your Worker Data With?</h2>
+    <h2 class="font-medium mb-5">Who Would You Like to Share Your Worker Data With?</h2>
     {#if sharePrivate}
-    <ToggleGroup type="single" onValueChange={changeSharingPreferencesSingle} variant="outline">
-        <ToggleGroupItem value="private" data-state={'on'} class="font-bold">Private</ToggleGroupItem>
-        <ToggleGroupItem value="workers" disabled>Workers</ToggleGroupItem>
-        <ToggleGroupItem value="policymakers" disabled>Policymakers</ToggleGroupItem>
-        <ToggleGroupItem value="advocates" disabled>Advocates</ToggleGroupItem>
-    </ToggleGroup>
+    <div class="space-y-2">
+        <div class="flex justify-center">
+          <ToggleGroup type="single" onValueChange={changeSharingPreferencesSingle}>
+            <ToggleGroupItem value="private" data-state='on' class="font-bold">Private</ToggleGroupItem>
+          </ToggleGroup>
+        </div>
+        
+        <div class="flex justify-center space-x-2">
+          <ToggleGroup type="single" onValueChange={changeSharingPreferencesSingle}>
+            <ToggleGroupItem value="workers" disabled>Workers</ToggleGroupItem>
+            <ToggleGroupItem value="policymakers" disabled>Policymakers</ToggleGroupItem>
+            <ToggleGroupItem value="advocates" disabled>Advocates</ToggleGroupItem>
+          </ToggleGroup>
+        </div>
+      </div>
     {:else}
-    <ToggleGroup type="multiple" variant="outline" bind:value={sharingData} onValueChange={changeSharingPreferencesMultiple}>
-    {#each sharingOptions as { value, label }}
-        <ToggleGroupItem value={value} class={sharingData.includes(value) ? 'font-bold' : ''}>{label}</ToggleGroupItem>
-    {/each}
-    </ToggleGroup>
+    <div class="space-y-2">
+        <div class="flex justify-center">
+          <ToggleGroup type="multiple" variant="outline" bind:value={sharingData} onValueChange={changeSharingPreferencesMultiple}>
+            <ToggleGroupItem value={sharingOptions[0].value} class={sharingData.includes(sharingOptions[0].value) ? 'font-bold' : ''}>
+              {sharingOptions[0].label}
+            </ToggleGroupItem>
+          </ToggleGroup>
+        </div>
+        
+        <div class="flex justify-center space-x-2">
+          <ToggleGroup type="multiple" variant="outline" bind:value={sharingData} onValueChange={changeSharingPreferencesMultiple}>
+            {#each sharingOptions.slice(1) as { value, label }}
+              <ToggleGroupItem value={value} class={sharingData.includes(value) ? 'font-bold' : ''}>
+                {label}
+              </ToggleGroupItem>
+            {/each}
+          </ToggleGroup>
+        </div>
+      </div>
     {/if}
 </div>
-<h2 class="font-bold whitespace-nowrap ">Data Options</h2>
-<div class = "py-5">
-    <Label>Data Expiratioon</Label>
-    <Select bind:value={uploadData.data_lifespan} items={lifespanOptions}/>
-</div>
-<div >
-    <Label>Location Granularity</Label>
-    <Select bind:value={uploadData.location_granularity} items={locationOptions}/>
-</div>
+
 <div class = "py-5">
 <BlueButton onclick={submitPreferences} buttonText="Submit"/>
 </div>

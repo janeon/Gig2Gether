@@ -40,8 +40,8 @@
 		: parsePageNameFromUrl(activeUrl));
 
 	const navItems = [
-		{ label: "Upload", icon: "fas fa-upload", href: '/protected/upload' },
-		{ label: "Stories", icon: "fas fa-book", href: '/protected/stories' },
+		{ label: "Upload", icon: "fas fa-upload", href: '/protected/upload/manual' },
+		{ label: "Stories", icon: "fas fa-book", href: '/protected/stories/story_feed' },
 		{ label: "Trends", icon: "fas fa-chart-line", href: '/protected/trends/personal' },
 		{ label: "Settings", icon: "fas fa-cog", href: '/protected/settings/account' },
 		{ label: "Planner", icon: "fas fa-calendar", href: '/protected/planner/taxes' }

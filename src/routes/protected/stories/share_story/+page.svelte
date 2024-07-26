@@ -1,6 +1,6 @@
 <script lang="ts">
     import { page } from "$app/stores";
-    import { Checkbox, Radio, Button, Input, Label } from "flowbite-svelte";
+    import { Button, Input, Label, ButtonGroup, Textarea } from "flowbite-svelte";
     import { ToggleGroupItem, ToggleGroup } from "$lib/components/ui/toggle-group";
     import { addDoc, collection, doc, getDoc } from "firebase/firestore";
     import { db, storage } from "$lib/firebase/client";
@@ -8,11 +8,13 @@
     import { onMount } from "svelte";
     
     import { updateTitle } from "$lib/stores/title";
+	import Tags from "$lib/components/tags.svelte";
+	import BlueButton from "$lib/components/BlueButton.svelte";
     updateTitle("Share Story");
     
     let tags : string[] = []
     let video: File
-    let title : string = "Untitled Story"
+    let title : string = ""
     let description : string = ""
     let url : string
     let type : string
@@ -49,6 +51,13 @@
         {value: "algorithm functionality", label: "Algorithm Functionality"},
         {value: "customers", label: "Customers"},
         ...commonTags
+    ];
+
+    const sharingOptions = [
+        { value: 'private', label: 'Private' },
+        { value: 'workers', label: 'Workers' },
+        { value: 'policymakers', label: 'Policymakers' },
+        { value: 'advocates', label: 'Advocates' }
     ];
 
     async function uploadContent() {
@@ -113,9 +122,14 @@
         sharePrivate = false
     }
 
-    function changeSharingPreferencesMultiple(item:String[]) {
-        if (item.includes("private")) {
+    function changeSharingPreferencesMultiple(value:String[]) {
+        if (value.includes("private")) {
             sharePrivate = true
+        }
+        if (postSharing.includes(value)) {
+            postSharing = postSharing.filter(item => item !== value);
+        } else {
+            postSharing = [...postSharing, value];
         }
     }
 
@@ -124,9 +138,6 @@
         let docRef = doc(collectionRef, "sharing")
         let docSnap = await getDoc(docRef)
         if (docSnap.exists()) {
-            // for (let option of docSnap.data().sharing) {
-            //     .push({value: option, label: (option.charAt(0).toUpperCase() + option.slice(1))})
-            // }
             postSharing = docSnap.data().sharing
         }
         if (postSharing.includes('private')) {
@@ -136,42 +147,101 @@
 
 </script>
 <p class="text-red-500">{errorMessage}</p>
-<div class="flex flex-row space-x-2">
-    <Label> Story Type: </Label>
-    <Radio name="type" bind:group={type} value="issue" >Issue</Radio>
-    <Radio name="type" bind:group={type} value="strategy" >Strategy</Radio>
+<!-- Issue/Strategy Selection -->
+
+<div class="flex justify-center py-2">
+    <div class="flex items-center space-x-2">
+    <h2 class="font-medium whitespace-nowrap">Story Type:</h2>
+    <ButtonGroup>
+      {#each ['issue', 'strategy'] as option}
+        <Button
+        on:click={() => type = option}
+        class={`flex-1 ${type === option ? 'bg-blue-500 text-white font-bold' : 'bg-gray-200 text-gray-600 font-normal'} ${type === option ? 'focus:outline-none ring-2 ring-blue-500' : ''} hover:bg-transparent hover:text-current`}
+        >
+          {option.charAt(0).toUpperCase() + option.slice(1)}
+        </Button>
+      {/each}
+    </ButtonGroup>
+  </div>
 </div>
-<h1>What tags would you like to use?</h1>
-<p>Tags make your content more easily searchable!</p>
+
+<!-- Tag selection -->
+<h1 class="font-medium whitespace-nowrap py-5">
+    Tag your story with related topics!</h1>
 {#if $page.data.user.platform == "rover"}
-<Checkbox bind:group={tags} choices={roverTags}/>
+  <Tags tags={roverTags} bindGroup={tags} />
 {:else if $page.data.user.platform == "uber"}
-<Checkbox bind:group={tags} choices={uberTags}/>
+  <Tags tags={uberTags} bindGroup={tags} />
 {:else if $page.data.user.platform == "upwork"}
-<Checkbox bind:group={tags} choices={upworkTags}/>
+  <Tags tags={upworkTags} bindGroup={tags} />
 {/if}
 
-<Input placeholder="Untitled Video Post" bind:value={title}/>
-<Input placeholder="Write a description here" bind:value={description}/>
-<input type="file" id="video" accept = "video/* image/*" on:change={(e) =>{video = e?.target?.files[0]}}/>
+<div class="py-5">
+Title:
+<Input placeholder="Short summary" bind:value={title}/>
+
+<div class="mt-4">
+Description:
+<Textarea id="description" placeholder="Elaborate on your story here"
+bind:value={description}
+class="resize-none"
+style="
+  background-color: rgb(249, 250, 251); /* Light background */
+  border: 1px solid rgb(209, 213, 219); /* Gray border */
+  border-radius: 0.375rem; /* Rounded corners */
+  padding: 0.5rem; /* Padding inside textarea */
+  color: rgb(31, 41, 55); /* Text color */
+"/>
+</div>
+<div class="pt-5 flex justify-center">
+<input type="file" id="video" accept = "video/* image/*" 
+class="pt-5"
+on:change={(e) =>{video = e?.target?.files[0]}}/>
+</div>
+</div>
+
+
 <div class = "py-5">
-    <Label>Who Would You Like to Share Your Worker Data With?</Label>
+    <h2 class="font-medium mb-5">Who Would You Like to Share Your Worker Data With?</h2>
     {#if sharePrivate}
-    <ToggleGroup type="single" onValueChange={changeSharingPreferencesSingle}>
-        <ToggleGroupItem value="private" data-state='on'>Private</ToggleGroupItem>
-        <ToggleGroupItem value="workers" disabled>Workers</ToggleGroupItem>
-        <ToggleGroupItem value="policymakers" disabled>Policymakers</ToggleGroupItem>
-        <ToggleGroupItem value="advocates" disabled>Advocates</ToggleGroupItem>
-    </ToggleGroup>
+    <div class="space-y-2">
+        <div class="flex justify-center">
+          <ToggleGroup type="single" onValueChange={changeSharingPreferencesSingle}>
+            <ToggleGroupItem value="private" data-state='on' class="font-bold">Private</ToggleGroupItem>
+          </ToggleGroup>
+        </div>
+        
+        <div class="flex justify-center space-x-2">
+          <ToggleGroup type="single" onValueChange={changeSharingPreferencesSingle}>
+            <ToggleGroupItem value="workers" disabled>Workers</ToggleGroupItem>
+            <ToggleGroupItem value="policymakers" disabled>Policymakers</ToggleGroupItem>
+            <ToggleGroupItem value="advocates" disabled>Advocates</ToggleGroupItem>
+          </ToggleGroup>
+        </div>
+      </div>
     {:else}
-    <ToggleGroup type="multiple" bind:value={postSharing} onValueChange={changeSharingPreferencesMultiple}>
-        <ToggleGroupItem value="private" data-state='off'>Private</ToggleGroupItem>
-        <ToggleGroupItem value="workers">Workers</ToggleGroupItem>
-        <ToggleGroupItem value="policymakers">Policymakers</ToggleGroupItem>
-        <ToggleGroupItem value="advocates">Advocates</ToggleGroupItem>
-    </ToggleGroup>
+    <div class="space-y-2">
+        <div class="flex justify-center">
+          <ToggleGroup type="multiple" variant="outline" bind:value={postSharing} onValueChange={changeSharingPreferencesMultiple}>
+            <ToggleGroupItem value={sharingOptions[0].value} class={postSharing.includes(sharingOptions[0].value) ? 'font-bold' : ''}>
+              {sharingOptions[0].label}
+            </ToggleGroupItem>
+          </ToggleGroup>
+        </div>
+        
+        <div class="flex justify-center space-x-2">
+          <ToggleGroup type="multiple" variant="outline" bind:value={postSharing} onValueChange={changeSharingPreferencesMultiple}>
+            {#each sharingOptions.slice(1) as { value, label }}
+              <ToggleGroupItem value={value} class={postSharing.includes(value) ? 'font-bold' : ''}>
+                {label}
+              </ToggleGroupItem>
+            {/each}
+          </ToggleGroup>
+        </div>
+      </div>
     {/if}
 </div>
-<div>
-    <Button on:click={uploadContent}>Upload Content</Button>
-</div>
+
+<div class="flex justify-center py-5">
+    <BlueButton onclick={uploadContent} buttonText="Upload Content"></BlueButton>
+  </div>
