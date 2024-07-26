@@ -110,6 +110,7 @@
             url,
             date: new Date(),
             tags,
+            likes: [],
             platform: $page.data.user.platform,
             sharing: postSharing
 
