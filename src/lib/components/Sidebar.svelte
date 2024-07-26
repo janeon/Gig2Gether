@@ -42,22 +42,27 @@
 </script>
 
   <!-- Hamburger button for smaller screensize -->
+  <div class="relative flex items-center pt-3">
     <Button 
       on:click={() => (hidden2 = false)} 
-      class="text-center font-medium focus-within:ring-4 focus-within:outline-none flex flex-col items-center pl-5 pr-3 py-3 text-sm hover:bg-primary-800 dark:bg-primary-600 dark:hover:bg-primary-700 focus-within:ring-primary-300 dark:focus-within:ring-primary-800 rounded-lg bg-transparent text-black block md:hidden h-12">
+      class="absolute left-0 text-center font-medium focus-within:ring-4 focus-within:outline-none flex items-center pl-5 pr-3 py-3 text-sm hover:bg-primary-800 dark:bg-primary-600 dark:hover:bg-primary-700 focus-within:ring-primary-300 dark:focus-within:ring-primary-800 rounded-lg bg-transparent text-black block md:hidden h-12">
       <div class="flex items-center space-x-4">
         <i class="fas fa-bars text-2xl mb-2"></i>
-        {#if mobile}
-        <h1 class="text-lg font-bold">{title}</h1>
-        {/if}
       </div>
     </Button>
+    
+    <div class="flex-1 flex justify-center">
+    {#if mobile}
+      <h1 class="text-lg font-bold">{title}</h1>
+    {/if}
+    </div>
+  </div>
     
   <!-- Sidebar for medium and large screens -->
     {#if option == "upload"}
       <UploadSidebar/>
     {:else}
-      <Sidebar {activeUrl} class="w-64 bg-gray-100 hidden md:block">
+      <Sidebar {activeUrl} class="w-64 bg-transparent hidden md:block">
         <SidebarWrapper>
           <SidebarGroup>
             {#each options[option] as { label, href }}

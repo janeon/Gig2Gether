@@ -5,7 +5,7 @@
     $: activeUrl = $page.url.pathname;
 </script>
 
-<Sidebar {activeUrl} class="w-64 bg-gray-100 hidden md:block">
+<Sidebar {activeUrl} class="w-64 bg-transparent hidden md:block">
     <SidebarWrapper>
         <SidebarGroup>
                 <!-- // Uber -->

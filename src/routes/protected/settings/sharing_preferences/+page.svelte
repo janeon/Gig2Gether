@@ -11,6 +11,13 @@
 
     updateTitle("Sharing Preferences");
     $: sharingData = []
+    const sharingOptions = [
+        { value: 'private', label: 'Private' },
+        { value: 'workers', label: 'Workers' },
+        { value: 'policymakers', label: 'Policymakers' },
+        { value: 'advocates', label: 'Advocates' }
+    ];
+
     let uploadData = {
         sharing: [],
         data_lifespan: "never",
@@ -20,10 +27,10 @@
     $: sharePrivate = false
     const lifespanOptions = [
         {value: "never", name: "Never"},
-        {value: "1 week", name: "1 Week"},
-        {value: "1 month", name: "1 Month"},
-        {value: "6 months", name: "6 Months"},
-        {value: "1 year", name: "1 Year"}
+        {value: "1 week", name: "After 1 Week"},
+        {value: "1 month", name: "After 1 Month"},
+        {value: "6 months", name: "After 6 Months"},
+        {value: "1 year", name: "After 1 Year"}
     ]
 
     const locationOptions = [
@@ -45,9 +52,14 @@
         sharePrivate = false
     }
 
-    function changeSharingPreferencesMultiple(item:String[]) {
-        if (item.includes("private")) {
+    function changeSharingPreferencesMultiple(value:String[]) {
+        if (value.includes("private")) {
             sharePrivate = true
+        }
+        if (sharingData.includes(value)) {
+            sharingData = sharingData.filter(item => item !== value);
+        } else {
+            sharingData = [...sharingData, value];
         }
     }
 
@@ -67,30 +79,31 @@
 </script>
 
 <div class = "py-5">
-    <Label>Who Would You Like to Share Your Worker Data With?</Label>
+    <h2 class="font-medium whitespace-nowrap mb-5">Who Would You Like to Share Your Worker Data With?</h2>
     {#if sharePrivate}
-    <ToggleGroup type="single" onValueChange={changeSharingPreferencesSingle}>
-        <ToggleGroupItem value="private" data-state='on'>Private</ToggleGroupItem>
+    <ToggleGroup type="single" onValueChange={changeSharingPreferencesSingle} variant="outline">
+        <ToggleGroupItem value="private" data-state={'on'} class="font-bold">Private</ToggleGroupItem>
         <ToggleGroupItem value="workers" disabled>Workers</ToggleGroupItem>
         <ToggleGroupItem value="policymakers" disabled>Policymakers</ToggleGroupItem>
         <ToggleGroupItem value="advocates" disabled>Advocates</ToggleGroupItem>
     </ToggleGroup>
     {:else}
-    <ToggleGroup type="multiple" bind:value={sharingData} onValueChange={changeSharingPreferencesMultiple}>
-        <ToggleGroupItem value="private" data-state='off'>Private</ToggleGroupItem>
-        <ToggleGroupItem value="workers">Workers</ToggleGroupItem>
-        <ToggleGroupItem value="policymakers">Policymakers</ToggleGroupItem>
-        <ToggleGroupItem value="advocates">Advocates</ToggleGroupItem>
+    <ToggleGroup type="multiple" variant="outline" bind:value={sharingData} onValueChange={changeSharingPreferencesMultiple}>
+    {#each sharingOptions as { value, label }}
+        <ToggleGroupItem value={value} class={sharingData.includes(value) ? 'font-bold' : ''}>{label}</ToggleGroupItem>
+    {/each}
     </ToggleGroup>
     {/if}
 </div>
-<h1>Data Options</h1>
+<h2 class="font-bold whitespace-nowrap ">Data Options</h2>
 <div class = "py-5">
-    <Label>Data Lifespan</Label>
+    <Label>Data Expiratioon</Label>
     <Select bind:value={uploadData.data_lifespan} items={lifespanOptions}/>
 </div>
-<div>
+<div >
     <Label>Location Granularity</Label>
     <Select bind:value={uploadData.location_granularity} items={locationOptions}/>
 </div>
+<div class = "py-5">
 <BlueButton onclick={submitPreferences} buttonText="Submit"/>
+</div>

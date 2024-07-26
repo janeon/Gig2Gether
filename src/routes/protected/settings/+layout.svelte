@@ -23,12 +23,16 @@
 
 <div class={mobile ? '' : 'flex'}>
     <Sidebar title={title} option="settings"/>
-    <div class="p-3 flex-1">
-        <header>
+    <div class="flex p-3 flex-1 justify-center h-[80vh] overflow-y-auto">
+        <div class="flex flex-col items-center w-full">
+          <div class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg max-w-md w-full">
+            <header>
             {#if !mobile}
-            <h1 class="text-lg font-bold">{title}</h1>
+            <h1 class="text-xl font-bold">{title}</h1>
             {/if}
         </header>
         <slot/>
+    </div>    
+    </div>
     </div>
 </div>

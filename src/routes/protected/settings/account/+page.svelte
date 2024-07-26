@@ -9,7 +9,9 @@
     
 </script>
 
-<div>
-    <Label>My Email/Phone: {username}</Label> 
-    <Label>Platform: {platform}</Label> 
+<div class="py-5">
+    <Label class="block mb-4">
+        My Email/Phone: {username}</Label>
+    <Label class="block">
+        Platform: {platform}</Label>
 </div>
