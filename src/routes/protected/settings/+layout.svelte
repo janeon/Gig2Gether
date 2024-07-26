@@ -21,6 +21,7 @@
 
 </script>
 
+
 <div class={mobile ? '' : 'flex'}>
     <SettingsSidebar title={title}/>
     <div class="p-3 flex-1 h-[80vh] overflow-y-scroll w-full">
