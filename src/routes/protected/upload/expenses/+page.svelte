@@ -4,6 +4,9 @@
     import { collection, doc, setDoc } from "firebase/firestore";
     import { MultiSelect, Label, NumberInput, Input } from "flowbite-svelte";
 
+    import { updateTitle } from "$lib/stores/title";
+    import { capitalize } from "$lib/utils";
+    updateTitle(capitalize($page.data.user?.platform) + " Expenses");
 
     let successMessage = '';
     let errorMessage = '';
@@ -76,15 +79,14 @@
 </script>
 
 <div class="flex flex-row">
-    <div class="p-8 flex flex-col items-center w-full">
-        <h1 class="text-2xl font-bold mb-6">Expenses</h1>
+    <div class="py-2 flex flex-col items-center w-full">
         {#if $page.data.user?.platform == "uber"}
             <h2 class="text-xl font-semibold mb-4">Uber</h2>
 
             <div class="w-full max-w-md space-y-5">
                 <div class="flex flex-col">
                     <Label>Date</Label>
-                    <Input type="text" bind:value={uberData.date} class="mt-1" />
+                    <Input type="date" bind:value={uberData.date} class="mt-1" />
                 </div>
 
                 <div class="flex flex-col">
@@ -108,12 +110,10 @@
                 </div>
             </div>
         {:else if $page.data.user?.platform == "rover"}
-            <h2 class="text-xl font-semibold mb-4">Rover</h2>
-
             <div class="w-full max-w-md space-y-5">
                 <div class="flex flex-col">
                     <Label>Date</Label>
-                    <Input type="text" bind:value={roverData.date} class="mt-1" />
+                    <Input type="date" bind:value={roverData.date} class="mt-1" />
                 </div>
 
                 <div class="flex flex-col">
@@ -142,7 +142,7 @@
             <div class="w-full max-w-md space-y-5">
                 <div class="flex flex-col">
                     <Label>Date</Label>
-                    <Input type="text" bind:value={upworkData.date} class="mt-1" />
+                    <Input type="date" bind:value={upworkData.date} class="mt-1" />
                 </div>
 
                 <div class="flex flex-col">

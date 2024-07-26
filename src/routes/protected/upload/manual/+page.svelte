@@ -3,7 +3,9 @@
     import { db } from "$lib/firebase/client";
     import { collection, doc, setDoc } from "firebase/firestore";
     import { MultiSelect, Label, NumberInput, Input } from "flowbite-svelte";
-
+    import { updateTitle } from "$lib/stores/title";
+    import { capitalize } from "$lib/utils";
+    updateTitle(capitalize($page.data.user?.platform) + " Manual Upload");
 
     let successMessage = '';
     let errorMessage = '';
@@ -72,29 +74,23 @@
         successMessage = "Input Submitted Successfully!"
         if ($page.data.user?.platform == "uber") {
             setDoc(docRef, uberData, { merge: true })
-            // successMessage = "Input Submitted Successfully!"  - add when roles are implemented
         }
         else if ($page.data.user?.platform == "rover") {
             setDoc(docRef, roverData, { merge: true })
-            // successMessage = "Input Submitted Successfully!"  - add when roles are implemented
         }
         else if ($page.data.user?.platform == "upwork") {
             setDoc(docRef, upworkData, { merge: true })
-            // successMessage = "Input Submitted Successfully!"  - add when roles are implemented
         }
     }
 </script>
 
 <div class="flex flex-row">
-    <div class="p-8 flex flex-col items-center w-full">
-        <h1 class="text-2xl font-bold mb-6">Manual Upload</h1>
+    <div class="py-2 flex flex-col items-center w-full">
         {#if $page.data.user?.platform == "uber"}
-            <h2 class="text-xl font-semibold mb-4">Uber</h2>
-
             <div class="w-full max-w-md space-y-5">
                 <div class="flex flex-col">
                     <Label>Date</Label>
-                    <Input type="text" bind:value={uberData.date} class="mt-1" />
+                    <Input type="date" bind:value={uberData.date} class="mt-1" />
                 </div>
 
                 <div class="flex flex-col">
@@ -129,12 +125,10 @@
             </div>
 
         {:else if $page.data.user?.platform == "rover"}
-            <h2 class="text-xl font-semibold mb-4">Rover</h2>
-
             <div class="w-full max-w-md space-y-5">
                 <div class="flex flex-col">
                     <Label>Date</Label>
-                    <Input type="text" bind:value={roverData.date} class="mt-1" />
+                    <Input type="date" bind:value={roverData.date} class="mt-1" />
                 </div>
 
                 <div class="flex flex-col">
@@ -174,8 +168,6 @@
             </div>
 
         {:else if $page.data.user?.platform == "upwork"}
-            <h2 class="text-xl font-semibold mb-4">UpWork</h2>
-
             <div class="w-full max-w-md space-y-5">
                 <div class="flex flex-col">
                     <Label>Job Category</Label>

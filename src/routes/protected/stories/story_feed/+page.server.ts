@@ -7,7 +7,7 @@ export async function load() {
     let posts = []
     for (let platform of platforms) {
         const snapshot = await getDocs(query(collection(db, 'stories', platform, "posts"), orderBy("date", "desc")))
-        console.log(snapshot)
+        // console.log(snapshot)
         console.log("--------")
         snapshot.forEach((doc) => {
             let post = doc.data()

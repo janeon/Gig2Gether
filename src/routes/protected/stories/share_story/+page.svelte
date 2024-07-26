@@ -1,15 +1,16 @@
 <script lang="ts">
-    import { page } from "$app/stores";
-    import { Button, Input, Label, ButtonGroup, Textarea } from "flowbite-svelte";
-    import { ToggleGroupItem, ToggleGroup } from "$lib/components/ui/toggle-group";
     import { addDoc, collection, doc, getDoc } from "firebase/firestore";
     import { db, storage } from "$lib/firebase/client";
     import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-    import { onMount } from "svelte";
+
+    import { Button, Input, ButtonGroup, Textarea } from "flowbite-svelte";
+    import { ToggleGroupItem, ToggleGroup } from "$lib/components/ui/toggle-group";
+    import BlueButton from "$lib/components/BlueButton.svelte";
+    import Tags from "$lib/components/tags.svelte";
     
+    import { onMount } from "svelte";
+    import { page } from "$app/stores";
     import { updateTitle } from "$lib/stores/title";
-	import Tags from "$lib/components/tags.svelte";
-	import BlueButton from "$lib/components/BlueButton.svelte";
     updateTitle("Share Story");
     
     let tags : string[] = []

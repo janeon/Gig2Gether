@@ -23,7 +23,7 @@
 
 <div class={mobile ? '' : 'flex'}>
     <Sidebar title={title} option="settings"/>
-    <div class="flex p-3 flex-1 justify-center h-[80vh] overflow-y-auto">
+    <div class="flex p-3 flex-1 justify-center h-[85vh] overflow-y-auto">
         <div class="flex flex-col items-center w-full">
           <div class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg max-w-md w-full">
             <header>
