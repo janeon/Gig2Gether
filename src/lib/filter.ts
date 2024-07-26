@@ -5,8 +5,8 @@ export const createFilterStore = (data) => {
     const {subscribe, set, update} = writable({
         data,
         filtered: data,
-        platform_filter: '',
-        type_filter: ''
+        platform_filter: ['rover', 'uber', 'upwork'],
+        type_filter: ['issue','strategy']
     })
 
     return {
@@ -18,6 +18,9 @@ export const createFilterStore = (data) => {
 
 export const filterHandler = (store) => {
     store.filtered = store.data.filter((item) => {
-        return (item.platform.includes(store.platform_filter) && item.type.includes(store.type_filter))
+        console.log(item)
+        //  && store.type_filter.includes(item.type)
+        // return (store.platform_filter.includes(item.platform))
+        return (store.platform_filter.includes(item.platform) && store.type_filter.includes(item.type))
     })
 }
