@@ -1,11 +1,15 @@
 <script lang="ts">
     import { page } from "$app/stores";
     import { db } from "$lib/firebase/client";
-    import Sidebar from "$lib/components/SettingsSidebar.svelte";
     import { collection, doc, setDoc } from "firebase/firestore";
     import MultiSelect from 'svelte-multiselect'
     import {Label, NumberInput, Input } from "flowbite-svelte";
     import us_cities from "$lib/us_cities.json"
+    import { updateTitle } from "$lib/stores/title";
+	import BlueButton from "$lib/components/BlueButton.svelte";
+    import { capitalize } from "$lib/utils";
+    updateTitle("My "+capitalize($page.data.user?.platform)+" Profile");
+
     //UBER
 
     let uberData = {
@@ -77,9 +81,7 @@
     }
 </script>
 
-<h1>Worker Information</h1>
 {#if $page.data.user?.platform == "uber"}
-    <h1>Uber</h1>
     <div class = "py-5">
         <Label>Uber Rating</Label>
         <NumberInput type="number"  bind:value={uberData.rating}/>
@@ -108,7 +110,6 @@
 
 {:else if $page.data.user?.platform == "rover"}
 <div>
-    <h1>Rover</h1>
     <!-- Need to incorporate available times -->
         <div class = "py-5">
         <Label>Rover Rating</Label>
@@ -137,6 +138,7 @@
 </div>
 
 {:else if $page.data.user?.platform == "upwork"}
-    <h1>UpWork</h1>
+TODO
 {/if}
-<button on:click = {submitProfile}>Submit</button>
+
+<BlueButton onclick={submitProfile} buttonText="Submit"/>

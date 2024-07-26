@@ -43,7 +43,7 @@ export const actions = {
         secure: true,
         sameSite: "lax",
     });
-    log("Session cookie set: ", sessionCookie);
+    // log("Session cookie set: ", sessionCookie);
 
     throw redirect(303, '/protected');
     }
