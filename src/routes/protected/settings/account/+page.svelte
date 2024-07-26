@@ -15,3 +15,7 @@
     <Label class="block">
         Platform: {platform}</Label>
 </div>
+<!-- <div>
+    <Label>My Phone</Label>
+    <p>{email}</p>
+</div> -->

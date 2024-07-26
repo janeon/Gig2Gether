@@ -10,6 +10,7 @@
 	import { Navbar, NavLi, NavUl, Dropdown, DropdownItem, BottomNav, BottomNavItem} from 'flowbite-svelte';
 
 	import { ChevronDownOutline } from 'flowbite-svelte-icons';
+	
 	$: activeUrl = $page.url.pathname;
 	
 	let mobile: boolean;
@@ -35,7 +36,7 @@
 	}
 
 	let title: string;
-	$: (title = ($page.url.pathname === "/") ? "GigUnity" 
+	$: (title = ($page.url.pathname === "/") ? "GigConnect" 
 		: parsePageNameFromUrl(activeUrl));
 
 	const navItems = [
@@ -53,6 +54,7 @@
 </svelte:head>
 
 {#key title} 
+	<!-- top nav bar for web -->
 	<div class={(mobile && protected_urls) ? 'hidden md:block' : 'block'}>
 		<header class="flex justify-between items-center p-4 bg-gray-100">
 			{#if ["register", "Register Worker", "Register Policymaker"].includes(title)}
@@ -60,7 +62,7 @@
 				<h1 class="text-lg font-bold">{title}</h1>
 			</div>
 				<BlueButton href="/login" buttonText="Login"/>
-			{:else if title==="GigUnity"}
+			{:else if title==="GigConnect"}
 				<div>
 					{#if data.user===undefined}
 						<a href="/" class="text-lg font-bold">{title}</a>
@@ -87,7 +89,7 @@
 			<!-- Using native flowbite instead of flowbite-svelte bc height & break pt issues -->
 			<!-- https://github.com/themesberg/flowbite-svelte/issues/1156 -->
 			<div>
-				<a href="/protected" class="text-lg font-bold">{"GigUnity"}</a>
+				<a href="/protected" class="text-lg font-bold">{"GigConnect"}</a>
 			</div>
 
 			<div class="flex justify-center w-7/8">
@@ -110,6 +112,7 @@
 		</header>
 	</div>
 
+	<!-- Bottom navigation -->
 	<div class={mobile && protected_urls ? 'fixed bottom-0 w-full md:hidden' : 'hidden'}>
 		<BottomNav position="absolute" classInner="grid-cols-5">
 			{#each navItems as item}

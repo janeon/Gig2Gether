@@ -3,6 +3,10 @@
     import ToggleGroupItem from "$lib/components/ui/toggle-group/toggle-group-item.svelte";
     import ToggleGroup from "$lib/components/ui/toggle-group/toggle-group.svelte";
     import { db } from "$lib/firebase/client";
+
+    import { Checkbox, Label, Select } from "flowbite-svelte";
+    import { updateTitle } from "$lib/stores/title";
+	  import BlueButton from "$lib/components/BlueButton.svelte";
     import { collection, doc, getDoc, setDoc } from "firebase/firestore";
     import { Label, Select} from "flowbite-svelte";
     import { updateTitle } from "$lib/stores/title";
