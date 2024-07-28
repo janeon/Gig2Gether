@@ -1,4 +1,4 @@
-# datasharing
+# Datasharing: Live at [gigshare.web.app](https://gigshare.web.app/)
 
 ## Firebase authentication setup
 Make sure you have .env file added to the root of the folder (under /datasharing) so that authentication is connected
