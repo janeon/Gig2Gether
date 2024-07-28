@@ -2,8 +2,9 @@
     import { page } from "$app/stores";
     import { db } from "$lib/firebase/client";
     import { collection, doc, setDoc } from "firebase/firestore";
-    import { MultiSelect, Label, NumberInput, Input } from "flowbite-svelte";
-
+    import MultiSelect from 'svelte-multiselect';
+    import { Label, NumberInput, Input, Textarea} from "flowbite-svelte";
+    import { currentDate } from "$lib/utils";
     import { updateTitle } from "$lib/stores/title";
     import { capitalize } from "$lib/utils";
     updateTitle(capitalize($page.data.user?.platform) + " Expenses");
@@ -13,7 +14,7 @@
 
     // Uber Expenses
     let uberData = {
-        date: '',
+        date: currentDate,
         time: '',
         expenseType: [],
         description: '',
@@ -22,7 +23,7 @@
 
     // Rover Expenses
     let roverData = {
-        date: '',
+        date: currentDate,
         time: '',
         expenseType: [],
         description: '',
@@ -31,32 +32,18 @@
 
     // UpWork Expenses
     let upworkData = {
-        date: '',
+        date: currentDate,
         time: '',
         expenseType: [],
         description: '',
         amount: 0,
     }
 
-    const uberExpenseType = [
-        { value: "cleaning", name: "Car Wash/ Cleaning" },
-        { value: "gas", name: "Gas" },
-        { value: "rental", name: "Car Rental" },
-        { value: "other", name: "Other" },
-    ]
+    const uberExpenseType = ["Car Wash/ Cleaning", "Gas", "Car Rental", "Other"]
 
-    const roverExpenseType = [
-        { value: "supplies", name: "Pet Supplies" },
-        { value: "transport", name: "Transportation" },
-        { value: "other", name: "Other" },
-    ]
+    const roverExpenseType = ["Pet Supplies", "Transportation", "Other"]
 
-    const upworkExpenseType = [
-        { value: "software", name: "Software" },
-        { value: "supplies", name: "Office Supplies" },
-        { value: "insurance", name: "Insurance" },
-        { value: "other", name: "Other" },
-    ]
+    const upworkExpenseType = ["Software", "Office Supplies", "Insurance", "Other"]
 
     async function submitExpenses() {
         const collectionRef = collection(db, "users", $page.data.user?.uid, "upload")
@@ -96,12 +83,15 @@
 
                 <div class="flex flex-col">
                     <Label>Expense Type</Label>
-                    <MultiSelect items={uberExpenseType} bind:value={uberData.expenseType} class="mt-1" />
+                    <MultiSelect options={uberExpenseType} bind:value={uberData.expenseType} 
+                    style="--sms-bg: rgb(249, 250, 251); padding: 8px; border-radius: 8px;"
+                    --sms-focus-border="2px solid blue"/>
                 </div>
 
                 <div class="flex flex-col">
                     <Label>Description</Label>
-                    <textarea bind:value={uberData.description} rows="4" class="mt-1 border border-gray-300 rounded px-3 py-2"></textarea>
+                    <Textarea bind:value={uberData.description} rows="4" 
+                    class="mt-1 border border-gray-300 rounded-lg px-3 py-2 bg-gray-50"/>
                 </div>
 
                 <div class="flex flex-col">
@@ -123,12 +113,15 @@
 
                 <div class="flex flex-col">
                     <Label>Expense Type</Label>
-                    <MultiSelect items={roverExpenseType} bind:value={roverData.expenseType} class="mt-1" />
+                    <MultiSelect options={roverExpenseType} bind:value={roverData.expenseType} 
+                    style="--sms-bg: rgb(249, 250, 251); padding: 8px; border-radius: 8px;"
+                    --sms-focus-border="2px solid blue"/>
                 </div>
 
                 <div class="flex flex-col">
                     <Label>Description</Label>
-                    <textarea bind:value={roverData.description} rows="4" class="mt-1 border border-gray-300 rounded px-3 py-2"></textarea>
+                    <Textarea bind:value={roverData.description} rows="4" 
+                    class="mt-1 border border-gray-300 rounded-lg px-3 py-2 bg-gray-50"/>
                 </div>
 
                 <div class="flex flex-col">
@@ -152,12 +145,15 @@
 
                 <div class="flex flex-col">
                     <Label>Expense Type</Label>
-                    <MultiSelect items={upworkExpenseType} bind:value={upworkData.expenseType} class="mt-1" />
+                    <MultiSelect options={upworkExpenseType} bind:value={upworkData.expenseType} 
+                    style="--sms-bg: rgb(249, 250, 251); padding: 8px; border-radius: 8px;"
+                    --sms-focus-border="2px solid blue"/>
                 </div>
 
                 <div class="flex flex-col">
                     <Label>Description</Label>
-                    <textarea bind:value={upworkData.description} rows="4" class="mt-1 border border-gray-300 rounded px-3 py-2"></textarea>
+                    <Textarea bind:value={upworkData.description} rows="4" 
+                    class="mt-1 border border-gray-300 rounded-lg px-3 py-2 bg-gray-50"/>
                 </div>
 
                 <div class="flex flex-col">

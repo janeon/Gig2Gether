@@ -8,14 +8,15 @@
     import { updateTitle } from "$lib/stores/title";
     import BlueButton from "$lib/components/BlueButton.svelte";
     import { capitalize } from "$lib/utils";
+    import { currentDate } from "$lib/utils";
     
     updateTitle(`My ${capitalize($page.data.user?.platform)} Profile`);
 
     let uberData = {
-        rating: 0, car: '', services: [], cities: [], dateJoined: new Date()
+        rating: 0, car: '', services: [], cities: [], dateJoined: currentDate
     };
     let roverData = {
-        rating: 0, pets: [], services: [], cities: [], dateJoined: new Date()
+        rating: 0, pets: [], services: [], cities: [], dateJoined: currentDate
     };
 
     const uberServices = ["UberX", "UberXL", "UberX Share", "UberX Comfort", "Uber Black", "Uber Black SUV", "WAV", "Uber Car Seat X", "Uber Green", "Uber Taxi"];
@@ -59,7 +60,7 @@
 
     <div class="py-5">
         <Label>Date of Joining Uber</Label>
-        <Input type="date" bind:value={uberData.dateJoined} />
+        <Input type="date" size="md" bind:value={uberData.dateJoined} />
     </div>
 
 {:else if $page.data.user?.platform === "rover"}

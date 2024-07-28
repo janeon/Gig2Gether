@@ -1,13 +1,16 @@
 <script lang="ts">
     import { onMount } from 'svelte';
     import { page } from '$app/stores';
-    import { Sidebar, SidebarGroup, SidebarItem, SidebarWrapper, Drawer, CloseButton, Button } from 'flowbite-svelte';
-
-    $: activeUrl = $page.url.pathname;
+    import { Sidebar, SidebarGroup, SidebarItem, SidebarWrapper, Drawer, CloseButton, Button, Avatar, Dropdown, DropdownDivider, DropdownHeader, DropdownItem } from 'flowbite-svelte';
     import { sineIn } from 'svelte/easing';
     import '@fortawesome/fontawesome-free/css/all.min.css';
-	import { capitalize } from '$lib/utils';
-
+	  import { capitalize } from '$lib/utils';
+	  import { enhance } from '$app/forms';
+	  import type { ActionData } from '../../routes/protected/$types';
+    
+    export let form : ActionData;
+    $: activeUrl = $page.url.pathname;
+    let activeClass = 'text-green-500 dark:text-green-300 hover:text-green-700 dark:hover:text-green-500';
     let mobile: boolean;
     onMount(() => {
       mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(window.navigator.userAgent);
@@ -23,13 +26,14 @@
     const closeDrawer = () => hidden2 = true;
 
     const settings = [
-            { label: "My Account", href: "/protected/settings/account" },
             { label: "My Worker Profile", href: "/protected/settings/profile" },
+            { label: "My Account", href: "/protected/settings/account" },
             { label: "Demographics", href: "/protected/settings/demographics" },
             { label: "Sharing Preferences", href: "/protected/settings/sharing_preferences" },
             { label: "Withdraw Data" },
             { label: "Notification" }
-          ]
+    ]
+
     const sharing = [
       { label: "Story Feed", href: "/protected/stories/story_feed" },
       { label: "Share Story", href: "/protected/stories/share_story" }
@@ -68,20 +72,40 @@
 
   <!-- Hamburger button for smaller screensize -->
   <div class="relative flex items-center py-3">
-    <Button 
-      on:click={() => (hidden2 = false)} 
-      class="absolute left-0 text-center font-medium focus-within:ring-4 focus-within:outline-none flex items-center pl-5 pr-3 py-3 text-sm hover:bg-primary-800 dark:bg-primary-600 dark:hover:bg-primary-700 focus-within:ring-primary-300 dark:focus-within:ring-primary-800 rounded-lg bg-transparent text-black block md:hidden h-12">
-      <div class="flex items-center space-x-4">
-        <i class="fas fa-bars text-2xl mb-2"></i>
-      </div>
-    </Button>
-    
-    <div class="flex-1 flex justify-center">
     {#if mobile}
-      <h1 class="text-lg font-bold">{title}</h1>
+      <Button 
+        on:click={() => (hidden2 = false)} 
+        class="absolute left-0 text-center font-medium focus-within:ring-4 
+        flex items-center pl-5 pr-3 py-3 
+        text-sm rounded-lg bg-transparent text-black block md:hidden h-12">
+        <i class="fas fa-bars text-2xl mb-2"></i>
+      </Button>
+      <h1 
+      class="absolute left-1/2 transform -translate-x-1/2 font-bold text-sm sm:text-sm md:text-base lg:text-lg xl:text-xl"
+      style="font-size: 0.9925rem;">
+      {title}
+    </h1>
+      <div class="ml-auto mr-3 flex items-center">
+        <Avatar class="acs mr-3 w-8 h-8" dot={{ color: 'green' }} border/>
+        <Dropdown {activeUrl} {activeClass} triggeredBy=".acs">
+          <DropdownHeader>
+            <span class="block text-sm text-gray-900 dark:text-white">Username</span>
+            <span class="block truncate text-sm font-medium">#email/password</span>
+          </DropdownHeader>
+          <DropdownItem href="/protected">Home</DropdownItem>
+          <DropdownItem href="/protected/settings/account">Account</DropdownItem>
+          <DropdownItem>Notifications</DropdownItem>
+          <DropdownDivider />
+          <form action="/logout" method="POST" use:enhance bind:this={form}>
+            <DropdownItem slot="footer" on:click={() => form.submit()}>
+              Log out
+            </DropdownItem>
+            </form>
+        </Dropdown>
+      </div>
     {/if}
-    </div>
   </div>
+  
     
   <!-- Sidebar for medium and large screens -->
   <Sidebar {activeUrl} class="w-64 bg-transparent hidden md:block">
@@ -93,16 +117,16 @@
       </SidebarGroup>
     </SidebarWrapper>
   </Sidebar>
-  <!-- mobile version drawer only -->
-  <Drawer transitionType="fly" {transitionParams} bind:hidden={hidden2} id="sidebar2">
-      <div class="flex items-center">
+  <!-- mobile-only sliding drawer sidebar -->
+  <Drawer transitionType="fly" {transitionParams} bind:hidden={hidden2} id="sidebar2" class="w-60">
+      <div class="flex items-center w-48">
         <h5 id="drawer-navigation-label-3" class="text-base font-semibold text-gray-500 uppercase dark:text-gray-400">
           {capitalize(option)}
         </h5>
         <CloseButton on:click={() => (hidden2 = true)} class="mb-4 dark:text-white" />
       </div>
 
-    <Sidebar {activeUrl} class="w-64 bg-gray-100">
+    <Sidebar {activeUrl} class="w-48 bg-gray-100">
       <SidebarWrapper>
         <SidebarGroup>
           {#each options[option] as { label, href }}

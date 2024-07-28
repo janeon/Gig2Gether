@@ -19,6 +19,8 @@
     let description : string = ""
     let url : string
     let type : string
+    let fileName: string = '';
+    $: fileName = video ? video.name : 'No file selected';
     $: postSharing = []
     $: sharePrivate = false
     $: errorMessage = " "
@@ -61,6 +63,21 @@
         { value: 'advocates', label: 'Advocates' }
     ];
 
+    function handleClick() {
+    const fileInput = document.getElementById('selectedFile');
+    if (fileInput) {
+      (fileInput as HTMLInputElement).click();
+    }
+  }
+
+    function handleFileChange(event: Event) {
+    const fileInput = event.target as HTMLInputElement;
+    if (fileInput.files && fileInput.files.length > 0) {
+      video = fileInput.files[0];
+      fileName = video.name;
+    }
+  }
+
     async function uploadContent() {
         if (!type) {
             errorMessage = "Please select a type"
@@ -83,14 +100,9 @@
 
         if (url) {
             try {
-            await addDoc(collection(db, 'stories', $page.data.user.platform, "posts"), {
-            type,
-            title,
-            description,
-            uid: $page.data.user.uid,
-            url,
-            date: new Date(),
-            tags,
+            await addDoc(collection(db, 'stories', $page.data.user.platform, "posts"), 
+            { type, title, description, uid: $page.data.user.uid,
+            url, date: new Date(), tags,
             sharing: postSharing
 
         })
@@ -194,11 +206,26 @@ style="
   color: rgb(31, 41, 55); /* Text color */
 "/>
 </div>
-<div class="pt-5 flex justify-center">
-<input type="file" id="video" accept = "video/* image/*" 
-class="pt-5"
-on:change={(e) =>{video = e?.target?.files[0]}}/>
-</div>
+
+<!-- https://stackoverflow.com/questions/1084925/input-type-file-show-only-button -->
+<div class="flex items-center space-x-4 pt-5 justify-center">
+    <input 
+      type="button" 
+      value="Browse" 
+      on:click={handleClick} 
+      class="bg-gray-500 text-white font-bold py-2 px-4 rounded hover:bg-gray-700" 
+    />
+    <p class="text-center">{fileName}</p>
+  </div>
+  
+  <input 
+    type="file" 
+    id="selectedFile" 
+    style="display: none;" 
+    accept="video/*,image/*" 
+    on:change={handleFileChange} 
+  />
+
 </div>
 
 
@@ -245,4 +272,4 @@ on:change={(e) =>{video = e?.target?.files[0]}}/>
 
 <div class="flex justify-center py-5">
     <BlueButton onclick={uploadContent} buttonText="Upload Content"></BlueButton>
-  </div>
+</div>
