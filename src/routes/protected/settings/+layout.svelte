@@ -21,6 +21,7 @@
 
 </script>
 
+
 <div class={mobile ? 'fixed-y' : 'flex pt-3'}>
     <Sidebar title={title} option="settings"/>
     <div class="flex flex-1 justify-center h-[80vh] overflow-y-auto">
