@@ -134,11 +134,17 @@
 		{/if}
 		
 		{#if signInMethod == 'email'}
-		<Input placeholder="Username" name="username" class="px-4 py-2 border border-gray-300 rounded-md" />
+		<div>
+			<Input placeholder="Username" name="username" class="px-4 pt-2 border border-gray-300 rounded-md" />
+			<p class="text-xs">Choose a username without any identifiable information.</p>
+		</div>
 		<Input type="password" placeholder="Password" name="password" class="px-4 py-2 border border-gray-300 rounded-md" />
 		<BlueButton onclick={register} type="submit" buttonText="Register" href="/protected"/>
 		{:else if signInMethod == 'phone'}
-		<Input placeholder="Username" name="username" class="px-4 py-2 border border-gray-300 rounded-md" />
+		<div>
+			<Input placeholder="Username" name="username" class="px-4 pt-2 border border-gray-300 rounded-md" />
+			<p class="text-xs">Choose a username without any identifiable information.</p>
+		</div>
 		<Input type="text" placeholder="Verification Code" name="code" class="px-4 py-2 border border-gray-300 rounded-md" required />
 		<BlueButton onclick={register} type="submit" buttonText="Register" href="/protected"/>
 		{/if}
