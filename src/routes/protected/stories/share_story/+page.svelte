@@ -1,7 +1,7 @@
 <script lang="ts">
     import { addDoc, collection, doc, getDoc } from "firebase/firestore";
     import { db, storage } from "$lib/firebase/client";
-    import { getDownloadURL, ref, uploadBytes, deleteObject } from "firebase/storage";
+    import { getDownloadURL, ref, uploadBytes} from "firebase/storage";
 
     import { Button, Input, ButtonGroup, Textarea } from "flowbite-svelte";
     import { ToggleGroupItem, ToggleGroup } from "$lib/components/ui/toggle-group";
