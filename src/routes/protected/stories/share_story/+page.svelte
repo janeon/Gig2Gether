@@ -15,14 +15,15 @@
     updateTitle("Share Story");
     
     let tags : string[] = []
-    let video: File
+    let file: File
     let title : string = ""
     let description : string = ""
     let url : string
     let type : string
     let uploading = false
 
-    $: fileName = video ? video.name : 'No file selected';
+    let imageUrlPreview : string
+    $: fileName = file ? file.name : 'No file selected';
     $: postSharing = []
     $: sharePrivate = false
     $: errorMessageType = " "
@@ -79,26 +80,10 @@
 
     async function handleFileChange (event: Event) {
     const fileInput = event.target as HTMLInputElement;
-    if (url) {
-      const imageRef = ref(storage, url)
-      try {
-        deleteObject(imageRef)
-      } catch (error) {
-        console.log(error)
-      }
-      
-    }
+    imageUrlPreview = URL.createObjectURL(fileInput.files[0])
     if (fileInput.files && fileInput.files.length > 0) {
-      video = fileInput.files[0];
-      fileName = video.name;
-      try {
-          const storageRef = ref(storage, 'stories/strategy/'+$page.data.user.uid+'/'+video.name)
-          const result = await uploadBytes(storageRef, video)
-          url = await getDownloadURL(result.ref)
-          console.log('url uploaded')
-      } catch (error) {
-          console.log("error with video upload")
-      }
+      file = fileInput.files[0];
+      fileName = file.name;
     }
   }
 
@@ -140,15 +125,15 @@
         }
 
         uploading = true
-        // if (video) {
-        //     try {
-        //         const storageRef = ref(storage, 'stories/strategy/'+$page.data.user.uid+'/'+video.name)
-        //         const result = await uploadBytes(storageRef, video)
-        //         url = await getDownloadURL(result.ref)
-        //     } catch (error) {
-        //         console.log("error with video upload")
-        //     }
-        // }
+        if (file) {
+            try {
+                const storageRef = ref(storage, 'stories/strategy/'+$page.data.user.uid+'/'+file.name)
+                const result = await uploadBytes(storageRef, file)
+                url = await getDownloadURL(result.ref)
+            } catch (error) {
+                console.log("error with video upload")
+            }
+        }
 
         if (url) {
             try {
@@ -276,9 +261,10 @@ style="
   />
 
   <div class = "flex items-center justify-center">
-    {#if url}
+    <img src={imageUrlPreview} class="rounded-sm mt-2 object-contain w-1/2 " alt="" />
+    <!-- {#if url}
     <img src={url} class="rounded-sm mt-2 object-contain w-1/2 " alt="" />
-    {/if}
+    {/if} -->
   </div>
 </div>
 
