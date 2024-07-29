@@ -3,7 +3,8 @@
 export type User = {
 	uid: string
 	role: string
-	username: string // email or phone
+	credentials: string // email or phone
+	username: string
 	platform: string
 }
 
