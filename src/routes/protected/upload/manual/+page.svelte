@@ -1,17 +1,20 @@
 <script lang="ts">
     import { page } from "$app/stores";
     import { db } from "$lib/firebase/client";
-    import UploadSidebar from "$lib/components/UploadSidebar.svelte";
     import { collection, doc, setDoc } from "firebase/firestore";
-    import { MultiSelect, Label, NumberInput, Input } from "flowbite-svelte";
-
+    import MultiSelect from 'svelte-multiselect';
+    import { Label, NumberInput, Input } from "flowbite-svelte";
+    import { currentDate } from "$lib/utils";
+    import { updateTitle } from "$lib/stores/title";
+    import { capitalize } from "$lib/utils";
+    updateTitle(capitalize($page.data.user?.platform) + " Manual Upload");
 
     let successMessage = '';
     let errorMessage = '';
 
     // Uber Manual
     let uberData = {
-        date: '',
+        date: currentDate,
         income: 0,
         tips: 0,
         expenses: 0,
@@ -22,7 +25,7 @@
 
     // Rover Manual
     let roverData = {
-        date: '',
+        date: currentDate,
         income: 0,
         tips: 0,
         expenses: 0,
@@ -43,29 +46,11 @@
         clientLocation: '',
     }
 
-    const uberSchedule = [
-        { value: "M", name: "Monday" },
-        { value: "T", name: "Tuesday" },
-        { value: "W", name: "Wednesday" },
-        { value: "TH", name: "Thursday" },
-        { value: "F", name: "Friday" },
-        { value: "Sat", name: "Saturday" },
-        { value: "Sun", name: "Sunday" },
-    ]
+    const uberSchedule = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
-    const roverServices = [
-        { value: "boarding", name: "Boarding" },
-        { value: "house sitting", name: "House Sitting" },
-        { value: "drop-in", name: "Drop-In Visits" },
-        { value: "day care", name: "Doggy Day Care" },
-        { value: "dog walking", name: "Dog Walking" }
-    ]
+    const roverServices = [ "Boarding", "House Sitting", "Drop-In Visits", "Doggy Day Care", "Dog Walking"]
 
-    const upworkExperience = [
-        { value: "entry level", name: "Entry-Level" },
-        { value: "intermediate level", name: "Intermediate-Level" },
-        { value: "expert level", name: "Expert Level" },
-    ]
+    const upworkExperience = ["Entry-Level", "Intermediate-Level", "Expert Level"]
 
     async function submitManual() {
         const collectionRef = collection(db, "users", $page.data.user?.uid, "upload")
@@ -73,30 +58,23 @@
         successMessage = "Input Submitted Successfully!"
         if ($page.data.user?.platform == "uber") {
             setDoc(docRef, uberData, { merge: true })
-            // successMessage = "Input Submitted Successfully!"  - add when roles are implemented
         }
         else if ($page.data.user?.platform == "rover") {
             setDoc(docRef, roverData, { merge: true })
-            // successMessage = "Input Submitted Successfully!"  - add when roles are implemented
         }
         else if ($page.data.user?.platform == "upwork") {
             setDoc(docRef, upworkData, { merge: true })
-            // successMessage = "Input Submitted Successfully!"  - add when roles are implemented
         }
     }
 </script>
 
 <div class="flex flex-row">
-    <UploadSidebar />
-    <div class="p-8 flex flex-col items-center w-full">
-        <h1 class="text-2xl font-bold mb-6">Manual Upload</h1>
+    <div class="py-2 flex flex-col items-center w-full">
         {#if $page.data.user?.platform == "uber"}
-            <h2 class="text-xl font-semibold mb-4">Uber</h2>
-
             <div class="w-full max-w-md space-y-5">
                 <div class="flex flex-col">
                     <Label>Date</Label>
-                    <Input type="text" bind:value={uberData.date} class="mt-1" />
+                    <Input type="date" bind:value={uberData.date} class="mt-1" />
                 </div>
 
                 <div class="flex flex-col">
@@ -126,17 +104,17 @@
 
                 <div class="flex flex-col">
                     <Label>Weekly Driving Schedule</Label>
-                    <MultiSelect items={uberSchedule} bind:value={uberData.schedule} class="mt-1" />
+                    <MultiSelect options={uberSchedule} bind:value={uberData.schedule} 
+                    style="--sms-bg: rgb(249, 250, 251); padding: 8px; border-radius: 8px;"
+                    --sms-focus-border="2px solid blue"/>
                 </div>
             </div>
 
         {:else if $page.data.user?.platform == "rover"}
-            <h2 class="text-xl font-semibold mb-4">Rover</h2>
-
             <div class="w-full max-w-md space-y-5">
                 <div class="flex flex-col">
                     <Label>Date</Label>
-                    <Input type="text" bind:value={roverData.date} class="mt-1" />
+                    <Input type="date" bind:value={roverData.date} class="mt-1 min-h-5" />
                 </div>
 
                 <div class="flex flex-col">
@@ -166,7 +144,9 @@
 
                 <div class="flex flex-col">
                     <Label>Services Offered</Label>
-                    <MultiSelect items={roverServices} bind:value={roverData.services} class="mt-1" />
+                    <MultiSelect options={roverServices} bind:value={roverData.services} 
+                    style="--sms-bg: rgb(249, 250, 251); padding: 8px; border-radius: 8px;"
+                    --sms-focus-border="2px solid blue"/>
                 </div>
 
                 <div class="flex flex-col">
@@ -176,8 +156,6 @@
             </div>
 
         {:else if $page.data.user?.platform == "upwork"}
-            <h2 class="text-xl font-semibold mb-4">UpWork</h2>
-
             <div class="w-full max-w-md space-y-5">
                 <div class="flex flex-col">
                     <Label>Job Category</Label>
@@ -201,7 +179,8 @@
 
                 <div class="flex flex-col">
                     <Label>Experience Level</Label>
-                    <MultiSelect items={upworkExperience} bind:value={upworkData.experience} class="mt-1" />
+                    <MultiSelect options={upworkExperience} bind:value={upworkData.experience} style="--sms-bg: rgb(249, 250, 251); padding: 8px; border-radius: 8px;"
+                    --sms-focus-border="2px solid blue"/>
                 </div>
 
                 <div class="flex flex-col">

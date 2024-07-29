@@ -4,16 +4,19 @@
 	import "../app.css";
 	import { page } from '$app/stores'
 	/** @type {import('./$types').LayoutData} */
+	export let form : ActionData;
 	export let data;
+	$: activeUrl = $page.url.pathname;
+  	let activeClass = 'text-green-500 dark:text-green-300 hover:text-green-700 dark:hover:text-green-500';
 
 	import BlueButton from "$lib/components/BlueButton.svelte";
-	import { Navbar, NavLi, NavUl, Dropdown, DropdownItem, BottomNav, BottomNavItem} from 'flowbite-svelte';
+	import { Avatar, DropdownHeader, DropdownDivider, Navbar, NavLi, NavUl, Dropdown, DropdownItem, BottomNav, BottomNavItem} from 'flowbite-svelte';
 	import { ChevronDownOutline } from 'flowbite-svelte-icons';
+	import { enhance } from '$app/forms';
+	import type { ActionData } from './protected/$types';
 	
-	$: activeUrl = $page.url.pathname;
 	let mobile: boolean;
 	let protected_urls: boolean;
-	
 	onMount(() => {
 		mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(window.navigator.userAgent);
 		protected_urls = activeUrl.startsWith('/protected');
@@ -35,12 +38,12 @@
 	}
 
 	let title: string;
-	$: (title = ($page.url.pathname === "/") ? "GigConnect" 
+	$: (title = ($page.url.pathname === "/") ? "Gig2Gether" 
 		: parsePageNameFromUrl(activeUrl));
 
 	const navItems = [
-		{ label: "Upload", icon: "fas fa-upload", href: '/protected/upload' },
-		{ label: "Stories", icon: "fas fa-book", href: '/protected/stories' },
+		{ label: "Upload", icon: "fas fa-upload", href: '/protected/upload/manual' },
+		{ label: "Stories", icon: "fas fa-book", href: '/protected/stories/story_feed' },
 		{ label: "Trends", icon: "fas fa-chart-line", href: '/protected/trends/personal' },
 		{ label: "Settings", icon: "fas fa-cog", href: '/protected/settings/account' },
 		{ label: "Planner", icon: "fas fa-calendar", href: '/protected/planner/taxes' }
@@ -51,7 +54,6 @@
 <svelte:head>
     <title>{title}</title> 
 </svelte:head>
-
 {#key title} 
 	<!-- top nav bar for web -->
 	<div class={(mobile && protected_urls) ? 'hidden md:block' : 'block'}>
@@ -61,7 +63,7 @@
 				<h1 class="text-lg font-bold">{title}</h1>
 			</div>
 				<BlueButton href="/login" buttonText="Login"/>
-			{:else if title==="GigConnect"}
+			{:else if title==="Gig2Gether"}
 				<div>
 					{#if data.user===undefined}
 						<a href="/" class="text-lg font-bold">{title}</a>
@@ -84,11 +86,11 @@
 			</Dropdown>
 			
 			
-			{:else} 
+			{:else} <!-- usually user is authenticated -->
 			<!-- Using native flowbite instead of flowbite-svelte bc height & break pt issues -->
 			<!-- https://github.com/themesberg/flowbite-svelte/issues/1156 -->
 			<div>
-				<a href="/protected" class="text-lg font-bold">{"GigConnect"}</a>
+				<a href="/protected" class="text-lg font-bold">{"Gig2Gether"}</a>
 			</div>
 
 			<div class="flex justify-center w-7/8">
@@ -103,16 +105,31 @@
 				  </NavUl>
 				</Navbar>
 			</div>
-			
-			<form action="/logout" method="POST">
-				<BlueButton buttonText="Log out" type="submit"/>
-			</form>
+			<div class="mr-3">
+			<Avatar class="acs mr-3 w-8 h-8" dot={{ color: 'green' }} border/>
+			<Dropdown {activeUrl} {activeClass} triggeredBy=".acs">
+				<DropdownHeader>
+				  <span class="block text-sm text-gray-900 dark:text-white">Username</span>
+				  <span class="block truncate text-sm font-medium">#email/password</span>
+				</DropdownHeader>
+				<DropdownItem href="/protected">Home</DropdownItem>
+				<DropdownItem href="/protected/settings/account">Account</DropdownItem>
+				<DropdownItem>Notifications</DropdownItem>
+				<DropdownDivider />
+
+				<form action="/logout" method="POST" use:enhance bind:this={form}>
+				<DropdownItem slot="footer" on:click={() => form.submit()}>
+					Log out
+				</DropdownItem>
+				</form>
+			</Dropdown>
+			</div>
 			{/if}
 		</header>
 	</div>
 
 	<!-- Bottom navigation -->
-	<div class={mobile && protected_urls ? 'fixed bottom-0 w-full md:hidden' : 'hidden'}>
+	<div class={mobile && protected_urls ? 'fixed bottom-0 w-full md:hidden z-30' : 'hidden'}>
 		<BottomNav position="absolute" classInner="grid-cols-5">
 			{#each navItems as item}
 			  <BottomNavItem href={item.href}>

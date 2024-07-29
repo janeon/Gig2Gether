@@ -1,7 +1,6 @@
 import { redirect } from "@sveltejs/kit"
 import type { Actions, PageServerLoad } from './$types'
 import { getFirebaseServer } from "$lib/firebase/adminServer";
-import { log } from 'firebase-functions/logger';
 
 export const load: PageServerLoad = async ({locals}) => {
   if (locals.user) {

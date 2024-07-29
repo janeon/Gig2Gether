@@ -112,7 +112,7 @@
         </div>
         
         <div class="py-5">
-            <Label>Hours spent on a W2 job (per week)</Label>
+            <Label>Hours spent on a full time (W2) job per week</Label>
             <NumberInput class = "border-2" bind:value={w2Hours} type = "number"/>
         </div>
         

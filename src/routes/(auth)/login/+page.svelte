@@ -5,7 +5,7 @@
 	import type { ActionData } from './$types'; 
 	import { getUser } from '$lib/utils'
 	import { enhance } from '$app/forms';
-	import { Button, Input, Label, Alert } from 'flowbite-svelte';
+	import { Button, Input, Alert } from 'flowbite-svelte';
 	import BlueButton from '$lib/components/BlueButton.svelte';
 	export let form : ActionData;
 	let token: string;
@@ -16,13 +16,7 @@
 	let signInMethod : string = "";
   
 	onMount(() => {
-	  recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-		'size': 'invisible',
-		'callback': (response) => {
-		  // reCAPTCHA solved, allow signInWithPhoneNumber.
-		  console.log('reCAPTCHA solved.');
-		}
-	  });
+	  
 	});
   
 	const sendCode = async () => {
@@ -39,6 +33,12 @@
 			signInMethod = 'email';
 		} else {
 			signInMethod = 'phone';
+			recaptchaVerifier = await new RecaptchaVerifier(auth, 'recaptcha-container', {
+			'size': 'invisible',
+			'callback': (response) => {
+			// reCAPTCHA solved, allow signInWithPhoneNumber.
+			console.log('reCAPTCHA solved.');}
+			});
 			sendCode();
 		}
 	}
