@@ -77,7 +77,8 @@
             ethnicity: ethnicity,
             householdIncome: householdIncome,
             w2Hours: w2Hours,
-            otherGigHours: otherGigHours
+            otherGigHours: otherGigHours,
+            date: new Date()
         }
         try {
             const userRef = doc(db, "demographics", $page.data.user.uid);
