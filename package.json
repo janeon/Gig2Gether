@@ -52,6 +52,8 @@
 		"flowbite": "^2.4.1",
 		"flowbite-svelte": "^0.46.15",
 		"papaparse": "^5.4.1",
+		"praecox-datepicker": "^1.1.7",
+		"svelte-calendar": "^3.1.6",
 		"svelte-multiselect": "^10.3.0",
 		"tailwind-merge": "^2.4.0",
 		"tailwind-variants": "^0.2.1"

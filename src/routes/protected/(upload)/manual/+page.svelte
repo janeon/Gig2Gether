@@ -4,7 +4,7 @@
     import UploadSidebar from "$lib/components/UploadSidebar.svelte";
     import { collection, doc, setDoc } from "firebase/firestore";
     import { MultiSelect, Label, NumberInput, Input } from "flowbite-svelte";
-
+    import { get } from 'svelte/store';
 
     let successMessage = '';
     let errorMessage = '';
@@ -18,7 +18,7 @@
         hoursSpent: 0,
         withholdings: 0,
         schedule: [],
-    }
+    };
 
     // Rover Manual
     let roverData = {
@@ -30,7 +30,7 @@
         platfromCut: 0,
         services: [],
         travelTime: 0,
-    }
+    };
 
     // UpWork Manual
     let upworkData = {
@@ -41,7 +41,7 @@
         experience: [],
         jobDuration: '',
         clientLocation: '',
-    }
+    };
 
     const uberSchedule = [
         { value: "M", name: "Monday" },
@@ -51,7 +51,7 @@
         { value: "F", name: "Friday" },
         { value: "Sat", name: "Saturday" },
         { value: "Sun", name: "Sunday" },
-    ]
+    ];
 
     const roverServices = [
         { value: "boarding", name: "Boarding" },
@@ -59,29 +59,57 @@
         { value: "drop-in", name: "Drop-In Visits" },
         { value: "day care", name: "Doggy Day Care" },
         { value: "dog walking", name: "Dog Walking" }
-    ]
+    ];
 
     const upworkExperience = [
         { value: "entry level", name: "Entry-Level" },
         { value: "intermediate level", name: "Intermediate-Level" },
         { value: "expert level", name: "Expert Level" },
-    ]
+    ];
 
     async function submitManual() {
-        const collectionRef = collection(db, "users", $page.data.user?.uid, "upload")
-        const docRef = doc(collectionRef, "manual") // Separate by gig work manual inputs?
-        successMessage = "Input Submitted Successfully!"
-        if ($page.data.user?.platform == "uber") {
-            setDoc(docRef, uberData, { merge: true })
-            // successMessage = "Input Submitted Successfully!"  - add when roles are implemented
-        }
-        else if ($page.data.user?.platform == "rover") {
-            setDoc(docRef, roverData, { merge: true })
-            // successMessage = "Input Submitted Successfully!"  - add when roles are implemented
-        }
-        else if ($page.data.user?.platform == "upwork") {
-            setDoc(docRef, upworkData, { merge: true })
-            // successMessage = "Input Submitted Successfully!"  - add when roles are implemented
+
+        const user = get(page).data.user;
+
+        try {
+            const user = get(page).data.user;
+            if (!user) {
+                errorMessage = 'User not authenticated';
+                return;
+            }
+
+            const platform = user.platform;
+            let data = {};
+            let collectionName = '';
+
+            data = roverData;
+            collectionName = 'rover';
+            
+            if (platform === 'uber') {
+                data = uberData;
+                collectionName = 'uber';
+            } else if (platform === 'rover') {
+                data = roverData;
+                collectionName = 'rover';
+            } else if (platform === 'upwork') {
+                data = upworkData;
+                collectionName = 'upwork';
+            } else {
+                errorMessage = 'Invalid platform';
+                return;
+            }
+
+            const manualDocRef = doc(db, 'users', user.uid, 'upload', 'manual');
+            const subCollectionRef = collection(manualDocRef, collectionName);
+            const newDocRef = doc(subCollectionRef); // this generates the random ID
+
+            await setDoc(newDocRef, data);
+            successMessage = 'Input Submitted Successfully!';
+            errorMessage = '';
+        } catch (error) {
+            console.error('Error submitting data:', error);
+            successMessage = '';
+            errorMessage = 'Failed to submit data';
         }
     }
 </script>
@@ -128,7 +156,7 @@
                     <Label>Weekly Driving Schedule</Label>
                     <MultiSelect items={uberSchedule} bind:value={uberData.schedule} class="mt-1" />
                 </div>
-            </div>
+            </div> 
 
         {:else if $page.data.user?.platform == "rover"}
             <h2 class="text-xl font-semibold mb-4">Rover</h2>
@@ -150,7 +178,7 @@
                 </div>
 
                 <div class="flex flex-col">
-                    <Label>Time Spent</Label>
+                    <Label>Time Spent (Hours)</Label>
                     <NumberInput bind:value={roverData.timeSpent} class="mt-1" />
                 </div>
 
@@ -223,7 +251,7 @@
             </button>
             {#if successMessage}
                 <p class="text-green-600 mt-2">{successMessage}</p>
-             {/if}
+            {/if}
             {#if errorMessage}
                 <p class = "text-red-600 mt-2">{errorMessage}</p>
             {/if}

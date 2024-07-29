@@ -4,6 +4,7 @@
     import UploadSidebar from "$lib/components/UploadSidebar.svelte";
     import { collection, doc, setDoc } from "firebase/firestore";
     import { MultiSelect, Label, NumberInput, Input } from "flowbite-svelte";
+    import { get } from "svelte/store";
 
 
     let successMessage = '';
@@ -57,22 +58,48 @@
     ]
 
     async function submitExpenses() {
-        const collectionRef = collection(db, "users", $page.data.user?.uid, "upload")
-        const docRef = doc(collectionRef, "Expenses") // Separate by gig work manual inputs?
-        successMessage = "Input Submitted Successfully!"
+         const user = get(page).data.user;
 
-        if ($page.data.user?.platform == "uber") {
-            setDoc(docRef, uberData, { merge: true })
-            // successMessage = "Input Submitted Successfully!" - useful when roles work
-        }
-        else if ($page.data.user?.platform == "rover") {
-            setDoc(docRef, roverData, { merge: true })
-            // successMessage = "Input Submitted Successfully!"  - useful when roles work
-        }
-        else if ($page.data.user?.platform == "upwork") {
-            setDoc(docRef, upworkData, { merge: true })
-            // successMessage = "Input Submitted Successfully!"   - useful when roles work
-        }
+            try {
+                const user = get(page).data.user;
+                if (!user) {
+                    errorMessage = 'User not authenticated';
+                    return;
+                }
+
+                const platform = user.platform;
+                let data = {};
+                let collectionName = '';
+
+                data = roverData;
+                collectionName = 'rover';
+                
+                if (platform === 'uber') {
+                    data = uberData;
+                    collectionName = 'uber';
+                } else if (platform === 'rover') {
+                    data = roverData;
+                    collectionName = 'rover';
+                } else if (platform === 'upwork') {
+                    data = upworkData;
+                    collectionName = 'upwork';
+                } else {
+                    errorMessage = 'Invalid platform';
+                    return;
+                }
+
+                const manualDocRef = doc(db, 'users', user.uid, 'upload', 'expenses');
+                const subCollectionRef = collection(manualDocRef, collectionName);
+                const newDocRef = doc(subCollectionRef); // this generates the random ID
+
+                await setDoc(newDocRef, data);
+                successMessage = 'Input Submitted Successfully!';
+                errorMessage = '';
+            } catch (error) {
+                console.error('Error submitting data:', error);
+                successMessage = '';
+                errorMessage = 'Failed to submit data';
+            }
     }
 </script>
 

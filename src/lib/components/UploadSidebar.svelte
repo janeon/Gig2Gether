@@ -9,10 +9,10 @@
     <SidebarWrapper>
         <SidebarGroup>
                 <!-- // Uber -->
-            {#if $page.data.user?.platform == "uber"}
+            <!-- {#if $page.data.user?.platform == "uber"} -->
             <SidebarItem label="Quests" href="/protected/quests"/>
             <SidebarItem label="Trips" href="/protected/trips"/>
-            {/if}
+            <!-- {/if} -->
             
                  <!-- // Rover -->
             {#if $page.data.user?.platform == "rover"}
