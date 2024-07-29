@@ -36,6 +36,8 @@
         {value: "ratings", label: "Ratings"},
         {value: "working time", label: "Working Time"},
         {value: "stress", label: "Stress (e.g. from precarity)"},
+        {value: "deactivation", label: "Deactivation"},
+        {value: "technology", label: "Technology"},
         {value: "other", label: "Other"}
     ];
 
