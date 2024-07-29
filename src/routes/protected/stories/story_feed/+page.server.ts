@@ -12,6 +12,7 @@ export async function load() {
         snapshot.forEach((doc) => {
             let post = doc.data()
             post.date = post.date.toDate()
+            post.id = doc.id
             posts.push(post)
         })
     }

@@ -23,7 +23,9 @@
     $: fileName = video ? video.name : 'No file selected';
     $: postSharing = []
     $: sharePrivate = false
-    $: errorMessage = " "
+    $: errorMessageType = " "
+    $: errorMessageTags = " "
+    $: errorMessageSharing = " "
 
     const commonTags = [
         {value: "fair pay", label: "Fair Pay"},
@@ -79,11 +81,32 @@
   }
 
     async function uploadContent() {
+        //error catching
         if (!type) {
-            errorMessage = "Please select a type"
+            errorMessageType = "Please select a type"
+        }
+        else {
+            errorMessageType = ""
+        }
+
+        if (tags.length == 0) {
+            errorMessageTags = "Please select at least one tag"
+        }
+        else {
+            errorMessageTags = ""
+        }
+
+        if (postSharing.length == 0) {
+            errorMessageSharing = "Please choose a sharing preference"
+        }
+        else {
+            errorMessageSharing = ""
+        }
+
+        if (errorMessageSharing != "" || errorMessageTags != "" || errorMessageType != "") {
             return
         }
-        errorMessage = " "
+
         if (postSharing.includes('private')) {
             postSharing = ['private']
         }
@@ -102,7 +125,7 @@
             try {
             await addDoc(collection(db, 'stories', $page.data.user.platform, "posts"), 
             { type, title, description, uid: $page.data.user.uid,
-            url, date: new Date(), tags,
+            url, date: new Date(), tags, platform: $page.data.user.platform, likes: [],
             sharing: postSharing
 
         })
@@ -115,13 +138,8 @@
                 console.log(type)
                 console.log(title, description, $page.data.user.uid, tags)
                 await addDoc(collection(db, 'stories', $page.data.user.platform, "posts"), {
-                type,
-                title,
-                description,
-                uid: $page.data.user.uid,
-                date: new Date(),
-                tags,
-                sharing: postSharing
+                type, title, description, uid: $page.data.user.uid, date: new Date(),
+                likes: [], tags, platform: $page.data.user.platform, sharing: postSharing
 
             })
         } catch {
@@ -159,7 +177,7 @@
     })
 
 </script>
-<p class="text-red-500">{errorMessage}</p>
+<p class="text-red-500">{errorMessageType}</p>
 <!-- Issue/Strategy Selection -->
 
 <div class="flex justify-center py-2">
@@ -181,6 +199,7 @@
 <!-- Tag selection -->
 <h1 class="font-medium whitespace-nowrap py-5">
     Tag your story with related topics!</h1>
+<p class="text-red-500">{errorMessageTags}</p>
 {#if $page.data.user.platform == "rover"}
   <Tags tags={roverTags} bindGroup={tags} />
 {:else if $page.data.user.platform == "uber"}
@@ -231,6 +250,7 @@ style="
 
 <div class = "py-5">
     <h2 class="font-medium mb-5">Who Would You Like to Share Your Worker Data With?</h2>
+    <p class="text-red-500">{errorMessageSharing}</p>
     {#if sharePrivate}
     <div class="space-y-2">
         <div class="flex justify-center">
