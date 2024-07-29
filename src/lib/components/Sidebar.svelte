@@ -8,7 +8,7 @@
 	  import { enhance } from '$app/forms';
 	  import type { ActionData } from '../../routes/protected/$types';
     
-    export let form : ActionData;
+    let form : ActionData;
     $: activeUrl = $page.url.pathname;
     let activeClass = 'text-green-500 dark:text-green-300 hover:text-green-700 dark:hover:text-green-500';
     let mobile: boolean;
