@@ -5,6 +5,7 @@
     $: activeUrl = $page.url.pathname;
     import { sineIn } from 'svelte/easing';
     import '@fortawesome/fontawesome-free/css/all.min.css';
+    import { onMount } from 'svelte';
 
     let mobile: boolean;
     onMount(() => {
