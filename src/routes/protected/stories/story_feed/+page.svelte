@@ -1,4 +1,5 @@
 <script lang="ts">
+<script lang="ts">
     import PostCard from "$lib/components/PostCard.svelte";
     import { Button, Dropdown, Checkbox, Accordion, AccordionItem } from 'flowbite-svelte';
     export let data
