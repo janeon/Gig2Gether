@@ -1,5 +1,4 @@
 <script lang="ts">
-<script lang="ts">
     import PostCard from "$lib/components/PostCard.svelte";
     import { Button, Dropdown, Checkbox, Accordion, AccordionItem } from 'flowbite-svelte';
     export let data
@@ -23,6 +22,8 @@
     $: issueCheck = true
     $: strategyCheck = true
 
+    let allPlatformChecked = true
+    let allTypeChecked = true
     //checkboxes:
     // const uberCheck = document.getElementById("uber")
     // const upworkCheck = document.getElementById("upwork")
@@ -60,6 +61,8 @@
                     roverCheck = false
                     uberCheck = false
                     upworkCheck = false
+                    allPlatformChecked = true
+                    return
                     // try{
                     //     let rover = document.getElementById('rover') as HTMLInputElement
                     //     let uber = document.getElementById('uber') as HTMLInputElement
@@ -76,6 +79,7 @@
                     uberCheck = true
                     upworkCheck = true
                     $filterStore.platform_filter = ['rover', 'uber', 'upwork']
+                    allPlatformChecked = false
                 }
             }
             else if (box == 'rover') {
@@ -83,29 +87,43 @@
                     platform_all = false
                     $filterStore.platform_filter = $filterStore.platform_filter.filter((item)=>{return item !== 'rover'})
                     console.log($filterStore.platform_filter)
+                    allPlatformChecked = false
                 }
                 else {
-                    console.log('adding')
                     $filterStore.platform_filter = [...$filterStore.platform_filter, 'rover']
+                    if (uberCheck && upworkCheck) {
+                        allPlatformChecked = true
+                    }
                 }
             }
             else if (box == 'uber') {
                 if (uberCheck) {
                     platform_all = false
                     $filterStore.platform_filter = $filterStore.platform_filter.filter((item)=>{return item != 'uber'})
+                    allPlatformChecked = false
                 }
                 else {
                     $filterStore.platform_filter = [...$filterStore.platform_filter, 'uber']
+                    if (roverCheck && upworkCheck) {
+                        allPlatformChecked = true
+                    }
                 }
             }
             else if (box == 'upwork') {
                 if (upworkCheck) {
                     platform_all = false
                     $filterStore.platform_filter = $filterStore.platform_filter.filter((item)=>{return item != 'upwork'})
+                    allPlatformChecked = false
                 }
                 else {
                     $filterStore.platform_filter = [...$filterStore.platform_filter, 'upwork']
+                    if (uberCheck && roverCheck) {
+                        allPlatformChecked = true
+                    }
                 }
+            }
+            if (allPlatformChecked) {
+                platform_all = true
             }
         }
 
@@ -115,20 +133,27 @@
                     $filterStore.type_filter = []
                     issueCheck = false
                     strategyCheck = false
+                    allTypeChecked = true
+                    return
                 }
                 else {
                     $filterStore.type_filter = ['issue', 'strategy']
                     issueCheck = true
                     strategyCheck = true
+                    allTypeChecked = false
                 }
             }
             else if (box == 'issue') {
                 if (issueCheck) {
                     type_all = false
                     $filterStore.type_filter = $filterStore.type_filter.filter((item)=>{ return item != 'issue'})
+                    allTypeChecked = false
                 }
                 else {
                     $filterStore.type_filter = [...$filterStore.type_filter, 'issue']
+                    if (strategyCheck) {
+                        allTypeChecked = true
+                    }
                 }
             }
 
@@ -136,10 +161,17 @@
                 if (strategyCheck) {
                     type_all = false
                     $filterStore.type_filter = $filterStore.type_filter.filter((item)=>{ return item != 'strategy'})
+                    allTypeChecked = false
                 }
                 else {
                     $filterStore.type_filter = [...$filterStore.type_filter, 'strategy']
+                    if (issueCheck) {
+                        allTypeChecked = true
+                    }
                 }
+            }
+            if (allTypeChecked) {
+                type_all = true
             }
         }
     }
