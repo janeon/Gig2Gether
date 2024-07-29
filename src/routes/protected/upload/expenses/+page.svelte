@@ -68,7 +68,6 @@
 <div class="flex flex-row">
     <div class="py-2 flex flex-col items-center w-full">
         {#if $page.data.user?.platform == "uber"}
-            <h2 class="text-xl font-semibold mb-4">Uber</h2>
 
             <div class="w-full max-w-md space-y-5">
                 <div class="flex flex-col">
@@ -130,7 +129,6 @@
                 </div>
             </div>
         {:else if $page.data.user?.platform == "upwork"}
-            <h2 class="text-xl font-semibold mb-4">UpWork</h2>
 
             <div class="w-full max-w-md space-y-5">
                 <div class="flex flex-col">
