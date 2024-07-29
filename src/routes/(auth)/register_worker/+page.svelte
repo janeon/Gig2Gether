@@ -5,7 +5,7 @@
 	
 	import { type ConfirmationResult, PhoneAuthProvider, signInWithCredential, createUserWithEmailAndPassword } from "firebase/auth";
 	import { auth, RecaptchaVerifier, db, signInWithPhoneNumber } from '$lib/firebase/client';
-	import { doc, setDoc } from 'firebase/firestore';
+	import { collection, doc, getCountFromServer, query, setDoc, where } from 'firebase/firestore';
 
 	import { Button, Input, Label, Radio, Alert } from 'flowbite-svelte';
 	import BlueButton from '$lib/components/BlueButton.svelte';
@@ -29,7 +29,7 @@
 
 	const sendCode = async () => {
 	  try {
-		confirmationResult = await signInWithPhoneNumber(auth, '+1'+form.username.value, recaptchaVerifier);
+		confirmationResult = await signInWithPhoneNumber(auth, '+1'+form.credentials.value, recaptchaVerifier);
 		console.log('SMS sent.');
 	  } catch (error) {
 		form.formErrors = (error as Error).message;
@@ -38,7 +38,7 @@
 	};
 
 	const emailOrPhone = async () => {
-		if (form.username.value.includes('@')) {
+		if (form.credentials.value.includes('@')) {
 			signInMethod = 'email';
 		} else {
 			signInMethod = 'phone';
@@ -48,12 +48,22 @@
 
 	async function register(event: Event): Promise<void> {
 		event.preventDefault(); // Prevent the default form submission
+		// let username: form.username.value
+		if (form.username.value.length < 4) {
+			form.formErrors = "Username must be at least 4 characters"
+			return
+		}
+		const count = await getCountFromServer(query(collection(db, 'users'), where('username', '==', form.username.value)))
+		if (count.data().count > 0) {
+			form.formErrors = "Username is in use"
+			return
+		}
 
         try {
 			let cred = null;
 			try {
 				if (signInMethod == 'email') {
-					cred = await createUserWithEmailAndPassword(auth, form.username.value, form.password.value);
+					cred = await createUserWithEmailAndPassword(auth, form.credentials.value, form.password.value);
 				}
 				if (signInMethod == 'phone') {
 					const credential = PhoneAuthProvider.credential(confirmationResult.verificationId, form.code.value);
@@ -68,6 +78,7 @@
 				const docRef = doc(db, 'users', user.uid)
 				await setDoc(docRef, {
 					username: form.username.value,
+					auth: form.credentials.value,
 					role: "worker",
 					platform: selectedPlatform
 				})
@@ -117,15 +128,17 @@
 		</div>
 		{#if selectedPlatform}
 		<div class="relative inline-block">
-			<Input type="text" placeholder="Email or Phone Number" name="username" class="px-4 py-2 border border-gray-300 rounded-md" on:keypress={go} required />
+			<Input type="text" placeholder="Email or Phone Number" name="credentials" class="px-4 py-2 border border-gray-300 rounded-md" on:keypress={go} required />
 			<Button on:click={emailOrPhone} class="absolute top-0 right-0 h-full px-4 py-2 bg-blue-500 text-white rounded-r-md">Go</Button>
 		</div>
 		{/if}
 		
 		{#if signInMethod == 'email'}
+		<Input placeholder="Username" name="username" class="px-4 py-2 border border-gray-300 rounded-md" />
 		<Input type="password" placeholder="Password" name="password" class="px-4 py-2 border border-gray-300 rounded-md" />
 		<BlueButton onclick={register} type="submit" buttonText="Register" href="/protected"/>
 		{:else if signInMethod == 'phone'}
+		<Input placeholder="Username" name="username" class="px-4 py-2 border border-gray-300 rounded-md" />
 		<Input type="text" placeholder="Verification Code" name="code" class="px-4 py-2 border border-gray-300 rounded-md" required />
 		<BlueButton onclick={register} type="submit" buttonText="Register" href="/protected"/>
 		{/if}
