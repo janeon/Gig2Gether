@@ -12,8 +12,18 @@
     let modal = false
     const deleteData = async()=> {
         for (let dataDoc of toDelete) {
-            if (dataDoc.type == "story") {
+            if (dataDoc.type === "Story") {
                 const docRef = doc(db, 'stories', data.user.platform, "posts", dataDoc.id)
+                await deleteDoc(docRef)
+                
+            }
+            else if (dataDoc.type === "Manual") {
+                const docRef = doc(db, 'upload', 'manual', 'entries', dataDoc.id)
+                await deleteDoc(docRef)
+                
+            }
+            else if (dataDoc.type === "Expense") {
+                const docRef = doc(db, 'upload', 'expenses', 'entries', dataDoc.id)
                 await deleteDoc(docRef)
                 
             }
