@@ -17,7 +17,8 @@
     let typeError = ''
     let incomeError = ''
 
-    let date = currentDate
+    let date = currentDate //Called date for same values for other uploads
+    let end_date = currentDate
     // Uber Manual
     let uberData = {
         date: new Date(),
@@ -32,7 +33,8 @@
 
     // Rover Manual
     let roverData = {
-        date: new Date(),
+        date: new Date(), //Called date for same values for other uploads (but is start date)
+        end_date: new Date(),
         income: 0,
         tips: 0,
         expenses: 0,
@@ -45,7 +47,8 @@
 
     // UpWork Manual
     let upworkData = {
-        date: new Date(),
+        date: new Date(), //Called date for same values for other uploads (but is start date)
+        end_date: new Date(),
         type: '',
         hourlyCharge: 0,
         hoursPerWeek: 0,
@@ -143,10 +146,12 @@
         }
         else if ($page.data.user?.platform == "rover") {
             roverData.date = new Date(date)
+            roverData.end_date = new Date(end_date)
             setDoc(docRef, roverData, { merge: true })
         }
         else if ($page.data.user?.platform == "upwork") {
             upworkData.date = new Date(date)
+            upworkData.end_date = new Date(end_date)
             setDoc(docRef, upworkData, { merge: true })
         }
     }
@@ -197,8 +202,12 @@
         {:else if $page.data.user?.platform == "rover"}
             <div class="w-full max-w-md space-y-5">
                 <div class="flex flex-col">
-                    <Label>Date</Label>
+                    <Label>Start Date</Label>
                     <Input type="date" bind:value={date} class="mt-1 min-h-5" />
+                </div>
+                <div class="flex flex-col">
+                    <Label>End Date</Label>
+                    <Input type="date" bind:value={end_date} class="mt-1 min-h-5" />
                 </div>
 
                 <div class="flex flex-col">
@@ -245,8 +254,13 @@
         {:else if $page.data.user?.platform == "upwork"}
             <div class="w-full max-w-md space-y-5">
                 <div class="flex flex-col">
-                    <Label>Date</Label>
+                    <Label>Start Date</Label>
                     <Input type="date" bind:value={date} class="mt-1 min-h-5" />
+                </div>
+
+                <div class="flex flex-col">
+                    <Label>End Date</Label>
+                    <Input type="date" bind:value={end_date} class="mt-1 min-h-5" />
                 </div>
                 
                 <div class="flex flex-col">
