@@ -1,12 +1,16 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import type { ActionData } from './$types'; 
-	export let form : ActionData;
+
 	import { createUserWithEmailAndPassword } from 'firebase/auth';
 	import { auth, db } from '$lib/firebase/client'
 	import { doc, setDoc } from 'firebase/firestore';
+	import { Input } from 'flowbite-svelte';
+	import BlueButton from '$lib/components/BlueButton.svelte';
+
+	export let form : ActionData;
 	let token: string;
-	$: console.log("token", token);
+	// $: console.log("token", token);
 
 	async function register(event: Event): Promise<void> {
 		event.preventDefault(); // Prevent the default form submission
@@ -20,7 +24,8 @@
 				const docRef = doc(db, 'users', user.uid)
 				await setDoc(docRef, {
 					email: email,
-					role: "policymaker"
+					role: "policymaker",
+					platform: "policymaker"
 				})
 			} catch (error) {
 			console.error((error as Error).message)
@@ -36,30 +41,41 @@
             console.error(err);
 			form!.formErrors = err.code.split('/')[1];
         }
-		
     }
 </script>
 
+<div class="flex justify-center min-h-screen pt-16">
+	<form
+	  class="flex flex-col gap-4 p-8 space-y-4 bg-white rounded-md w-full max-w-md"
+	  action="?/register"
+	  method="POST"
+	  use:enhance
+	  bind:this={form}
+	>
+	  <Input
+		type="email"
+		placeholder="Email"
+		name="email"
+		label="Email"
+		required
+	  />
+	  <Input
+		type="password"
+		placeholder="Password"
+		name="password"
+		label="Password"
+		required
+	  />
+  
+	  {#if form?.formErrors}
+		<article>
+		  <div class="text-red-600">
+			{form.formErrors}
+		  </div>
+		</article>
+	  {/if}
+  
+	  <BlueButton onclick={register} type="submit" buttonText="Register" href="/protected"/>
 
-<div class="flex flex-col items-center">
-
-<form
-	class="flex flex-col gap-4 p-8 space-y-4 bg-white sm:w-6/12"
-	action="?/register" method="POST" use:enhance bind:this={form}
->
-	<input type="email" placeholder="email" name="email" 
-		class="px-4 py-2 border border-gray-300 rounded-md" required/>
-	<input type="password" placeholder="password" name="password" 
-		class="px-4 py-2 border border-gray-300 rounded-md" required/>	
-
-	{#if form?.formErrors}
-			<article>
-				<div style="color: red;">
-					{form.formErrors}
-				</div>
-			</article>
-	{/if}
-	
-	<button on:click={register} type="submit" class="default-action">Register</button>
-</form>
-</div>
+	</form>
+  </div>

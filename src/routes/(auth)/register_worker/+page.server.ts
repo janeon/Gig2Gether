@@ -1,21 +1,23 @@
 import { redirect } from '@sveltejs/kit'
-import type { Action, Actions, PageServerLoad } from './$types'
+import type { Actions, PageServerLoad } from './$types'
 import { getFirebaseServer } from "$lib/firebase/adminServer";
 
 export const load: PageServerLoad = async ({locals}) => {
   if (locals.user) {
+    console.log("User is already logged in");
     redirect(302, '/')
   }
 }
 
-const register: Action = async ({ request, cookies }) => {
+export const actions = {
+  default: async ({ request, cookies }) => {
   const data = await request.formData()
   const token = data.get("token") as string;
 
   const admin = getFirebaseServer();
   if (admin.error) {
       console.error("Error getting firebase admin");
-      throw redirect(303, "/register");
+      throw redirect(303, "/register_worker");
   }
 
   // Expires in 5 days
@@ -28,7 +30,7 @@ const register: Action = async ({ request, cookies }) => {
     sessionCookie = await admin_auth.createSessionCookie(token, { expiresIn: expiresIn * 1000 });
     } catch (error) {
       console.error("Error creating session cookie", (error as Error).message); 
-      throw redirect(303, "/register");
+      throw redirect(303, "/register_worker");
     }
 
   // DO NOT RENAME COOKIE 
@@ -43,6 +45,6 @@ const register: Action = async ({ request, cookies }) => {
   });
 
   redirect(303, '/protected')
-}
-
-export const actions: Actions = { register }
+  }
+} satisfies Actions
+  

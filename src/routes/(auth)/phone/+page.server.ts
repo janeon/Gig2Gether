@@ -1,7 +1,6 @@
 import { redirect } from "@sveltejs/kit"
 import type { Actions, PageServerLoad } from './$types'
 import { getFirebaseServer } from "$lib/firebase/adminServer";
-import { log } from 'firebase-functions/logger';
 
 
 export const load: PageServerLoad = async ({locals}) => {
@@ -47,7 +46,7 @@ export const actions = {
         secure: true,
         sameSite: "lax",
     });
-    log("Session cookie set: ", sessionCookie);
+    console.log("Session cookie set: ", sessionCookie);
 
     
     throw redirect(303, '/protected');

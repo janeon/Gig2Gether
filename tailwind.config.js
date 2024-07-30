@@ -1,11 +1,13 @@
 import flowbitePlugin from 'flowbite/plugin'
 import { fontFamily } from "tailwindcss/defaultTheme";
+import fa from 'tailwind-fontawesome'
+
 
 const config = {
 	darkMode: ["class"],
 	content: ['./src/**/*.{html,js,svelte,ts}', './node_modules/flowbite-svelte/**/*.{html,js,svelte,ts}'],
 	safelist: ["dark"],
-	plugins: [flowbitePlugin],
+	plugins: [flowbitePlugin, fa],
 	theme: {
 		container: {
 			center: true,
