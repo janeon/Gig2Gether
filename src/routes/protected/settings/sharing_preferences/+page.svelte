@@ -21,7 +21,8 @@
     let uploadData = {
         sharing: [],
         data_lifespan: "never",
-        location_granularity: "1 mile"
+        location_granularity: "1 mile",
+        date: new Date()
     }
 
     $: sharePrivate = false

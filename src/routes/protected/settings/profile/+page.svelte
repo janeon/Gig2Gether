@@ -13,10 +13,10 @@
     updateTitle(`My ${capitalize($page.data.user?.platform)} Profile`);
 
     let uberData = {
-        rating: 0, car: '', services: [], cities: [], dateJoined: currentDate
+        rating: 0, car: '', services: [], cities: [], dateJoined: currentDate, date: new Date()
     };
     let roverData = {
-        rating: 0, pets: [], services: [], cities: [], dateJoined: currentDate
+        rating: 0, pets: [], services: [], cities: [], dateJoined: currentDate, date: new Date()
     };
 
     const uberServices = ["UberX", "UberXL", "UberX Share", "UberX Comfort", "Uber Black", "Uber Black SUV", "WAV", "Uber Car Seat X", "Uber Green", "Uber Taxi"];
