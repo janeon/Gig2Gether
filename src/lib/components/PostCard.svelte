@@ -10,7 +10,6 @@
     const changeLikes = async()=> {
         let newLikes
         const post = doc(db, 'stories', postData.platform, "posts", postData.id)
-        console.log("current likes: ",likes)
         if (likes.includes($page.data.user.uid)) {
             newLikes = postData.likes.filter((item)=> {item !== $page.data.user.uid})
         }

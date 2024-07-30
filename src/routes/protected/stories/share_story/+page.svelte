@@ -115,7 +115,6 @@
                 const storageRef = ref(storage, 'stories/strategy/'+$page.data.user.uid+'/'+video.name)
                 const result = await uploadBytes(storageRef, video)
                 url = await getDownloadURL(result.ref)
-                console.log(url)
             } catch (error) {
                 console.log("error with video upload")
             }
@@ -135,8 +134,6 @@
         }
         else {
             try {
-                console.log(type)
-                console.log(title, description, $page.data.user.uid, tags)
                 await addDoc(collection(db, 'stories', $page.data.user.platform, "posts"), {
                 type, title, description, uid: $page.data.user.uid, date: new Date(),
                 likes: [], tags, platform: $page.data.user.platform, sharing: postSharing
