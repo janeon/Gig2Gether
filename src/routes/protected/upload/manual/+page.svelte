@@ -17,9 +17,10 @@
     let typeError = ''
     let incomeError = ''
 
+    let date = currentDate
     // Uber Manual
     let uberData = {
-        date: currentDate,
+        date: new Date(),
         income: 0,
         tips: 0,
         expenses: 0,
@@ -31,7 +32,7 @@
 
     // Rover Manual
     let roverData = {
-        date: currentDate,
+        date: new Date(),
         income: 0,
         tips: 0,
         expenses: 0,
@@ -44,6 +45,7 @@
 
     // UpWork Manual
     let upworkData = {
+        date: new Date(),
         type: '',
         hourlyCharge: 0,
         hoursPerWeek: 0,
@@ -136,12 +138,15 @@
         const docRef = doc(collectionRef) // Separate by gig work manual inputs?
         successMessage = "Input Submitted Successfully!"
         if ($page.data.user?.platform == "uber") {
+            uberData.date = new Date(date)
             setDoc(docRef, uberData, { merge: true })
         }
         else if ($page.data.user?.platform == "rover") {
+            roverData.date = new Date(date)
             setDoc(docRef, roverData, { merge: true })
         }
         else if ($page.data.user?.platform == "upwork") {
+            upworkData.date = new Date(date)
             setDoc(docRef, upworkData, { merge: true })
         }
     }
@@ -153,7 +158,7 @@
             <div class="w-full max-w-md space-y-5">
                 <div class="flex flex-col">
                     <Label>Date</Label>
-                    <Input type="date" bind:value={uberData.date} class="mt-1" />
+                    <Input type="date" bind:value={date} class="mt-1" />
                 </div>
 
                 <div class="flex flex-col">
@@ -193,7 +198,7 @@
             <div class="w-full max-w-md space-y-5">
                 <div class="flex flex-col">
                     <Label>Date</Label>
-                    <Input type="date" bind:value={roverData.date} class="mt-1 min-h-5" />
+                    <Input type="date" bind:value={date} class="mt-1 min-h-5" />
                 </div>
 
                 <div class="flex flex-col">
