@@ -79,6 +79,7 @@ export const getUser = async(uid:string) => {
         const user : User = {
             uid: uid,
             role: docRef.data().role,
+			credentials: docRef.data().credentials,
             username: docRef.data().username,
             platform: docRef.data().platform
         }

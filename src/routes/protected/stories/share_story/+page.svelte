@@ -1,7 +1,7 @@
 <script lang="ts">
     import { addDoc, collection, doc, getDoc } from "firebase/firestore";
     import { db, storage } from "$lib/firebase/client";
-    import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+    import { getDownloadURL, ref, uploadBytes, deleteObject } from "firebase/storage";
 
     import { Button, Input, ButtonGroup, Textarea } from "flowbite-svelte";
     import { ToggleGroupItem, ToggleGroup } from "$lib/components/ui/toggle-group";
@@ -11,6 +11,7 @@
     import { onMount } from "svelte";
     import { page } from "$app/stores";
     import { updateTitle } from "$lib/stores/title";
+    import { goto } from "$app/navigation";
     updateTitle("Share Story");
     
     let tags : string[] = []
@@ -19,13 +20,15 @@
     let description : string = ""
     let url : string
     let type : string
-    let fileName: string = '';
+    let uploading = false
+
     $: fileName = video ? video.name : 'No file selected';
     $: postSharing = []
     $: sharePrivate = false
     $: errorMessageType = " "
     $: errorMessageTags = " "
     $: errorMessageSharing = " "
+
 
     const commonTags = [
         {value: "fair pay", label: "Fair Pay"},
@@ -72,15 +75,35 @@
     }
   }
 
-    function handleFileChange(event: Event) {
+    async function handleFileChange (event: Event) {
     const fileInput = event.target as HTMLInputElement;
+    if (url) {
+      const imageRef = ref(storage, url)
+      try {
+        deleteObject(imageRef)
+      } catch (error) {
+        console.log(error)
+      }
+      
+    }
     if (fileInput.files && fileInput.files.length > 0) {
       video = fileInput.files[0];
       fileName = video.name;
+      try {
+          const storageRef = ref(storage, 'stories/strategy/'+$page.data.user.uid+'/'+video.name)
+          const result = await uploadBytes(storageRef, video)
+          url = await getDownloadURL(result.ref)
+          console.log('url uploaded')
+      } catch (error) {
+          console.log("error with video upload")
+      }
     }
   }
 
     async function uploadContent() {
+      if (uploading) {
+        return
+      }
         //error catching
         if (!type) {
             errorMessageType = "Please select a type"
@@ -90,6 +113,7 @@
         }
 
         if (tags.length == 0) {
+            console.log("here")
             errorMessageTags = "Please select at least one tag"
         }
         else {
@@ -106,20 +130,23 @@
         if (errorMessageSharing != "" || errorMessageTags != "" || errorMessageType != "") {
             return
         }
+        //end of error catching
+
 
         if (postSharing.includes('private')) {
             postSharing = ['private']
         }
-        if (video) {
-            try {
-                const storageRef = ref(storage, 'stories/strategy/'+$page.data.user.uid+'/'+video.name)
-                const result = await uploadBytes(storageRef, video)
-                url = await getDownloadURL(result.ref)
-                console.log(url)
-            } catch (error) {
-                console.log("error with video upload")
-            }
-        }
+
+        uploading = true
+        // if (video) {
+        //     try {
+        //         const storageRef = ref(storage, 'stories/strategy/'+$page.data.user.uid+'/'+video.name)
+        //         const result = await uploadBytes(storageRef, video)
+        //         url = await getDownloadURL(result.ref)
+        //     } catch (error) {
+        //         console.log("error with video upload")
+        //     }
+        // }
 
         if (url) {
             try {
@@ -129,8 +156,9 @@
             sharing: postSharing
 
         })
+        goto('/protected/stories/story_feed')
         } catch {
-            console.log("error with adding document")
+            uploading = false
         }
         }
         else {
@@ -142,8 +170,9 @@
                 likes: [], tags, platform: $page.data.user.platform, sharing: postSharing
 
             })
+            goto('/protected/stories/story_feed')
         } catch {
-            console.log("error with adding document here")
+            uploading = false
             }
         }
     }
@@ -201,12 +230,13 @@
     Tag your story with related topics!</h1>
 <p class="text-red-500">{errorMessageTags}</p>
 {#if $page.data.user.platform == "rover"}
-  <Tags tags={roverTags} bindGroup={tags} />
+  <Tags tags={roverTags} bind:bindGroup={tags} />
 {:else if $page.data.user.platform == "uber"}
-  <Tags tags={uberTags} bindGroup={tags} />
+  <Tags tags={uberTags} bind:bindGroup={tags} />
 {:else if $page.data.user.platform == "upwork"}
-  <Tags tags={upworkTags} bindGroup={tags} />
+  <Tags tags={upworkTags} bind:bindGroup={tags} />
 {/if}
+<p>{tags}</p>
 
 <div class="py-5">
 Title:
@@ -245,6 +275,11 @@ style="
     on:change={handleFileChange} 
   />
 
+  <div class = "flex items-center justify-center">
+    {#if url}
+    <img src={url} class="rounded-sm mt-2 object-contain w-1/2 " alt="" />
+    {/if}
+  </div>
 </div>
 
 
@@ -291,5 +326,13 @@ style="
 </div>
 
 <div class="flex justify-center py-5">
-    <BlueButton onclick={uploadContent} buttonText="Upload Content"></BlueButton>
+  {#if uploading}
+  <Button 
+    class="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700"
+    on:click={uploadContent}>
+    <i class="fa-solid fa-spinner loadingSpinner animate-spin" />
+  </Button>
+  {:else}
+  <BlueButton onclick={uploadContent} buttonText="Upload Content"></BlueButton>
+  {/if}
 </div>

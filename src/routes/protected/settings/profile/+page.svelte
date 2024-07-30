@@ -13,10 +13,10 @@
     updateTitle(`My ${capitalize($page.data.user?.platform)} Profile`);
 
     let uberData = {
-        rating: 0, car: '', services: [], cities: [], dateJoined: currentDate
+        rating: 0, car: '', services: [], cities: [], dateJoined: currentDate, date: new Date()
     };
     let roverData = {
-        rating: 0, pets: [], services: [], cities: [], dateJoined: currentDate
+        rating: 0, pets: [], services: [], cities: [], dateJoined: currentDate, date: new Date()
     };
     let upworkData = {
         rating: 0, services: [], jss:0, hourlyCharge: 0, dateJoined: currentDate
