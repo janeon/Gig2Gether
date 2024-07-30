@@ -11,6 +11,7 @@
 
     // Uber Expenses
     let questData = {
+        type: 'quest',
         startTime: '',
         endTime: '',
         baseTrips: 0,
@@ -24,8 +25,8 @@
     }
 
     async function submitManualQuest() {
-        const collectionRef = collection(db, "users", $page.data.user?.uid, "upload");
-        const docRef = doc(collectionRef, "Manual Quests"); // Separate by gig work manual inputs?
+        const collectionRef = collection(db, "upload", "manual", "entries")
+        const docRef = doc(collectionRef) // Separate by gig work manual inputs?
         setDoc(docRef, questData, { merge: true });
         successMessage = "Input Submitted Successfully!"
     }
