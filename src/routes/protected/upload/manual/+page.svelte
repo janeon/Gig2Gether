@@ -16,6 +16,8 @@
     let typeError = ''
     let incomeError = ''
 
+    let date = currentDate
+    let end_date = currentDate
     // Uber Manual
     let uberData = {
         date: new Date(),
