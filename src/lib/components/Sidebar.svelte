@@ -53,8 +53,9 @@
       ];
     } else if ($page.data.user?.platform === "upwork") {
       upload_options = [
-        { label: "Jobs", href: "/protected/upload/upwork-job" },
-        { label: "Profile", href: "/protected/upload/upwork-profile" }
+        // { label: "Jobs", href: "/protected/upload/upwork-job" },
+        // { label: "Profile", href: "/protected/upload/upwork-profile" }
+        { label: "Manual", href: "/protected/upload/manual" }
       ];
     }
 
