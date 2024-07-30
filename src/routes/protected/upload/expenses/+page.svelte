@@ -7,7 +7,6 @@
     import { currentDate } from "$lib/utils";
     import { updateTitle } from "$lib/stores/title";
     import { capitalize } from "$lib/utils";
-    import {Timestamp} from 'firebase/firestore'
     updateTitle(capitalize($page.data.user?.platform) + " Expenses");
 
     let successMessage = '';
