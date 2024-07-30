@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { invalidateAll } from "$app/navigation";
     import DataRow from "$lib/components/DataRow.svelte";
     import { db } from "$lib/firebase/client.js";
     import type { Data } from "$lib/types";
@@ -14,9 +15,10 @@
             if (dataDoc.type == "story") {
                 const docRef = doc(db, 'stories', data.user.platform, "posts", dataDoc.id)
                 await deleteDoc(docRef)
-                console.log(docRef)
+                
             }
         }
+        invalidateAll()
     }
 </script>
 
