@@ -3,14 +3,12 @@ import type { Data } from "$lib/types.js";
 import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
 
 export async function load({parent}) {
-    console.log("in load")
     const platforms = ["rover", "uber", "upwork"]
     let postedData = []
     let data = await parent()
     const snapshot = await getDocs(query(collection(db, 'stories', data.user.platform, "posts"), where('uid', "==", data.user.uid), orderBy("date", "desc")))
     snapshot.forEach((doc) => {
         let post : Data = {date: new Date, type: "", title: "", id: ""}
-        console.log(doc.data().date.toDate())
         post.date = doc.data().date.toDate()
         post.type = "story"
         post.title = doc.data().title

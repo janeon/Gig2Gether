@@ -18,7 +18,6 @@ export const createFilterStore = (data) => {
 
 export const filterHandler = (store) => {
     store.filtered = store.data.filter((item) => {
-        console.log(item)
         //  && store.type_filter.includes(item.type)
         // return (store.platform_filter.includes(item.platform))
         return (store.platform_filter.includes(item.platform) && store.type_filter.includes(item.type))

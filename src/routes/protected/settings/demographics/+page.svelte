@@ -82,7 +82,6 @@
         }
         try {
             const userRef = doc(db, "demographics", $page.data.user.uid);
-            console.log("submitting", demographic_information);
             await setDoc(userRef,
             demographic_information,
              {merge: true})

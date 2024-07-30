@@ -10,11 +10,9 @@
             checkBind = checkBind.filter((item)=> {
                 return item.id !== docInfo.id
             })
-            console.log(checkBind)
         }
         else {
             checkBind = [...checkBind, docInfo]
-            console.log(checkBind)
         }
     }
 </script>
