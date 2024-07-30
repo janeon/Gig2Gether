@@ -3,21 +3,19 @@
     import { db } from "$lib/firebase/client";
     import { collection, doc, setDoc } from "firebase/firestore";
     import MultiSelect from 'svelte-multiselect';
-    import { Label, NumberInput, Input } from "flowbite-svelte";
+    import { Label, NumberInput, Input, P } from "flowbite-svelte";
     import { currentDate } from "$lib/utils";
     import { updateTitle } from "$lib/stores/title";
     import { capitalize } from "$lib/utils";
+    import { error } from "@sveltejs/kit";
     updateTitle(capitalize($page.data.user?.platform) + " Manual Upload");
 
     let successMessage = '';
     let errorMessage = '';
-
     let timeError = ''
     let typeError = ''
     let incomeError = ''
 
-    let date = currentDate //Called date for same values for other uploads
-    let end_date = currentDate
     // Uber Manual
     let uberData = {
         date: new Date(),
