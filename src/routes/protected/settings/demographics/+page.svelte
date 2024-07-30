@@ -98,7 +98,7 @@
 </script>
         <div class="py-5">
             <Label>Age</Label>
-            <NumberInput class = "border-2" bind:value={age} type = "number"/>
+            <NumberInput bind:value={age} type = "number"/>
         </div>
         
         <div class="py-5">
@@ -113,12 +113,12 @@
         
         <div class="py-5">
             <Label>Hours spent on a full time (W2) job per week</Label>
-            <NumberInput class = "border-2" bind:value={w2Hours} type = "number"/>
+            <NumberInput bind:value={w2Hours} type = "number"/>
         </div>
         
         <div class="py-5">
             <Label>Estimated hours spent on gigs not part of this platform</Label>
-            <NumberInput class = "border-2" bind:value={otherGigHours} type = "number"/>
+            <NumberInput bind:value={otherGigHours} type = "number"/>
         </div>
         
         <BlueButton onclick={submitDemographics} buttonText="Submit"/>
