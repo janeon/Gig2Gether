@@ -7,36 +7,21 @@
     import { currentDate } from "$lib/utils";
     import { updateTitle } from "$lib/stores/title";
     import { capitalize } from "$lib/utils";
+    import {Timestamp} from 'firebase/firestore'
     updateTitle(capitalize($page.data.user?.platform) + " Expenses");
 
     let successMessage = '';
     let errorMessage = '';
 
+    let date = currentDate
     // Uber Expenses
-    let uberData = {
-        date: currentDate,
+    let data = {
+        date: new Date(),
         time: '',
         expenseType: [],
         description: '',
         amount: 0,
-    }
-
-    // Rover Expenses
-    let roverData = {
-        date: currentDate,
-        time: '',
-        expenseType: [],
-        description: '',
-        amount: 0,
-    }
-
-    // UpWork Expenses
-    let upworkData = {
-        date: currentDate,
-        time: '',
-        expenseType: [],
-        description: '',
-        amount: 0,
+        uid: $page.data.user.uid
     }
 
     const uberExpenseType = ["Car Wash/ Cleaning", "Gas", "Car Rental", "Other"]
@@ -46,59 +31,69 @@
     const upworkExpenseType = ["Software", "Office Supplies", "Insurance", "Other"]
 
     async function submitExpenses() {
-        const collectionRef = collection(db, "users", $page.data.user?.uid, "upload")
-        const docRef = doc(collectionRef, "Expenses") // Separate by gig work manual inputs?
+        if (data.amount == 0) {
+            errorMessage = "Please Enter an Expense Amount"
+            return
+        }
+        errorMessage = ""
+        const collectionRef = collection(db, "upload", "expenses", "entries")// Separate by gig work manual inputs?
+        const docRef = doc(collectionRef)
+        data.date = new Date(date)
         successMessage = "Input Submitted Successfully!"
-
-        if ($page.data.user?.platform == "uber") {
-            setDoc(docRef, uberData, { merge: true })
-            // successMessage = "Input Submitted Successfully!" - useful when roles work
-        }
-        else if ($page.data.user?.platform == "rover") {
-            setDoc(docRef, roverData, { merge: true })
-            // successMessage = "Input Submitted Successfully!"  - useful when roles work
-        }
-        else if ($page.data.user?.platform == "upwork") {
-            setDoc(docRef, upworkData, { merge: true })
-            // successMessage = "Input Submitted Successfully!"   - useful when roles work
-        }
+        setDoc(docRef, data, { merge: true })
     }
 </script>
 
 <div class="flex flex-row">
     <div class="py-2 flex flex-col items-center w-full">
-        {#if $page.data.user?.platform == "uber"}
 
             <div class="w-full max-w-md space-y-5">
                 <div class="flex flex-col">
                     <Label>Date</Label>
-                    <Input type="date" bind:value={uberData.date} class="mt-1" />
+                    <Input type="date" bind:value={date} class="mt-1" />
                 </div>
 
                 <div class="flex flex-col">
                     <Label>Time</Label>
-                    <Input type="text" bind:value={uberData.time} class="mt-1" />
+                    <Input type="time" bind:value={data.time} class="mt-1" />
                 </div>
 
+                {#if $page.data.user?.platform == "uber"}
+                    <div class="flex flex-col">
+                        <Label>Expense Type</Label>
+                        <MultiSelect options={uberExpenseType} bind:value={data.expenseType} 
+                        style="--sms-bg: rgb(249, 250, 251); padding: 8px; border-radius: 8px;"
+                        --sms-focus-border="2px solid blue"/>
+                    </div>
+                {:else if $page.data.user?.platform == "rover"}
                 <div class="flex flex-col">
                     <Label>Expense Type</Label>
-                    <MultiSelect options={uberExpenseType} bind:value={uberData.expenseType} 
+                    <MultiSelect options={roverExpenseType} bind:value={data.expenseType} 
                     style="--sms-bg: rgb(249, 250, 251); padding: 8px; border-radius: 8px;"
                     --sms-focus-border="2px solid blue"/>
                 </div>
+                {:else if $page.data.user?.platform == "upwork"}
+                    <div class="flex flex-col">
+                        <Label>Expense Type</Label>
+                        <MultiSelect options={upworkExpenseType} bind:value={data.expenseType} 
+                        style="--sms-bg: rgb(249, 250, 251); padding: 8px; border-radius: 8px;"
+                        --sms-focus-border="2px solid blue"/>
+                    </div>
+                {/if}
+
 
                 <div class="flex flex-col">
                     <Label>Description</Label>
-                    <Textarea bind:value={uberData.description} rows="4" 
+                    <Textarea bind:value={data.description} rows="4" 
                     class="mt-1 border border-gray-300 rounded-lg px-3 py-2 bg-gray-50"/>
                 </div>
 
                 <div class="flex flex-col">
                     <Label>Amount</Label>
-                    <NumberInput bind:value={uberData.amount} class="mt-1" />
+                    <NumberInput bind:value={data.amount} class="mt-1" />
                 </div>
             </div>
-        {:else if $page.data.user?.platform == "rover"}
+        <!-- {:else if $page.data.user?.platform == "rover"}
             <div class="w-full max-w-md space-y-5">
                 <div class="flex flex-col">
                     <Label>Date</Label>
@@ -159,19 +154,19 @@
                     <NumberInput bind:value={upworkData.amount} class="mt-1" />
                 </div>
             </div>
-        {/if}
+        {/if} -->
+        {#if successMessage}
+            <p class="text-green-600 mt-2">{successMessage}</p>
+            {/if}
+            {#if errorMessage}
+             <p class = "text-red-600 mt-2">{errorMessage}</p>
+            {/if}
         <div class="flex justify-center mt-6">
             <button
                 class="bg-black text-white py-2 px-4 rounded"
                 on:click={submitExpenses}>
                 Submit
             </button>
-            {#if successMessage}
-            <p class="text-green-600 mt-2">{successMessage}</p>
-            {/if}
-            {#if errorMessage}
-             <p class = "text-red-600 mt-2">{errorMessage}</p>
-            {/if}
         </div>
     </div>
 </div>
