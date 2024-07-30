@@ -37,14 +37,14 @@
         expenses: 0,
         timeSpent: 0,
         platfromCut: 0,
-        services: [],
+        type: [],
         travelTime: 0,
         uid: $page.data.user.uid
     }
 
     // UpWork Manual
     let upworkData = {
-        jobCategory: '',
+        type: '',
         hourlyCharge: 0,
         hoursPerWeek: 0,
         clientHistory: '',
@@ -96,7 +96,7 @@
             else {
                 incomeError = ""
             }
-            if (roverData.services.length === 0) {
+            if (roverData.type.length === 0) {
                 console.log('s')
                 typeError = "Please Add Service(s)"
             }
@@ -121,7 +121,7 @@
             else {
                 incomeError = ""
             }
-            if (upworkData.jobCategory === "") {
+            if (upworkData.type === "") {
                 typeError = "Please Add Job Category"
             }
             else {
@@ -226,7 +226,7 @@
                 <div class="flex flex-col">
                     <Label>Services Offered</Label>
                     <p class="text-red-500">{typeError}</p>
-                    <MultiSelect options={roverServices} bind:value={roverData.services} 
+                    <MultiSelect options={roverServices} bind:value={roverData.type} 
                     style="--sms-bg: rgb(249, 250, 251); padding: 8px; border-radius: 8px;"
                     --sms-focus-border="2px solid blue"/>
                 </div>
@@ -242,7 +242,7 @@
                 <div class="flex flex-col">
                     <Label>Job Category</Label>
                     <p class="text-red-500">{typeError}</p>
-                    <Input type="text" bind:value={upworkData.jobCategory} class="mt-1" />
+                    <Input type="text" bind:value={upworkData.type} class="mt-1" />
                 </div>
 
                 <div class="flex flex-col">
