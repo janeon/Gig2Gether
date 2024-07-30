@@ -10,7 +10,7 @@
     
     updateTitle("My Demographics");
 
-    let age: number = 0;
+    let age  = 0;
     let gender: string = '';
     let genders = [
         {value: "male", name: "Male"},
@@ -97,7 +97,7 @@
 </script>
         <div class="py-5">
             <Label>Age</Label>
-            <NumberInput class = "border-2" bind:value={age} type = "number"/>
+            <NumberInput  bind:value={age}/>
         </div>
         
         <div class="py-5">
@@ -112,12 +112,12 @@
         
         <div class="py-5">
             <Label>Hours spent on a full time (W2) job per week</Label>
-            <NumberInput class = "border-2" bind:value={w2Hours} type = "number"/>
+            <NumberInput bind:value={w2Hours}/>
         </div>
         
         <div class="py-5">
             <Label>Estimated hours spent on gigs not part of this platform</Label>
-            <NumberInput class = "border-2" bind:value={otherGigHours} type = "number"/>
+            <NumberInput bind:value={otherGigHours}/>
         </div>
         
         <BlueButton onclick={submitDemographics} buttonText="Submit"/>
