@@ -245,6 +245,11 @@
         {:else if $page.data.user?.platform == "upwork"}
             <div class="w-full max-w-md space-y-5">
                 <div class="flex flex-col">
+                    <Label>Date</Label>
+                    <Input type="date" bind:value={date} class="mt-1 min-h-5" />
+                </div>
+                
+                <div class="flex flex-col">
                     <Label>Job Category</Label>
                     <p class="text-red-500">{typeError}</p>
                     <Input type="text" bind:value={upworkData.type} class="mt-1" />
