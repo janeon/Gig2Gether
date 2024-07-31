@@ -8,7 +8,7 @@
 	  import { enhance } from '$app/forms';
 	  import type { ActionData } from '../../routes/protected/$types';
     
-    export let form : ActionData;
+    let form : ActionData;
     $: activeUrl = $page.url.pathname;
     let activeClass = 'text-green-500 dark:text-green-300 hover:text-green-700 dark:hover:text-green-500';
     let mobile: boolean;
@@ -30,7 +30,7 @@
             { label: "My Account", href: "/protected/settings/account" },
             { label: "Demographics", href: "/protected/settings/demographics" },
             { label: "Sharing Preferences", href: "/protected/settings/sharing_preferences" },
-            { label: "Withdraw Data" },
+            { label: "Withdraw Data", href:"/protected/settings/withdraw" },
             { label: "Notification" }
     ]
 
@@ -82,7 +82,7 @@
       </Button>
       <h1 
       class="absolute left-1/2 transform -translate-x-1/2 font-bold text-sm sm:text-sm md:text-base lg:text-lg xl:text-xl"
-      style="font-size: 0.9925rem;">
+      style="font-size: 0.85rem;">
       {title}
     </h1>
       <div class="ml-auto mr-3 flex items-center">
