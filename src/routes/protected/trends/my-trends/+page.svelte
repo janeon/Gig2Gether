@@ -1,20 +1,9 @@
 <script lang="ts">
   import TrendsSidebar from "$lib/components/TrendsSidebar.svelte";
-  import { Chart, Card, Button, Tooltip } from 'flowbite-svelte';
+  import { Chart, Card } from 'flowbite-svelte';
   import { page } from "$app/stores";
 
-
   let seriesData = [];
-
-
-  // {#if }
-
-  // {:else if} 
-
-
-  // {:else if} 
-    
-  // {/if}
 
   // Conditionally create the series data based on the user platform
   if ($page.data.user?.platform == "uber") {
@@ -135,6 +124,7 @@
       opacity: 1
     }
   };
+
 </script>
 
 <div class="flex flex-row">
@@ -159,7 +149,7 @@
                   {:else if $page.data.user?.platform == "rover"} 
                   Worker Earnings Per Hour
                   {:else if $page.data.user?.platform == "upwork"} 
-                   Earnings Per Month
+                  Earnings Per Month
                   {/if}
                 </h3>
               </div>
@@ -182,9 +172,8 @@
         </Card>
       </div>
 
-      <div class = "">
-       
-        
+      <div>
+   
       </div>
     </div>
 
