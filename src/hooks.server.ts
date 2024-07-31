@@ -4,10 +4,11 @@ import { getFirebaseServer } from '$lib/firebase/adminServer'
 import { getUser } from '$lib/utils' 
 import { redirect } from '@sveltejs/kit'
 import type { DecodedIdToken } from "firebase-admin/auth";
+import { log } from 'firebase-functions/logger';
 
 
 export const handle: Handle = async ({ event, resolve }) => {
-  // log("Running handle in hooks")
+  log("Running handle in hooks")
   // get cookies from browser
   const session = event.cookies.get("__session") ?? "";
   if (!session) {
@@ -20,7 +21,7 @@ export const handle: Handle = async ({ event, resolve }) => {
   const isAuth: boolean = event.url.pathname === "/login";
     if (isAuth || building) {
       event.cookies.set("__session", "", { path: "/" });
-      console.log("User is on login page or site is building")
+      log("User is on login page or site is building")
       return await resolve(event);
     }
   

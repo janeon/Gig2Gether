@@ -11,7 +11,7 @@
         id: 'quest_csv'
     };
 
-    let selectedDate = new Date().toISOString().substring(0, 10); // Default to today's date
+    let selectedDate = new Date().toISOString().substring(0, 10); 
 
     let successMessage = '';
     let errorMessage ='';
