@@ -1,14 +1,13 @@
 <script lang="ts">
     import { Button } from 'flowbite-svelte';
-    import { getFirestore, collection, doc, setDoc, writeBatch, Timestamp } from "firebase/firestore";
-    import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+    import { collection, doc, setDoc, writeBatch, Timestamp } from "firebase/firestore";
+    import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
     import { db, storage } from '$lib/firebase/client';
     import Papa from 'papaparse';
     import { page } from '$app/stores';
     import BlueButton from '$lib/components/BlueButton.svelte';
     import { updateTitle } from "$lib/stores/title";
     import { capitalize } from "$lib/utils";
-    import {invalidateAll} from '$app/navigation'
 
     updateTitle(capitalize($page.data.user?.platform) + " CSV Upload");
     let fileuploadprops = {
