@@ -39,7 +39,6 @@
         {/each}
         
     {/if}
-    <p>{toDelete}</p>
     <Button color="alternative" on:click={()=>{if (toDelete.length > 0) {modal=true}}}>Delete Data</Button>
     <Modal title="Are you sure you want to delete these uploads?" bind:open={modal} autoclose>
         <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">If you delete the selected data, you will have to reupload all content included.</p>
