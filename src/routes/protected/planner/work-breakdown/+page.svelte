@@ -5,10 +5,10 @@
     import { goto } from "$app/navigation";
 
     async function nextPage() {
-        goto('../protected/work-results');
+        goto('./work-results');
     }
     async function previousPage() {
-        goto('../protected/work-details');
+        goto('./work-details');
     }
 </script>
 

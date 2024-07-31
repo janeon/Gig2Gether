@@ -6,10 +6,10 @@
 
 
     async function nextPage() {
-        goto('../protected/work-details')
+        goto('./work-details')
     }
     async function previousPage () {
-        goto('../protected/work-day')
+        goto('./work-day')
     }
 
     let schedule = [];

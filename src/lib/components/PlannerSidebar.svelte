@@ -8,8 +8,8 @@
 <Sidebar {activeUrl}>
     <SidebarWrapper>
         <SidebarGroup>
-            <SidebarItem label="Work" href="/protected/work-day"/>
-            <SidebarItem label="Tax" href="/protected/tax"/>
+            <SidebarItem label="Work" href="/protected/planner/work-day"/>
+            <SidebarItem label="Tax" href="/protected/planner/tax"/>
           </SidebarGroup>
     </SidebarWrapper>
 </Sidebar>

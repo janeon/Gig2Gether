@@ -11,10 +11,10 @@
     let errorMessage = '';
 
     async function nextPage() {
-        goto('../protected/work-breakdown')
+        goto('./work-breakdown')
     }
     async function previousPage () {
-        goto('../protected/work-time')
+        goto('./work-time')
     }
 
     // Uber Details

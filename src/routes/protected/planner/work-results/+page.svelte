@@ -5,7 +5,7 @@
     import { goto } from "$app/navigation";
 
     async function previousPage () {
-        goto('../protected/work-breakdown')
+        goto('./work-breakdown')
     }
 </script>
 

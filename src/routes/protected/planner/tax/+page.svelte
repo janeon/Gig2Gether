@@ -15,7 +15,7 @@
             <h1 class="text-lg font-medium mb-1">What you need to know</h1>
             <div class="flex flex-col">
                 <div class="flex space-x-2 items-start mb-1">
-                    <Avatar src="../QuestionIcon.png" class="w-6 h-6" />
+                    <Avatar src="/QuestionIcon.png" class="w-6 h-6" />
                     <div>
                         <h2 class="text-sm font-semibold mb-1">Do I have to file a tax return?</h2>
                         <a href="taxes.com" class="text-sm text-blue-500 underline mb-1">Learn More</a>
@@ -24,7 +24,7 @@
                 </div>
              
                 <div class="flex space-x-2 items-start mb-1">
-                    <Avatar src="../QuestionIcon.png" class="w-6 h-6" />
+                    <Avatar src="/QuestionIcon.png" class="w-6 h-6" />
                     <div>
                         <h2 class="text-sm font-semibold mb-1">What is self-employment tax?</h2>
                         <a href="taxes.com" class="text-sm text-blue-500 underline mb-1">Learn More</a>
@@ -33,7 +33,7 @@
                 </div>
 
                 <div class="flex space-x-2 items-start mb-1">
-                    <Avatar src="../QuestionIcon.png" class="w-6 h-6" />
+                    <Avatar src="/QuestionIcon.png" class="w-6 h-6" />
                     <div>
                         <h2 class="text-sm font-semibold mb-1">What is Form 1099-K?</h2>
                         <a href="taxes.com" class="text-sm text-blue-500 underline mb-1">Learn More</a>
@@ -42,7 +42,7 @@
                 </div>
 
                 <div class="flex space-x-2 items-start mb-1">
-                    <Avatar src="../QuestionIcon.png" class="w-6 h-6" />
+                    <Avatar src="/QuestionIcon.png" class="w-6 h-6" />
                     <div>
                         <h2 class="text-sm font-semibold mb-1">What is Form 1099-NEC?</h2>
                         <a href="taxes.com" class="text-sm text-blue-500 underline mb-1">Learn More</a>
@@ -51,7 +51,7 @@
                 </div>
 
                 <div class="flex space-x-2 items-start mb-1">
-                    <Avatar src="../QuestionIcon.png" class="w-6 h-6" />
+                    <Avatar src="/QuestionIcon.png" class="w-6 h-6" />
                     <div>
                         <h2 class="text-sm font-semibold mb-1">Do I need to pay estimated taxes?</h2>
                         <a href="taxes.com" class="text-sm text-blue-500 underline mb-1">Learn More</a>
@@ -60,7 +60,7 @@
                 </div>
 
                 <div class="flex space-x-2 items-start mb-1">
-                    <Avatar src="../QuestionIcon.png" class="w-6 h-6" />
+                    <Avatar src="/QuestionIcon.png" class="w-6 h-6" />
                     <div>
                         <h2 class="text-sm font-semibold mb-1">What can I deduct as a business expense?</h2>
                         <a href="taxes.com" class="text-sm text-blue-500 underline mb-1">Learn More</a>
@@ -89,7 +89,7 @@
         <div class="flex flex-col items-start">
             <h1 class="text-lg font-medium mb-1">Recommended Resources</h1>
             <div class="flex space-x-2 items-start mb-1">
-                <Avatar src="../magnifying.jpeg" class="w-6 h-6" />
+                <Avatar src="/magnifying.jpeg" class="w-6 h-6" />
                 <div>
                     <h2 class="text-sm font-semibold mb-1">IRS FAQs</h2>
                     <p class="text-xs font-light mb-1">Find answers to common tax questions from IRS.</p>
@@ -97,7 +97,7 @@
                 </div>
             </div>
             <div class="flex space-x-2 items-start mb-1">
-                <Avatar src="../book.png" class="w-6 h-6" />
+                <Avatar src="/book.png" class="w-6 h-6" />
                 <div>
                     <h2 class="text-sm font-semibold mb-1">Self Employment Tax Guide</h2>
                     <p class="text-xs font-light mb-1">Learn about self employment tax and how it works.</p>
@@ -105,7 +105,7 @@
                 </div>
             </div>
             <div class="flex space-x-2 items-start mb-1">
-                <Avatar src="../book.png" class="w-6 h-6" />
+                <Avatar src="/book.png" class="w-6 h-6" />
                 <div>
                     <h2 class="text-sm font-semibold mb-1">Business Expense Deductions</h2>
                     <p class="text-xs font-light mb-1">Discover what you can deduct as a business expense.</p>

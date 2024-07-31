@@ -5,7 +5,7 @@
 
 
     async function nextPage() {
-        goto('../protected/work-time')
+        goto('./work-time')
     }
 
 </script>
