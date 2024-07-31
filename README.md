@@ -44,11 +44,11 @@ Hosting setup instructions can be found in src/lib/firebase/Firebase.md
 
 - [ ] Debug login page with upload on deploy 
 
-- [ ] Consider how to adapt for mobile
-
 - [ ] How to store different types of workers' data, across different apps and work types (what if someone used both Uber and Rover?)
 
 - [ ] Tailwind
+
+- [X] Adapt for mobile
 
 - [X] Fix auth so that login doesn't expire at each reload
 
