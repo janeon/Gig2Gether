@@ -1,10 +1,8 @@
 <script>
-    import YouTube from "react-youtube";
     import ScheduleSelector from 'react-schedule-selector'
     let schedule = [];
 
     const handleChange = (newSchedule) => {
-        // console.log(newSchedule);
         schedule = newSchedule;
     };
 
