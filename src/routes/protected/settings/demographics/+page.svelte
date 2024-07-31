@@ -77,14 +77,14 @@
             <Select items={races} bind:value={dataToSetToStore.race}/>
         </div>
         
-        <div class="py-5">
+        <!-- <div class="py-5">
             <Label>Hours spent on a full time (W2) job per week</Label>
             <NumberInput class = "border-2" bind:value={dataToSetToStore.w2Hours} type = "number"/>
-        </div>
+        </div> -->
         
-        <div class="py-5">
+        <!-- <div class="py-5">
             <Label>Estimated hours spent on gigs not part of this platform</Label>
             <NumberInput class = "border-2" bind:value={dataToSetToStore.otherGigHours} type = "number"/>
-        </div>
+        </div> -->
         
         <BlueButton onclick={submitDemographics} buttonText="Submit"/>

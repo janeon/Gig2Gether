@@ -163,8 +163,6 @@
         }
         else {
             try {
-                console.log(type)
-                console.log(title, description, $page.data.user.uid, tags)
                 await addDoc(collection(db, 'stories', $page.data.user.platform, "posts"), {
                 type, title, description, uid: $page.data.user.uid, date: new Date(),
                 likes: [], tags, platform: $page.data.user.platform, sharing: postSharing

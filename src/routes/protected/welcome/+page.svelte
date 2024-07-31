@@ -97,7 +97,7 @@
     }
 </script>
 
-<h1>Welcome to the GigConnect data-sharing platform!</h1>
+<h1>Welcome to the Gig2Gether data-sharing platform!</h1>
 <h2>Before you get started, update your demographics and sharing preferences. You can change these at any time!</h2>
 
 <div class = "flex flex-col w-1/2">

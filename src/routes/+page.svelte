@@ -23,7 +23,7 @@
     ];
   
     const howItWorks = [
-      { img: 'Registration.png', heading: 'User Registration', text: 'Create your GigConnect account by your phone number and complete a short demographics form to finalize registration.' },
+      { img: 'Registration.png', heading: 'User Registration', text: 'Create your Gig2Gether account by your phone number and complete a short demographics form to finalize registration.' },
       { img: 'Sharing-Settings.png', heading: 'Choose Data to Share', text: 'Set your preferences for data sharing and visibility to maintain control over your information.' },
       { img: 'Data-Uploading.png', heading: 'Upload Your Data', text: 'Easily upload your gig work data through our secure system.' },
       { img: 'Trends.png', heading: 'Explore Trends', text: 'Access personal trends to track your performance over time. View collective insights to compare your data with aggregated statistics.' },
@@ -35,9 +35,9 @@
   <main class="px-4 md:px-20 lg:px-40 py-8 space-y-12 font-sans">
     <div class="p-4 rounded-lg">
       <div class="intro mx-auto max-w-screen-lg text-center md:text-left">
-        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mt-20 mb-10">Welcome to GigConnect</h1>
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mt-20 mb-10">Welcome to Gig2Gether</h1>
         <p class="text-base md:text-lg mb-10">
-          GigConnect is a worker-centered app that empowers gig workers through data sharing and collective action. It enables workers to analyze their work data, connect with peers, and gain valuable insights, while providing policymakers with crucial information to improve work conditions in the gig economy.
+          Gig2Gether is a worker-centered app that empowers gig workers through data sharing and collective action. It enables workers to analyze their work data, connect with peers, and gain valuable insights, while providing policymakers with crucial information to improve work conditions in the gig economy.
         </p>
         <div class="flex flex-col sm:flex-row justify-center md:justify-start space-y-4 sm:space-y-0 sm:space-x-4">
           <Button on:click={() => goto('register_worker')} color="dark" size="lg">
@@ -95,7 +95,7 @@
       <h3 class="text-2xl font-semibold mt-10 mb-6">Funding</h3>
       <div class="flex items-center mt-10 mb-6">
         <img src="/NSF.png" alt="National Science Foundation Logo" class="mr-4" style="width: 100px; height: auto;">
-        <p>GigConnect was built by a group of researchers from CMU/UT Austin. We are funded by the National Science Foundation and have no affiliation with specific platforms.</p>
+        <p>Gig2Gether was built by a group of researchers from CMU/UT Austin. We are funded by the National Science Foundation and have no affiliation with specific platforms.</p>
       </div>
     </div>
   </main>

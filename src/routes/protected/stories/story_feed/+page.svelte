@@ -86,7 +86,6 @@
                 if (roverCheck) {
                     platform_all = false
                     $filterStore.platform_filter = $filterStore.platform_filter.filter((item)=>{return item !== 'rover'})
-                    console.log($filterStore.platform_filter)
                     allPlatformChecked = false
                 }
                 else {
