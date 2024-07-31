@@ -49,7 +49,6 @@
                 await parseAndUploadCSV();
 
                 console.log('File uploaded and metadata saved:', csv.name);
-                successMessage = 'File uploaded successfully!'; 
             } catch (error) {
                 uploading = false
                 console.error('Error uploading file:', error);
@@ -90,7 +89,8 @@
             name: fileuploadprops.id,
             url: url,
             date: date,
-            type: "CSV"
+            type: "CSV",
+            title: csv.name
         });
 
         const batch = writeBatch(db);
@@ -107,7 +107,8 @@
         try {
             await batch.commit();
             console.log("CSV data successfully uploaded to Firestore.");
-            invalidateAll()
+            successMessage = 'File uploaded successfully!';
+            uploading = false
         } catch (error) {
             uploading = false
             console.error("Error uploading CSV data to Firestore:", error);
@@ -125,9 +126,9 @@
             Trips information are collected per ride, and both trip offers and summaries can be entered manually or via screenshot uploads.
         </p>
 
-        <div class="flex justify-start mt-6">
-            <div class="flex flex-col items-center space-y-4 ml-56">
-                <label class="pb-2" for={fileuploadprops.id}>Upload CSV</label>
+        <div class="flex mt-6">
+            <div class="flex flex-col items-center">
+                <label class="" for={fileuploadprops.id}>Upload CSV</label>
                 <input id={fileuploadprops.id} type="file" accept=".csv" on:change={handleFileInputChange} autocomplete="off" class="mt-1" />
                 {#if uploading}
                     <Button 
