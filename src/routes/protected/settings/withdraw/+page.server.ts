@@ -5,7 +5,7 @@ import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
 export async function load({parent}) {
     let postedData = []
     let data = await parent()
-    let snapshot = await getDocs(query(collection(db, 'stories', data.user.platform, "posts"), where('uid', "==", data.user.uid), orderBy("date", "desc")))
+    let snapshot = await getDocs(query(collection(db, 'stories', data.user.platform, "posts"), where('uid', "==", data.user.uid)))
     snapshot.forEach((doc) => {
         let post : Data = {date: new Date, type: "", title: "", id: ""}
         post.date = doc.data().date.toDate()
@@ -46,6 +46,16 @@ export async function load({parent}) {
         post.id = doc.id
         postedData.push(post)
         num++
+    })
+
+    snapshot = await getDocs(query(collection(db, "upload", "csv", "entries"), where('uid', "==", data.user.uid)))
+    snapshot.forEach((doc) => {
+        let post : Data = {date: new Date, type: "", title: "", id: ""}
+        post.date = doc.data().date.toDate()
+        post.type = "CSV"
+        post.title = doc.data().title
+        post.id = doc.id
+        postedData.push(post)
     })
 
 

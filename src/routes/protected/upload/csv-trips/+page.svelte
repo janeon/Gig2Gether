@@ -90,7 +90,8 @@
             url: url,
             date: date,
             type: "CSV",
-            title: csv.name
+            title: csv.name,
+            uid: $page.data.user.uid
         });
 
         const batch = writeBatch(db);
