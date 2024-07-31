@@ -4,7 +4,10 @@
     import { collection, doc, setDoc } from "firebase/firestore";
     import { Label, NumberInput, Input } from "flowbite-svelte";
     import { currentDate } from '$lib/utils'
+    import { updateTitle } from "$lib/stores/title";
+    import { capitalize } from "$lib/utils";
 
+    updateTitle(capitalize($page.data.user?.platform) + " Quest Upload");
 
     let successMessage = '';
     let errorMessage = '';
@@ -56,9 +59,9 @@
         setDoc(docRef, questData, { merge: true });
         successMessage = "Input Submitted Successfully!"
     }
+
 </script>
     <div class="p-8 flex flex-col items-center w-full">
-        <h1 class="text-2xl font-bold mb-6">Manual Quest Input</h1>
 
         <div class="w-full max-w-md space-y-5">
             <div class="flex flex-col">
