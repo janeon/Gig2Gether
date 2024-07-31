@@ -44,7 +44,8 @@
     if ($page.data.user?.platform === "uber") {
       upload_options = [
         { label: "Quests", href: "/protected/upload/manual-quests" },
-        { label: "Trips", href: "/protected/upload/manual-trips" }
+        { label: "Trips", href: "/protected/upload/manual-trips" },
+        { label: "CSV", href: '/protected/upload/csv-trips'}
       ];
     } else if ($page.data.user?.platform === "rover") {
       upload_options = [
