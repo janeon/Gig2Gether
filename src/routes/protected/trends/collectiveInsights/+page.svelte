@@ -232,7 +232,18 @@
         </Card>
       </div>
     </div>
-  </div>
+
+   <div class="mt-2">
+        <Button class="text-white bg-blue-400">Content</Button>
+        <Tooltip 
+            type="custom" 
+            defaultClass="" 
+            class="p-4 text-lg font-medium bg-blue-500 text-gray-100" 
+            arrow={false}>
+            The content displayed is an example of results layout. It does not contain real user data.
+        </Tooltip>
+    </div>
+
 </div>
 
 <style>
