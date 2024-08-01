@@ -12,6 +12,7 @@
     import { page } from "$app/stores";
     import { updateTitle } from "$lib/stores/title";
     import { goto } from "$app/navigation";
+    import { saveMessagingDeviceToken } from "$lib/firebase/messaging";
     updateTitle("Share Story");
     
     let tags : string[] = []
@@ -101,6 +102,7 @@
   }
 
     async function uploadContent() {
+      await saveMessagingDeviceToken($page.data.user.uid)
       if (uploading) {
         return
       }

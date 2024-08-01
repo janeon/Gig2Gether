@@ -42,6 +42,7 @@
 	"type": "module",
 	"dependencies": {
 		"@capacitor/ios": "^6.0.0",
+		"@firebase/messaging": "^0.12.10",
 		"@fortawesome/fontawesome-free": "^6.6.0",
 		"bits-ui": "^0.21.12",
 		"clsx": "^2.1.1",
@@ -52,6 +53,8 @@
 		"flowbite": "^2.4.1",
 		"flowbite-svelte": "^0.46.15",
 		"papaparse": "^5.4.1",
+		"praecox-datepicker": "^1.1.7",
+		"svelte-calendar": "^3.1.6",
 		"svelte-multiselect": "^10.3.0",
 		"tailwind-fontawesome": "^0.7.1",
 		"tailwind-merge": "^2.4.0",
