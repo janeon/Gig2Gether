@@ -6,6 +6,14 @@ import { db } from '$lib/firebase/client';
 import { doc, getDoc } from 'firebase/firestore';
 import type { User } from '../app';
 
+const date = new Date();
+const pad = (num) => num.toString().padStart(2, '0');
+export const currentDate = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+
+export function capitalize(string: string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
 }
@@ -71,6 +79,7 @@ export const getUser = async(uid:string) => {
         const user : User = {
             uid: uid,
             role: docRef.data().role,
+			credentials: docRef.data().credentials,
             username: docRef.data().username,
             platform: docRef.data().platform
         }
