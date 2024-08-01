@@ -21,17 +21,17 @@
     let tripData = {
         date: new Date(),
         type: "trip",
-        fare: 0,
-        surge: 0,
-        tips: 0,
-        waitTimeBonus: 0,
-        boost: 0,
-        withholdingsPercent: 0,
+        fare: null,
+        surge: null,
+        tips: null,
+        waitTimeBonus: null,
+        boost: null,
+        withholdingsPercent: null,
         uid: $page.data.user?.uid
     }
 
     async function submitManualTrip() {
-        if (tripData.fare === 0) {
+        if (!tripData.fare) {
             fareError = "Please Enter a Fare"
             return
         }
