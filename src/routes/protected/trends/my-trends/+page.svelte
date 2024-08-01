@@ -6,6 +6,7 @@
   let seriesData = [];
 
   // Conditionally create the series data based on the user platform
+  // Static can query into
   if ($page.data.user?.platform == "uber") {
     seriesData = [
       { x: '12am', y: 0.50 },
@@ -138,7 +139,7 @@
     </div>
 
     <div class="flex-col mt-3">
-      <div>
+      <div class = "w-1/2">
         <Card>
           <div class="flex justify-between pb-4 mb-4 border-b border-gray-200 dark:border-gray-700">
             <div class="flex items-center">
@@ -172,8 +173,8 @@
         </Card>
       </div>
 
-      <div>
-   
+      <div class = "w-1/2">
+            Calendar
       </div>
     </div>
 
