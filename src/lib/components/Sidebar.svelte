@@ -30,7 +30,7 @@
             { label: "My Account", href: "/protected/settings/account" },
             { label: "Demographics", href: "/protected/settings/demographics" },
             { label: "Sharing Preferences", href: "/protected/settings/sharing_preferences" },
-            { label: "Withdraw Data", href:"/protected/settings/withdraw" },
+            { label: "Withdraw Data", href:"/protected/settings/withdraw"},
             { label: "Notification" }
     ]
 
