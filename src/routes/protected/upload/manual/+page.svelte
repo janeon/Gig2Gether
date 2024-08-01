@@ -22,11 +22,11 @@
     // Uber Manual
     let uberData = {
         date: new Date(),
-        income: 0,
-        tips: 0,
-        expenses: 0,
-        hoursSpent: 0,
-        withholdings: 0,
+        income: null,
+        tips: null,
+        expenses: null,
+        hoursSpent: null,
+        withholdings: null,
         schedule: [],
         uid: $page.data.user.uid
     }
@@ -35,13 +35,13 @@
     let roverData = {
         date: new Date(), //Called date for same values for other uploads (but is start date)
         end_date: new Date(),
-        income: 0,
-        tips: 0,
-        expenses: 0,
-        timeSpent: 0,
-        platfromCut: 0,
+        income: null,
+        tips: null,
+        expenses: null,
+        timeSpent: null,
+        platfromCut: null,
         type: [],
-        travelTime: 0,
+        travelTime: null,
         uid: $page.data.user.uid
     }
 
@@ -50,8 +50,8 @@
         date: new Date(), //Called date for same values for other uploads (but is start date)
         end_date: new Date(),
         type: '',
-        hourlyCharge: 0,
-        hoursPerWeek: 0,
+        hourlyCharge: null,
+        hoursPerWeek: null,
         clientHistory: '',
         experience: [],
         jobDuration: '',
@@ -87,21 +87,21 @@
         //     }
         // }
         if ($page.data.user?.platform == "rover") {
-            if (roverData.timeSpent === 0) {
+            if (!roverData.timeSpent) {
                 console.log('time')
                 timeError = "Please Add Hours Spent"
             }
             else {
                 timeError = ""
             }
-            if (roverData.income === 0) {
+            if (!roverData.income) {
                 console.log('income')
                 incomeError = "Please Add Income"
             }
             else {
                 incomeError = ""
             }
-            if (roverData.type.length === 0) {
+            if (!roverData.type.length) {
                 console.log('s')
                 typeError = "Please Add Service(s)"
             }
@@ -114,13 +114,13 @@
             }
         }
         else if ($page.data.user?.platform === "upwork") {
-            if (upworkData.hoursPerWeek === 0) {
+            if (!upworkData.hoursPerWeek) {
                 timeError = "Please Add Hours Spent per Week"
             }
             else {
                 timeError = ""
             }
-            if (upworkData.hourlyCharge === 0) {
+            if (!upworkData.hourlyCharge) {
                 incomeError = "Please Add Hourly Rate"
             }
             else {
