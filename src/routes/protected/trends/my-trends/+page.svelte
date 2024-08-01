@@ -2,6 +2,7 @@
   import TrendsSidebar from "$lib/components/TrendsSidebar.svelte";
   import { Chart, Card } from 'flowbite-svelte';
   import { page } from "$app/stores";
+  import SvelteHeatmap from 'svelte-heatmap';
 
   let seriesData = [];
 
@@ -174,8 +175,8 @@
       </div>
 
       <div class = "w-1/2">
-            Calendar
-      </div>
+        Calendar
+  </div>
     </div>
 
     <div class="justify-center mt-4">
