@@ -25,25 +25,25 @@
         end_date: new Date(),
         startTime: '',
         endTime: '',
-        baseTrips: 0,
-        rewardForTrips: 0,
-        rewardForBonusTrips: 0,
-        hoursSince: 0,
-        tripsCompleted: 0,
-        earnings: 0,
-        distance: 0,
-        tips: 0,
+        baseTrips: null,
+        rewardForTrips: null,
+        rewardForBonusTrips: null,
+        hoursSince: null,
+        tripsCompleted: null,
+        earnings: null,
+        distance: null,
+        tips: null,
         uid: $page.data.user?.uid
     }
 
     async function submitManualQuest() {
-        if (questData.baseTrips === 0) {
+        if (!questData.baseTrips) {
             baseError = "Please Enter the Base Number of Trips"
         }
         else {
             baseError = ""
         }
-        if (questData.rewardForTrips === 0) {
+        if (!questData.rewardForTrips) {
             rewardError = "Please Enter the Reward"
         }
         else {

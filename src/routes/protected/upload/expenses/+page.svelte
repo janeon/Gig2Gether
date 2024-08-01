@@ -19,7 +19,7 @@
         time: '',
         expenseType: [],
         description: '',
-        amount: 0,
+        amount: null,
         uid: $page.data.user.uid
     }
 
@@ -30,7 +30,7 @@
     const upworkExpenseType = ["Software", "Office Supplies", "Insurance", "Other"]
 
     async function submitExpenses() {
-        if (data.amount == 0) {
+        if (!data.amount) {
             errorMessage = "Please Enter an Expense Amount"
             return
         }
