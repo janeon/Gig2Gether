@@ -8,7 +8,8 @@ export interface Post {
     type: string,
     likes: string[],
     platform: string,
-    id: string
+    id: string,
+    username: string,
 }
 
 export interface Data {
