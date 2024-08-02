@@ -31,7 +31,7 @@
 
 	function parsePageNameFromUrl(url: string) {
 		let lastSegment = url.split('/').filter(Boolean).pop() as string
-		lastSegment = lastSegment.split('_')          // Split the string by underscores
+		lastSegment = lastSegment.split('-')          // Split the string by underscores
             .map(word => word.charAt(0).toUpperCase() + word.slice(1))  // Capitalize each word
             .join(' ');          // Join the words with spaces
 		return (lastSegment === 'Protected') ? 'Home' : lastSegment;
