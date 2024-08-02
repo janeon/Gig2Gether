@@ -26,6 +26,12 @@
  * ```
  */
 declare module '$env/static/private' {
+	export const VITE_FIREBASE_API_KEY: string;
+	export const VITE_FIREBASE_APP_ID: string;
+	export const VITE_FIREBASE_AUTH_DOMAIN: string;
+	export const VITE_FIREBASE_PROJECT_ID: string;
+	export const VITE_STORAGE_BUCKET: string;
+	export const VITE_FIREBASE_SERVICE_ACCOUNT: string;
 	export const NVM_INC: string;
 	export const MANPATH: string;
 	export const TERM_PROGRAM: string;
@@ -128,6 +134,12 @@ declare module '$env/static/public' {
  */
 declare module '$env/dynamic/private' {
 	export const env: {
+		VITE_FIREBASE_API_KEY: string;
+		VITE_FIREBASE_APP_ID: string;
+		VITE_FIREBASE_AUTH_DOMAIN: string;
+		VITE_FIREBASE_PROJECT_ID: string;
+		VITE_STORAGE_BUCKET: string;
+		VITE_FIREBASE_SERVICE_ACCOUNT: string;
 		NVM_INC: string;
 		MANPATH: string;
 		TERM_PROGRAM: string;
