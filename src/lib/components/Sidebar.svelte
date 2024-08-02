@@ -29,14 +29,14 @@
             { label: "My Worker Profile", href: "/protected/settings/profile" },
             { label: "My Account", href: "/protected/settings/account" },
             { label: "Demographics", href: "/protected/settings/demographics" },
-            { label: "Sharing Preferences", href: "/protected/settings/sharing_preferences" },
+            { label: "Sharing Preferences", href: "/protected/settings/sharing-preferences" },
             { label: "Withdraw Data", href:"/protected/settings/withdraw" },
             { label: "Notification" }
     ]
 
     const sharing = [
-      { label: "Story Feed", href: "/protected/stories/story_feed" },
-      { label: "Share Story", href: "/protected/stories/share_story" }
+      { label: "Story Feed", href: "/protected/stories/story-feed" },
+      { label: "Share Story", href: "/protected/stories/share-story" }
     ]
 
     let upload_options = [];

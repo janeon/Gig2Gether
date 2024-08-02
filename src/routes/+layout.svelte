@@ -43,7 +43,7 @@
 
 	const navItems = [
 		{ label: "Upload", icon: "fas fa-upload", href: '/protected/upload/manual' },
-		{ label: "Stories", icon: "fas fa-book", href: '/protected/stories/story_feed' },
+		{ label: "Stories", icon: "fas fa-book", href: '/protected/stories/story-feed' },
 		{ label: "Trends", icon: "fas fa-chart-line", href: '/protected/trends/personal' },
 		{ label: "Settings", icon: "fas fa-cog", href: '/protected/settings/account' },
 		{ label: "Planner", icon: "fas fa-calendar", href: '/protected/planner/tax' }
@@ -81,8 +81,8 @@
 				<ChevronDownOutline class="w-6 h-6 ms-2 text-white dark:text-white" />
 			</BlueButton>
 			<Dropdown>
-			<DropdownItem href="/register_worker">Worker</DropdownItem>
-			<DropdownItem href="/register_policymaker">Policymaker</DropdownItem>
+			<DropdownItem href="/register-worker">Worker</DropdownItem>
+			<DropdownItem href="/register-policymaker">Policymaker</DropdownItem>
 			</Dropdown>
 			
 			

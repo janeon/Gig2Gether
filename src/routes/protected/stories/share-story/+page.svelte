@@ -156,7 +156,7 @@
             sharing: postSharing
 
         })
-        goto('/protected/stories/story_feed')
+        goto('/protected/stories/story-feed')
         } catch {
             uploading = false
         }
@@ -168,7 +168,7 @@
                 likes: [], tags, platform: $page.data.user.platform, sharing: postSharing
 
             })
-            goto('/protected/stories/story_feed')
+            goto('/protected/stories/story-feed')
         } catch {
             uploading = false
             }
