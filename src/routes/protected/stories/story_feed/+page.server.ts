@@ -13,7 +13,9 @@ export async function load() {
         posts.push(post)
     })
     }
-    console.log(posts)
+    posts = posts.sort((a, b) =>{
+        return (b.date.getTime() - a.date.getTime())
+    })
 
     return {
         posts: posts
