@@ -6,7 +6,6 @@
     updateTitle("Story Feed");
     import {createFilterStore, filterHandler} from '$lib/filter'
     import { onDestroy } from "svelte";
-    import type { fromJSON } from "postcss";
     let dataToDisplay = data.posts
 
     const filterStore = createFilterStore(dataToDisplay)

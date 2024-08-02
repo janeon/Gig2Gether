@@ -23,12 +23,12 @@
 
 <div class="border-t p-3 justify-items-center">
     <div class="">
-        <div class="flex items-center text-xs text-gray-500 gap-1">
+        <div class="text-xs text-gray-500 gap-1">
             <h3 class="capitalize text-sm font-semibold">{postData.username}</h3>
             <!-- {postData.date.getHours()}:{postData.date.getMinutes()} -->
             <!-- {dayNames[postData.date.getDay()]} {postData.date.getMonth() +1}/{postData.date.getDate()}/{postData.date.getFullYear()} -->
-            <p>{postData.date.toLocaleDateString('en-US', {dateStyle:'full'})} {postData.date.toLocaleTimeString('en-US', {timeStyle:'short'})}</p>
         </div>
+        <p class="text-xs text-gray-500 gap-1">{postData.date.toLocaleDateString('en-US', {dateStyle:'full'})} {postData.date.toLocaleTimeString('en-US', {timeStyle:'short'})}</p>
         <p class="text-lg flex flex-wrap break-words mb-2">
 			{postData.title}
 		</p>
