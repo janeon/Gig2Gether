@@ -1,5 +1,5 @@
 import { db } from "$lib/firebase/client";
-import { collection, getDoc, getDocs, orderBy, query, doc } from "firebase/firestore";
+import { collection, getDocs, orderBy, query, doc } from "firebase/firestore";
 
 export async function load() {
     const platforms = ["rover", "uber", "upwork"]

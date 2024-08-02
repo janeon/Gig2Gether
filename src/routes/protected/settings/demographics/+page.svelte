@@ -79,12 +79,12 @@
         
         <!-- <div class="py-5">
             <Label>Hours spent on a full time (W2) job per week</Label>
-            <NumberInput class = "border-2" bind:value={dataToSetToStore.w2Hours} type = "number"/>
+            <NumberInput bind:value={dataToSetToStore.w2Hours} type = "number"/>
         </div> -->
         
         <!-- <div class="py-5">
             <Label>Estimated hours spent on gigs not part of this platform</Label>
-            <NumberInput class = "border-2" bind:value={dataToSetToStore.otherGigHours} type = "number"/>
+            <NumberInput bind:value={dataToSetToStore.otherGigHours} type = "number"/>
         </div> -->
         <div class="flex justify-center">
             <BlueButton onclick={submitDemographics} buttonText="Submit"/>
