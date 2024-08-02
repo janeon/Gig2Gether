@@ -21,7 +21,7 @@
     // Uber Expenses
     let questData = {
         type: 'quest',
-        start_date: new Date(),
+        date: new Date(),
         end_date: new Date(),
         startTime: '',
         endTime: '',
@@ -54,7 +54,7 @@
         }
         const collectionRef = collection(db, "upload", "manual", "entries")
         const docRef = doc(collectionRef) // Separate by gig work manual inputs?
-        questData.start_date = new Date(start_date)
+        questData.date = new Date(start_date)
         questData.end_date = new Date(end_date)
         setDoc(docRef, questData, { merge: true });
         successMessage = "Input Submitted Successfully!"
