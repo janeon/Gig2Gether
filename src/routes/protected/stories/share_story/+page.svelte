@@ -100,7 +100,6 @@
         }
 
         if (tags.length == 0) {
-            console.log("here")
             errorMessageTags = "Please select at least one tag"
         }
         else {
@@ -140,7 +139,7 @@
             await addDoc(collection(db, 'stories', $page.data.user.platform, "posts"), 
             { type, title, description, uid: $page.data.user.uid,
             url, date: new Date(), tags, platform: $page.data.user.platform, likes: [],
-            sharing: postSharing
+            sharing: postSharing, username: $page.data.user.username
 
         })
         goto('/protected/stories/story_feed')
@@ -152,13 +151,14 @@
             try {
                 await addDoc(collection(db, 'stories', $page.data.user.platform, "posts"), {
                 type, title, description, uid: $page.data.user.uid, date: new Date(),
-                likes: [], tags, platform: $page.data.user.platform, sharing: postSharing
+                likes: [], tags, platform: $page.data.user.platform, sharing: postSharing, 
+                username: $page.data.user.username
 
             })
             goto('/protected/stories/story_feed')
         } catch {
             uploading = false
-            }
+          }
         }
     }
 
@@ -221,7 +221,6 @@
 {:else if $page.data.user.platform == "upwork"}
   <Tags tags={upworkTags} bind:bindGroup={tags} />
 {/if}
-<p>{tags}</p>
 
 <div class="py-5">
 Title:

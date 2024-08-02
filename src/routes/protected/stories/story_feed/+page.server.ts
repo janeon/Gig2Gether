@@ -5,18 +5,15 @@ export async function load() {
     const platforms = ["rover", "uber", "upwork"]
     let posts = []
     for (let platform of platforms) {
-        const snapshot = await getDocs(query(collection(db, 'stories', platform, "posts"), orderBy("date", "desc")))
-        snapshot.forEach(async(item) => {
-            let userRef = await getDoc(doc(db, 'users', item.data().uid))
-            let post = item.data()
-            post.date = post.date.toDate()
-            post.id = item.id
-            if (userRef.exists()) {
-                post.username = userRef.data().username
-            }
-            posts.push(post)
-        })
+    const snapshot = await getDocs(query(collection(db, 'stories', platform, "posts"), orderBy("date", "desc")))
+    snapshot.forEach(async(item) => {
+        let post = item.data()
+        post.date = post.date.toDate()
+        post.id = item.id
+        posts.push(post)
+    })
     }
+    console.log(posts)
 
     return {
         posts: posts
