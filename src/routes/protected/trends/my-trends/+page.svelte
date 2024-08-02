@@ -184,13 +184,13 @@
           <div class="flex flex-col">
             <h1 class="font-bold text-black mb-3">Other Information</h1>
             <p class="font-normal text-gray-700 dark:text-gray-400 leading-tight mb-3">
-              Average Job Length: XXXX
+              Average Job Length: 1 Month
             </p>
             <p class="font-normal text-gray-700 dark:text-gray-400 leading-tight mb-3">
-              Average Work/Day: XXXX
+              Average Work/Day: 8 Hours
             </p>
             <p class="font-normal text-gray-700 dark:text-gray-400 leading-tight mb-3">
-              Average Hourly Pay: XXXX
+              Average Hourly Pay: $15/hr
             </p>
           </div>
         </Card>
