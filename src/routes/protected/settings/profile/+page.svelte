@@ -11,6 +11,7 @@
     import us_cities from "$lib/us_cities.json";
     
     updateTitle(`My ${capitalize($page.data.user?.platform)} Profile`);
+    let successMessage = ""
 
     let uberData = {
         rating: null, car: '', services: [], cities: [], dateJoined: currentDate, date: new Date()
@@ -53,6 +54,7 @@
             const docRef = doc(collectionRef, "profile");
             const data = $page.data.user?.platform === "uber" ? uberData : roverData;
             await setDoc(docRef, data, { merge: true });
+            successMessage = "You've Updated Your Profile!"
         }
         catch (error) {
             console.error("Error updating profile", error);
@@ -163,4 +165,7 @@
 </div>
 {/if}
 
-<BlueButton onclick={submitProfile} buttonText="Submit"/>
+<div class="flex justify-center">
+    <p class="text-green-600 m-2">{successMessage}</p>
+        <BlueButton onclick={submitProfile} buttonText="Submit"/>
+</div>

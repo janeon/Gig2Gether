@@ -86,5 +86,6 @@
             <Label>Estimated hours spent on gigs not part of this platform</Label>
             <NumberInput class = "border-2" bind:value={dataToSetToStore.otherGigHours} type = "number"/>
         </div> -->
-        
-        <BlueButton onclick={submitDemographics} buttonText="Submit"/>
+        <div class="flex justify-center">
+            <BlueButton onclick={submitDemographics} buttonText="Submit"/>
+        </div>

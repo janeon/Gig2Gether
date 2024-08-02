@@ -1,5 +1,6 @@
 <script lang="ts">
     import { invalidateAll } from "$app/navigation";
+    import BlueButton from "$lib/components/BlueButton.svelte";
     import DataRow from "$lib/components/DataRow.svelte";
     import { db } from "$lib/firebase/client.js";
     import type { Data } from "$lib/types";
@@ -39,7 +40,9 @@
         {/each}
         
     {/if}
-    <Button color="alternative" on:click={()=>{if (toDelete.length > 0) {modal=true}}}>Delete Data</Button>
+    <div class="flex justify-center">
+        <BlueButton onclick={()=>{if (toDelete.length > 0) {modal=true}}} buttonText="Delete Data" />
+    </div>
     <Modal title="Are you sure you want to delete these uploads?" bind:open={modal} autoclose>
         <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">If you delete the selected data, you will have to reupload all content included.</p>
         <div class="flex flex-row space-x-2">

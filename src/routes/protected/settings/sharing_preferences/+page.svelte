@@ -120,6 +120,6 @@
     {/if}
 </div>
 
-<div class = "py-5">
+<div class = "py-5 flex justify-center">
 <BlueButton onclick={submitPreferences} buttonText="Submit"/>
 </div>
