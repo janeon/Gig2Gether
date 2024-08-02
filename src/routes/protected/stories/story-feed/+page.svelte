@@ -1,7 +1,7 @@
 <script lang="ts">
     import PostCard from "$lib/components/PostCard.svelte";
     import { Button, Dropdown, Checkbox, Accordion, AccordionItem } from 'flowbite-svelte';
-    export let data../story-feed/$types.js
+    export let data
     import { updateTitle } from "$lib/stores/title";
     updateTitle("Story Feed");
     import {createFilterStore, filterHandler} from '$lib/filter'
