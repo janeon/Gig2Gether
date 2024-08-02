@@ -125,18 +125,18 @@
                 <NumberInput bind:value={questData.tips} class="mt-1" />
             </div>
 
-            <div class="flex justify-center mt-6">
-                <button
-                    class="bg-black text-white py-2 px-4 rounded"
-                    on:click={submitManualQuest}>
-                    Submit
-                </button>
-                {#if successMessage}
+            {#if successMessage}
                 <p class="text-green-600 mt-2">{successMessage}</p>
                 {/if}
                 {#if errorMessage}
                  <p class = "text-red-600 mt-2">{errorMessage}</p>
                 {/if}
+            <div class="flex justify-center mt-6">
+                <button
+                    class="bg-black text-white py-2 px-4 rounded"
+                    on:click={submitManualQuest}>
+                    Submit
+            </button>
             </div>
         </div>
     </div>
