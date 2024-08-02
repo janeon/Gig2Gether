@@ -41,11 +41,11 @@
   <div class="flex flex-col items-center min-h-screen px-4 pt-20"> 
     <div class="grid grid-cols-1 xs:grid-cols-1 sm:grid-cols-2 gap-4 max-w-4xl w-full">
       {#each [
-        { iconClass: 'fa-upload', title: 'Upload', route: '/protected/upload' },
-        { iconClass: 'fa-book', title: 'Stories', route: '/protected/stories' },
+        { iconClass: 'fa-upload', title: 'Upload', route: '/protected/upload/manual' },
+        { iconClass: 'fa-book', title: 'Stories', route: '/protected/stories/story_feed' },
         { iconClass: 'fa-chart-line', title: 'Trends', route: '/protected' },
-        { iconClass: 'fa-cog', title: 'Settings', route: '/protected/settings/account' },
-        { iconClass: 'fa-calendar', title: 'Planner', route: '/protected' }
+        { iconClass: 'fa-cog', title: 'Settings', route: '/protected/settings/profile' },
+        { iconClass: 'fa-calendar', title: 'Planner', route: '/protected/planner/work-day' }
       ] as { iconClass, title, route }}
         <HomeCard {iconClass} {title} {route} mobile={mobile} />
       {/each}
