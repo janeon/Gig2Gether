@@ -35,8 +35,8 @@
     ]
 
     const sharing = [
-      { label: "Story Feed", href: "/protected/stories/story_feed" },
-      { label: "Share Story", href: "/protected/stories/share_story" }
+      { label: "Story Feed", href: "/protected/stories/story-feed" },
+      { label: "Share Story", href: "/protected/stories/share-story" }
     ]
 
     let upload_options = [];
