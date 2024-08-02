@@ -1,8 +1,8 @@
 <script lang="ts">
     import { page } from "$app/stores";
-    import TrendsSidebar from "$lib/components/TrendsSidebar.svelte";
     import { Chart, Card, Radio, Checkbox, Button, Tooltip } from 'flowbite-svelte';
     import { writable } from 'svelte/store';
+    import Sidebar from "$lib/components/Sidebar.svelte";
   
     let seriesData = writable([]);
     let selectedCompareBy = 'Hourly income rates';
@@ -169,7 +169,7 @@
   
   <div class="flex flex-row">
     <div class="w-1/4 p-2">
-      <TrendsSidebar />
+      <Sidebar title="Trends" option="trends"/>
     </div>
   
     <div class="flex flex-col items-center w-3/4 p-2">

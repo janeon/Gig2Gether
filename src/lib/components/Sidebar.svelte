@@ -39,6 +39,12 @@
       { label: "Share Story", href: "/protected/stories/share_story" }
     ]
 
+    const trends = [
+      { label: "My Trends", href: "/protected/trends/personal" },
+      { label: "Collective Insights", href: "/protected/trends/aggregate" }
+    ]
+
+
     $: platform = $page.data.user?.platform;
     let upload_options = [];
 
@@ -64,7 +70,7 @@
       { label: "Expenses", href: "/protected/upload/expenses" }
     );
     
-    const options = {"settings": settings, "sharing": sharing, "upload": upload_options} ;
+    const options = {"settings": settings, "sharing": sharing, "upload": upload_options, "trends": trends} ;
     export let option: string;
     export let title: string;
     
