@@ -101,6 +101,7 @@
                 incomeError = ""
             }
             if (!roverData.type.length) {
+                console.log('s')
                 typeError = "Please Add Service(s)"
             }
             else {
