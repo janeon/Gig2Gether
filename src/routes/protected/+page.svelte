@@ -23,7 +23,7 @@
     <Dropdown {activeUrl} {activeClass} triggeredBy=".acs">
       <DropdownHeader>
         <span class="block text-sm text-gray-900 dark:text-white">Username</span>
-        <span class="block truncate text-sm font-medium">{$page.data.user?.credentials}</span>
+        <span class="block truncate text-sm font-medium">{$page.data.user?.username}</span>
       </DropdownHeader>
       <DropdownItem href="/protected">Home</DropdownItem>
       <DropdownItem href="/protected/settings/account">Account</DropdownItem>
