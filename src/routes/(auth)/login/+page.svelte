@@ -5,8 +5,11 @@
 	import type { ActionData } from './$types'; 
 	import { getUser } from '$lib/utils'
 	import { enhance } from '$app/forms';
-	import { Button, Input, Alert } from 'flowbite-svelte';
+	import { Button, Label, Input, Alert } from 'flowbite-svelte';
 	import BlueButton from '$lib/components/BlueButton.svelte';
+  	import { EyeOutline, EyeSlashOutline } from 'flowbite-svelte-icons';
+  	
+	let show = false;
 	export let form : ActionData;
 	let token: string;
 	// $: console.log("token", token);
@@ -98,7 +101,18 @@
 		</div>
 	
 		{#if signInMethod == 'email'}
-		<Input type="password" placeholder="Password" name="password" class="px-4 py-2 border border-gray-300 rounded-md" />
+		<div>
+			<Label for="show-password" class="mb-2">Your password</Label>
+			<Input name="password" id="show-password" type={show ? 'text' : 'password'} placeholder="Password" size="lg" class="px-4 py-2 border border-gray-300 rounded-md">
+			  <button slot="left" on:click={() => (show = !show)} class="pointer-events-auto">
+				{#if show}
+				  <EyeOutline class="w-6 h-6" />
+				{:else}
+				  <EyeSlashOutline class="w-6 h-6" />
+				{/if}
+			  </button>
+			</Input>
+		  </div>
 		<BlueButton onclick={login} type="submit" buttonText="Login"></BlueButton>
 		{:else if signInMethod == 'phone'}
 		<Input type="text" placeholder="Verification Code" name="code" class="px-4 py-2 border border-gray-300 rounded-md" required />
