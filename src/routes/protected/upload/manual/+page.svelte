@@ -7,6 +7,7 @@
     import { currentDate } from "$lib/utils";
     import { updateTitle } from "$lib/stores/title";
     import { capitalize } from "$lib/utils";
+    import { error } from "@sveltejs/kit";
     updateTitle(capitalize($page.data.user?.platform) + " Manual Upload");
 
     let successMessage = '';
