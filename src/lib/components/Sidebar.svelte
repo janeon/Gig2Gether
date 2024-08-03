@@ -38,7 +38,7 @@
       { label: "Story Feed", href: "/protected/stories/story_feed" },
       { label: "Share Story", href: "/protected/stories/share_story" }
     ]
-
+    
     const trends = [
       { label: "My Trends", href: "/protected/trends/personal" },
       { label: "Collective Insights", href: "/protected/trends/aggregate" }
@@ -52,25 +52,28 @@
     $: platform = $page.data.user?.platform;
     let upload_options = [];
 
-    if (platform === "uber") {
+    if ($page.data.user?.platform === "uber") {
       upload_options = [
-        { label: "Quests", href: "/protected/upload/quests" },
-        { label: "Trips", href: "/protected/upload/trips" }
+        { label: "Quests", href: "/protected/upload/manual-quests" },
+        { label: "Trips", href: "/protected/upload/manual-trips" },
+        { label: "CSV", href: '/protected/upload/csv-trips'}
       ];
-    } else if (platform === "rover") {
+    } else if ($page.data.user?.platform === "rover") {
       upload_options = [
-        { label: "Screenshot", href: "/protected/upload/rover-upload" }
+        // { label: "Screenshot", href: "/protected/upload/rover-upload" }
+        { label: "Manual", href: "/protected/upload/manual" }
       ];
-    } else if (platform === "upwork") {
+    } else if ($page.data.user?.platform === "upwork") {
       upload_options = [
-        { label: "Jobs", href: "/protected/upload/upwork-job" },
-        { label: "Profile", href: "/protected/upload/upwork-profile" }
+        // { label: "Jobs", href: "/protected/upload/upwork-job" },
+        // { label: "Profile", href: "/protected/upload/upwork-profile" }
+        { label: "Manual", href: "/protected/upload/manual" }
       ];
     }
 
     // Add common items
     upload_options.push(
-      { label: "Manual", href: "/protected/upload/manual" },
+      // { label: "Manual", href: "/protected/upload/manual" },
       { label: "Expenses", href: "/protected/upload/expenses" }
     );
     
