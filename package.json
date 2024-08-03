@@ -56,7 +56,6 @@
 		"react-schedule-selector": "^2.0.0",
 		"react-youtube": "^10.1.0",
 		"styled-components": "^6.1.12",
-		"svelte-calendar": "^3.1.6",
 		"svelte-multiselect": "^10.3.0",
 		"svelte-preprocess-react": "^0.17.1",
 		"tailwind-fontawesome": "^0.7.1",

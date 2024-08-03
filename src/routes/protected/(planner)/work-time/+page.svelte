@@ -1,7 +1,6 @@
 <script lang="ts">
     import { goto } from "$app/navigation";
     import PlannerSidebar from "$lib/components/PlannerSidebar.svelte";
-    import { Calendar } from "svelte-calendar";
     import { writable } from 'svelte/store';
 
     // Store for selected dates
