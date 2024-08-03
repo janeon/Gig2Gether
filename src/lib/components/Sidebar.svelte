@@ -38,7 +38,18 @@
       { label: "Story Feed", href: "/protected/stories/story_feed" },
       { label: "Share Story", href: "/protected/stories/share_story" }
     ]
+    
+    const trends = [
+      { label: "My Trends", href: "/protected/trends/personal" },
+      { label: "Collective Insights", href: "/protected/trends/aggregate" }
+    ]
 
+    const planner = [
+      { label: "Work", href: "/protected/planner/work-day" },
+      { label: "Tax", href: "/protected/planner/tax" }
+    ]
+
+    $: platform = $page.data.user?.platform;
     let upload_options = [];
 
     if ($page.data.user?.platform === "uber") {
@@ -66,7 +77,13 @@
       { label: "Expenses", href: "/protected/upload/expenses" }
     );
     
-    const options = {"settings": settings, "sharing": sharing, "upload": upload_options} ;
+    const options = {
+      "settings": settings, 
+      "sharing": sharing, 
+      "upload": upload_options, 
+      "trends": trends,
+      "planner": planner
+    } ;
     export let option: string;
     export let title: string;
     
