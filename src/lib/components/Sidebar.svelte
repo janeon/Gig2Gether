@@ -30,7 +30,7 @@
             { label: "My Account", href: "/protected/settings/account" },
             { label: "Demographics", href: "/protected/settings/demographics" },
             { label: "Sharing Preferences", href: "/protected/settings/sharing_preferences" },
-            { label: "Withdraw Data", href:"/protected/settings/withdraw" },
+            { label: "Withdraw Data", href:"/protected/settings/withdraw"},
             { label: "Notification" }
     ]
 
@@ -106,7 +106,7 @@
         <Dropdown {activeUrl} {activeClass} triggeredBy=".acs">
           <DropdownHeader>
             <span class="block text-sm text-gray-900 dark:text-white">Username</span>
-            <span class="block truncate text-sm font-medium">{$page.data.user?.credentials}</span>
+            <span class="block truncate text-sm font-medium">{$page.data.user?.username}</span>
           </DropdownHeader>
           <DropdownItem href="/protected">Home</DropdownItem>
           <DropdownItem href="/protected/settings/account">Account</DropdownItem>
