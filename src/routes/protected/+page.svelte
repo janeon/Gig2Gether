@@ -43,7 +43,7 @@
       {#each [
         { iconClass: 'fa-upload', title: 'Upload', route: '/protected/upload/manual' },
         { iconClass: 'fa-book', title: 'Stories', route: '/protected/stories/story_feed' },
-        { iconClass: 'fa-chart-line', title: 'Trends', route: '/protected' },
+        { iconClass: 'fa-chart-line', title: 'Trends', route: '/protected/trends/personal' },
         { iconClass: 'fa-cog', title: 'Settings', route: '/protected/settings/profile' },
         { iconClass: 'fa-calendar', title: 'Planner', route: '/protected/planner/work-day' }
       ] as { iconClass, title, route }}
