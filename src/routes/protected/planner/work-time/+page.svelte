@@ -1,6 +1,5 @@
 <script lang="ts">
     import Datepicker from "praecox-datepicker";
-    import PlannerSidebar from "$lib/components/PlannerSidebar.svelte";
     import { goto } from "$app/navigation";
     import ScheduleSelector from 'react-schedule-selector'
 
@@ -22,9 +21,6 @@
 </script>
 
 <div class="flex flex-row">
-    <div class="w-1/4 p-2">
-        <PlannerSidebar />
-    </div>
 
     <div class="flex flex-col items-center w-3/4 p-2">
 
