@@ -39,16 +39,16 @@
             <img src={postData.url} class="rounded-sm mt-2 object-contain w-1/2" alt="" />
         {/if}
         <div class="flex justify-between text-sm mt-2">
-			<button class="flex transition-all group items-center gap-2 text-gray-600">
-				<div class="p-1 rounded-full group-hover:bg-blue-500/20" on:click={changeLikes}>
+			<div class="flex transition-all group items-center gap-2 text-gray-600">
+				<button class="p-1 rounded-full group-hover:bg-blue-500/20" on:click={changeLikes}>
 					{#if likes.includes($page.data.user.uid)}
                         <i class="fa-solid fa-heart text-blue-500"></i>
 					{:else}
                         <i class="fa-regular fa-heart group-hover:text-blue-500"></i>
 					{/if}
-				</div>
+				</button>
 				<span class="group-hover:text-blue-500"> {likes.length}</span>
-			</button>
+			</div>
 		</div>
     </div>
 </div>
