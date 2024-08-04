@@ -15,7 +15,7 @@ const register: Action = async ({ request, cookies }) => {
   const admin = getFirebaseServer();
   if (admin.error) {
       console.error("Error getting firebase admin");
-      throw redirect(303, "/register_policymaker");
+      throw redirect(303, "/register-policymaker");
   }
 
   // Expires in 5 days
@@ -28,7 +28,7 @@ const register: Action = async ({ request, cookies }) => {
     sessionCookie = await admin_auth.createSessionCookie(token, { expiresIn: expiresIn * 1000 });
     } catch (error) {
       console.error("Error creating session cookie", (error as Error).message); 
-      throw redirect(303, "/register_policymaker");
+      throw redirect(303, "/register-policymaker");
     }
 
   // DO NOT RENAME COOKIE 

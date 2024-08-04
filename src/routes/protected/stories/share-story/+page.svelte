@@ -142,7 +142,7 @@
             sharing: postSharing, username: $page.data.user.username
 
         })
-        goto('/protected/stories/story_feed')
+        goto('/protected/stories/story-feed')
         } catch {
             uploading = false
         }
@@ -155,7 +155,7 @@
                 username: $page.data.user.username
 
             })
-            goto('/protected/stories/story_feed')
+            goto('/protected/stories/story-feed')
         } catch {
             uploading = false
           }
