@@ -17,6 +17,10 @@
 	
 	let mobile: boolean;
 	let protected_urls: boolean;
+	let loggedIn = $page.data.user===undefined ? false : true;
+	console.log("logged in", loggedIn);
+	
+	
 	onMount(() => {
 		mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(window.navigator.userAgent);
 		protected_urls = activeUrl.startsWith('/protected');
@@ -54,7 +58,7 @@
 <svelte:head>
     <title>{title}</title> 
 </svelte:head>
-{#key title} 
+{#key [title, loggedIn].join(';')} 
 	<!-- top nav bar for web -->
 	<div class={(mobile && protected_urls) ? 'hidden md:block' : 'block'}>
 		<header class="flex justify-between items-center p-4 bg-gray-100">
@@ -71,7 +75,13 @@
 						<a href="/protected" class="text-lg font-bold">{title}</a>
 					{/if}
 				</div>
+				{#if loggedIn}
+				<form action="/logout" method="POST" use:enhance bind:this={form}>
+				<BlueButton href="/" buttonText="Log Out" onclick={() => form.submit()}/>
+				</form>
+				{:else}
 				<BlueButton href="/login" buttonText="Login"/>
+				{/if}
 
 			{:else if title==="Login"}
 			<div>
