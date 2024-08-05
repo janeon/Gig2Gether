@@ -8,6 +8,7 @@
 	import { collection, doc, getCountFromServer, query, setDoc, where } from 'firebase/firestore';
 
 	import { Button, Input, Label, Radio, Alert } from 'flowbite-svelte';
+	import { EyeOutline, EyeSlashOutline } from 'flowbite-svelte-icons';
 	import BlueButton from '$lib/components/BlueButton.svelte';
 	
 	export let form : ActionData;
@@ -16,6 +17,8 @@
 	let confirmationResult: ConfirmationResult;
 	let signInMethod : string;
 	let selectedPlatform : string = "";
+	let show1 = false;
+	let show2 = false;
 
 	onMount(() => {
 	  recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
@@ -56,6 +59,11 @@
 		const count = await getCountFromServer(query(collection(db, 'users'), where('username', '==', form.username.value)))
 		if (count.data().count > 0) {
 			form.formErrors = "Username is in use"
+			return
+		}
+
+		if (form.password.value != form.confirm.value) {
+			form.formErrors = "Passwords do not match"
 			return
 		}
 
@@ -138,7 +146,24 @@
 			<Input placeholder="Username" name="username" class="px-4 pt-2 border border-gray-300 rounded-md" />
 			<p class="text-xs">Choose a username without any identifiable information.</p>
 		</div>
-		<Input type="password" placeholder="Password" name="password" class="px-4 py-2 border border-gray-300 rounded-md" />
+			<Input name="password" id="show-password" type={show1 ? 'text' : 'password'} placeholder="Password" size="md" class="px-4 py-2 border border-gray-300 rounded-md">
+			  <button slot="left" on:click={() => (show1 = !show1)} class="pointer-events-auto">
+				{#if show1}
+				  <EyeOutline class="w-6 h-6" />
+				{:else}
+				  <EyeSlashOutline class="w-6 h-6" />
+				{/if}
+			  </button>
+			</Input>
+			<Input name="confirm" id="confirm-password" type={show2 ? 'text' : 'password'} placeholder="Confirm Password" size="md" class="px-4 py-2 border border-gray-300 rounded-md">
+				<button slot="left" on:click={() => (show2 = !show2)} class="pointer-events-auto">
+				  {#if show2}
+					<EyeOutline class="w-6 h-6" />
+				  {:else}
+					<EyeSlashOutline class="w-6 h-6" />
+				  {/if}
+				</button>
+			  </Input>
 		<BlueButton onclick={register} type="submit" buttonText="Register" href="/protected"/>
 		{:else if signInMethod == 'phone'}
 		<div>
