@@ -1,40 +1,61 @@
 <script lang="ts">
     import { page } from "$app/stores";
     import { db } from "$lib/firebase/client";
-    import UploadSidebar from "$lib/components/UploadSidebar.svelte";
     import { collection, doc, setDoc } from "firebase/firestore";
-    import { Label, NumberInput } from "flowbite-svelte";
+    import { Label, NumberInput, Input } from "flowbite-svelte";
+    import { currentDate } from '$lib/utils'
+    import { updateTitle } from "$lib/stores/title";
+    import { capitalize } from "$lib/utils";
+
+    updateTitle(capitalize($page.data.user?.platform) + " Trip Upload");
 
 
     let successMessage = '';
     let errorMessage = '';
 
+    let fareError = ""
+
+    let date = currentDate
+
     // Uber Expenses
     let tripData = {
-        fare: 0,
-        surge: 0,
-        tips: 0,
-        waitTimeBonus: 0,
-        boost: 0,
-        withholdingsPercent: 0,
+        date: new Date(),
+        type: "trip",
+        fare: null,
+        surge: null,
+        tips: null,
+        waitTimeBonus: null,
+        boost: null,
+        withholdingsPercent: null,
+        uid: $page.data.user?.uid
     }
 
     async function submitManualTrip() {
-        const collectionRef = collection(db, "users", $page.data.user?.uid, "upload");
-        const docRef = doc(collectionRef, "Manual Trips"); // Separate by gig work manual inputs?
+        if (!tripData.fare) {
+            fareError = "Please Enter a Fare"
+            return
+        }
+        fareError = ""
+        const collectionRef = collection(db, "upload", "manual", "entries")
+        const docRef = doc(collectionRef); // Separate by gig work manual inputs?
+        tripData.date = new Date(date)
         setDoc(docRef, tripData, { merge: true });
         successMessage = 'Input Submitted Successfully!';
     }
+
 </script>
 
-<div class="flex flex-row">
-    <UploadSidebar />
     <div class="p-8 flex flex-col items-center w-full">
-        <h1 class="text-2xl font-bold mb-6">Manual Trip Input</h1>
 
         <div class="w-full max-w-md space-y-5">
             <div class="flex flex-col">
+                <Label>Date</Label>
+                <Input type="date" bind:value={date} class="mt-1" />
+            </div>
+
+            <div class="flex flex-col">
                 <Label>Fare</Label>
+                <p class="text-red-500">{fareError}</p>
                 <NumberInput bind:value={tripData.fare} class="mt-1" />
             </div>
 
@@ -63,19 +84,18 @@
                 <NumberInput bind:value={tripData.withholdingsPercent} class="mt-1" />
             </div>
 
+            {#if successMessage}
+                <p class="text-green-600 mt-2">{successMessage}</p>
+            {/if}
+            {#if errorMessage}
+                <p class = "text-red-600 mt-2">{errorMessage}</p>
+            {/if}
             <div class="flex justify-center mt-6">
                 <button
                     class="bg-black text-white py-2 px-4 rounded"
                     on:click={submitManualTrip}>
                     Submit
                 </button>
-                {#if successMessage}
-                    <p class="text-green-600 mt-2">{successMessage}</p>
-                {/if}
-                {#if errorMessage}
-                    <p class = "text-red-600 mt-2">{errorMessage}</p>
-                {/if}
             </div>
         </div>
     </div>
-</div>

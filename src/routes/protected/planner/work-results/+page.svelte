@@ -1,5 +1,4 @@
 <script lang="ts">
-    import PlannerSidebar from "$lib/components/PlannerSidebar.svelte";
     import { Card, Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell, Tooltip, Button} from "flowbite-svelte";
     import { page } from "$app/stores";
     import { goto } from "$app/navigation";
@@ -10,9 +9,6 @@
 </script>
 
 <div class="flex flex-row">
-    <div class="w-1/4 p-2">
-        <PlannerSidebar />
-    </div>
     
     {#if $page.data.user?.platform == "uber"}
     <div class="w-3/4 p-2">

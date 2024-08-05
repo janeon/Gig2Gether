@@ -1,7 +1,7 @@
 <script lang="ts">
     import { addDoc, collection, doc, getDoc } from "firebase/firestore";
     import { db, storage } from "$lib/firebase/client";
-    import { getDownloadURL, ref, uploadBytes, deleteObject } from "firebase/storage";
+    import { getDownloadURL, ref, uploadBytes} from "firebase/storage";
 
     import { Button, Input, ButtonGroup, Textarea } from "flowbite-svelte";
     import { ToggleGroupItem, ToggleGroup } from "$lib/components/ui/toggle-group";
@@ -15,14 +15,15 @@
     updateTitle("Share Story");
     
     let tags : string[] = []
-    let video: File
+    let file: File
     let title : string = ""
     let description : string = ""
     let url : string
     let type : string
     let uploading = false
 
-    $: fileName = video ? video.name : 'No file selected';
+    let imageUrlPreview : string
+    $: fileName = file ? file.name : 'No file selected';
     $: postSharing = []
     $: sharePrivate = false
     $: errorMessageType = " "
@@ -36,6 +37,8 @@
         {value: "ratings", label: "Ratings"},
         {value: "working time", label: "Working Time"},
         {value: "stress", label: "Stress (e.g. from precarity)"},
+        {value: "deactivation", label: "Deactivation"},
+        {value: "technology", label: "Technology"},
         {value: "other", label: "Other"}
     ];
 
@@ -77,26 +80,10 @@
 
     async function handleFileChange (event: Event) {
     const fileInput = event.target as HTMLInputElement;
-    if (url) {
-      const imageRef = ref(storage, url)
-      try {
-        deleteObject(imageRef)
-      } catch (error) {
-        console.log(error)
-      }
-      
-    }
+    imageUrlPreview = URL.createObjectURL(fileInput.files[0])
     if (fileInput.files && fileInput.files.length > 0) {
-      video = fileInput.files[0];
-      fileName = video.name;
-      try {
-          const storageRef = ref(storage, 'stories/strategy/'+$page.data.user.uid+'/'+video.name)
-          const result = await uploadBytes(storageRef, video)
-          url = await getDownloadURL(result.ref)
-          console.log('url uploaded')
-      } catch (error) {
-          console.log("error with video upload")
-      }
+      file = fileInput.files[0];
+      fileName = file.name;
     }
   }
 
@@ -113,7 +100,6 @@
         }
 
         if (tags.length == 0) {
-            console.log("here")
             errorMessageTags = "Please select at least one tag"
         }
         else {
@@ -138,25 +124,25 @@
         }
 
         uploading = true
-        // if (video) {
-        //     try {
-        //         const storageRef = ref(storage, 'stories/strategy/'+$page.data.user.uid+'/'+video.name)
-        //         const result = await uploadBytes(storageRef, video)
-        //         url = await getDownloadURL(result.ref)
-        //     } catch (error) {
-        //         console.log("error with video upload")
-        //     }
-        // }
+        if (file) {
+            try {
+                const storageRef = ref(storage, 'stories/strategy/'+$page.data.user.uid+'/'+file.name)
+                const result = await uploadBytes(storageRef, file)
+                url = await getDownloadURL(result.ref)
+            } catch (error) {
+                console.log("error with video upload")
+            }
+        }
 
         if (url) {
             try {
             await addDoc(collection(db, 'stories', $page.data.user.platform, "posts"), 
             { type, title, description, uid: $page.data.user.uid,
             url, date: new Date(), tags, platform: $page.data.user.platform, likes: [],
-            sharing: postSharing
+            sharing: postSharing, username: $page.data.user.username
 
         })
-        goto('/protected/stories/story_feed')
+        goto('/protected/stories/story-feed')
         } catch {
             uploading = false
         }
@@ -165,13 +151,14 @@
             try {
                 await addDoc(collection(db, 'stories', $page.data.user.platform, "posts"), {
                 type, title, description, uid: $page.data.user.uid, date: new Date(),
-                likes: [], tags, platform: $page.data.user.platform, sharing: postSharing
+                likes: [], tags, platform: $page.data.user.platform, sharing: postSharing, 
+                username: $page.data.user.username
 
             })
-            goto('/protected/stories/story_feed')
+            goto('/protected/stories/story-feed')
         } catch {
             uploading = false
-            }
+          }
         }
     }
 
@@ -234,7 +221,6 @@
 {:else if $page.data.user.platform == "upwork"}
   <Tags tags={upworkTags} bind:bindGroup={tags} />
 {/if}
-<p>{tags}</p>
 
 <div class="py-5">
 Title:
@@ -274,9 +260,10 @@ style="
   />
 
   <div class = "flex items-center justify-center">
-    {#if url}
+    <img src={imageUrlPreview} class="rounded-sm mt-2 object-contain w-1/2 " alt="" />
+    <!-- {#if url}
     <img src={url} class="rounded-sm mt-2 object-contain w-1/2 " alt="" />
-    {/if}
+    {/if} -->
   </div>
 </div>
 

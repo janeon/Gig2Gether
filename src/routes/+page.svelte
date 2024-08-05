@@ -7,9 +7,9 @@
       {
         title: 'For Gig Workers',
         items: [
-          { img: 'Boost-Earnings.png', heading: 'Boost Earnings', text: 'Unlock data-driven strategies' },
-          { img: 'Work-Smarter.png', heading: 'Work Smarter', text: 'Tap into collective wisdom' },
-          { img: 'Connect-&-Thrive.png', heading: 'Connect & Thrive', text: 'Join a supportive community' },
+          { img: '/Boost-Earnings.png', heading: 'Boost Earnings', text: 'Unlock data-driven strategies' },
+          { img: '/Work-Smarter.png', heading: 'Work Smarter', text: 'Tap into collective wisdom' },
+          { img: '/Connect-&-Thrive.png', heading: 'Connect & Thrive', text: 'Join a supportive community' },
           { img: '/Data-Control.png', heading: 'You\'re in Control', text: 'Manage your data, your way' }
         ]
       },
@@ -23,12 +23,12 @@
     ];
   
     const howItWorks = [
-      { img: 'Registration.png', heading: 'User Registration', text: 'Create your Gig2Gether account by your phone number and complete a short demographics form to finalize registration.' },
-      { img: 'Sharing-Settings.png', heading: 'Choose Data to Share', text: 'Set your preferences for data sharing and visibility to maintain control over your information.' },
-      { img: 'Data-Uploading.png', heading: 'Upload Your Data', text: 'Easily upload your gig work data through our secure system.' },
-      { img: 'Trends.png', heading: 'Explore Trends', text: 'Access personal trends to track your performance over time. View collective insights to compare your data with aggregated statistics.' },
-      { img: 'Planner.png', heading: 'Optimize with the Planner', text: 'Use Planner to strategically choose work locations and times. Leverage your historical data to improve earnings and efficiency in your gig work.' },
-      { img: 'Community.png', heading: 'Community Engagement', text: 'Connect with fellow gig workers in our community. Exchange experiences, discuss issues, and share successful strategies to thrive in the gig economy.' }
+      { img: '/Registration.png', heading: 'User Registration', text: 'Create your Gig2Gether account by your phone number and complete a short demographics form to finalize registration.' },
+      { img: '/Sharing-Settings.png', heading: 'Choose Data to Share', text: 'Set your preferences for data sharing and visibility to maintain control over your information.' },
+      { img: '/Data-Uploading.png', heading: 'Upload Your Data', text: 'Easily upload your gig work data through our secure system.' },
+      { img: '/Trends.png', heading: 'Explore Trends', text: 'Access personal trends to track your performance over time. View collective insights to compare your data with aggregated statistics.' },
+      { img: '/Planner.png', heading: 'Optimize with the Planner', text: 'Use Planner to strategically choose work locations and times. Leverage your historical data to improve earnings and efficiency in your gig work.' },
+      { img: '/Community.png', heading: 'Community Engagement', text: 'Connect with fellow gig workers in our community. Exchange experiences, discuss issues, and share successful strategies to thrive in the gig economy.' }
     ];
   </script>
   
@@ -40,10 +40,10 @@
           Gig2Gether is a worker-centered app that empowers gig workers through data sharing and collective action. It enables workers to analyze their work data, connect with peers, and gain valuable insights, while providing policymakers with crucial information to improve work conditions in the gig economy.
         </p>
         <div class="flex flex-col sm:flex-row justify-center md:justify-start space-y-4 sm:space-y-0 sm:space-x-4">
-          <Button on:click={() => goto('register_worker')} color="dark" size="lg">
+          <Button on:click={() => goto('register-worker')} color="dark" size="lg">
             Register As a Gig Worker
           </Button>
-          <Button on:click={() => goto('register_policymaker')} color="dark" size="lg">
+          <Button on:click={() => goto('register-policymaker')} color="dark" size="lg">
             Register As a Gig Policymaker
           </Button>
         </div>

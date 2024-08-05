@@ -1,14 +1,10 @@
 <script lang="ts">
     import { goto } from "$app/navigation";
-    import PlannerSidebar from "$lib/components/PlannerSidebar.svelte";
     import '@fortawesome/fontawesome-free/css/all.min.css';
     import { Button } from "flowbite-svelte";
 </script>
 
 <div class="flex flex-row">
-    <div class="w-1/4 p-2">
-        <PlannerSidebar />
-    </div>
     <div class="w-3/4 flex flex-col p-2 space-y-2">
         <div class="flex flex-col items-start">
             <div class="text-left mb-4">

@@ -5,7 +5,6 @@
     import { MultiSelect, Label, NumberInput, Input } from "flowbite-svelte";
     import { get } from 'svelte/store';
     import { goto } from "$app/navigation";
-    import PlannerSidebar from "$lib/components/PlannerSidebar.svelte";
 
     let successMessage = '';
     let errorMessage = '';
@@ -139,7 +138,6 @@
 </script>
 
 <div class="flex flex-row">
-    <PlannerSidebar/>
     <div class="p-8 flex flex-col items-center w-full">
         <h1 class="text-2xl font-bold mb-6">Other Variables</h1>
         {#if $page.data.user?.platform == "uber"}

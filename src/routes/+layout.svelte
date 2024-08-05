@@ -31,7 +31,7 @@
 
 	function parsePageNameFromUrl(url: string) {
 		let lastSegment = url.split('/').filter(Boolean).pop() as string
-		lastSegment = lastSegment.split('_')          // Split the string by underscores
+		lastSegment = lastSegment.split('-')          // Split the string by underscores
             .map(word => word.charAt(0).toUpperCase() + word.slice(1))  // Capitalize each word
             .join(' ');          // Join the words with spaces
 		return (lastSegment === 'Protected') ? 'Home' : lastSegment;
@@ -43,7 +43,7 @@
 
 	const navItems = [
 		{ label: "Upload", icon: "fas fa-upload", href: '/protected/upload/manual' },
-		{ label: "Stories", icon: "fas fa-book", href: '/protected/stories/story_feed' },
+		{ label: "Stories", icon: "fas fa-book", href: '/protected/stories/story-feed' },
 		{ label: "Trends", icon: "fas fa-chart-line", href: '/protected/trends/personal' },
 		{ label: "Settings", icon: "fas fa-cog", href: '/protected/settings/account' },
 		{ label: "Planner", icon: "fas fa-calendar", href: '/protected/planner/work-day' }
@@ -81,8 +81,8 @@
 				<ChevronDownOutline class="w-6 h-6 ms-2 text-white dark:text-white" />
 			</BlueButton>
 			<Dropdown>
-			<DropdownItem href="/register_worker">Worker</DropdownItem>
-			<DropdownItem href="/register_policymaker">Policymaker</DropdownItem>
+			<DropdownItem href="/register-worker">Worker</DropdownItem>
+			<DropdownItem href="/register-policymaker">Policymaker</DropdownItem>
 			</Dropdown>
 			
 			
@@ -110,7 +110,7 @@
 			<Dropdown {activeUrl} {activeClass} triggeredBy=".acs">
 				<DropdownHeader>
 				  <span class="block text-sm text-gray-900 dark:text-white">Username</span>
-				  <span class="block truncate text-sm font-medium">{$page.data.user?.credentials}</span>
+				  <span class="block truncate text-sm font-medium">{$page.data.user?.username}</span>
 				</DropdownHeader>
 				<DropdownItem href="/protected">Home</DropdownItem>
 				<DropdownItem href="/protected/settings/account">Account</DropdownItem>

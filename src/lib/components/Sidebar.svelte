@@ -29,42 +29,61 @@
             { label: "My Worker Profile", href: "/protected/settings/profile" },
             { label: "My Account", href: "/protected/settings/account" },
             { label: "Demographics", href: "/protected/settings/demographics" },
-            { label: "Sharing Preferences", href: "/protected/settings/sharing_preferences" },
+            { label: "Sharing Preferences", href: "/protected/settings/sharing-preferences" },
             { label: "Withdraw Data", href:"/protected/settings/withdraw" },
             { label: "Notification" }
     ]
 
     const sharing = [
-      { label: "Story Feed", href: "/protected/stories/story_feed" },
-      { label: "Share Story", href: "/protected/stories/share_story" }
+      { label: "Story Feed", href: "/protected/stories/story-feed" },
+      { label: "Share Story", href: "/protected/stories/share-story" }
+    ]
+
+    const trends = [
+      { label: "My Trends", href: "/protected/trends/personal" },
+      { label: "Collective Insights", href: "/protected/trends/aggregate" }
+    ]
+
+    const planner = [
+      { label: "Work", href: "/protected/planner/work-day" },
+      { label: "Tax", href: "/protected/planner/tax" }
     ]
 
     $: platform = $page.data.user?.platform;
     let upload_options = [];
 
-    if (platform === "uber") {
+    if ($page.data.user?.platform === "uber") {
       upload_options = [
-        { label: "Quests", href: "/protected/upload/quests" },
-        { label: "Trips", href: "/protected/upload/trips" }
+        { label: "Quests", href: "/protected/upload/manual-quests" },
+        { label: "Trips", href: "/protected/upload/manual-trips" },
+        { label: "CSV", href: '/protected/upload/csv-trips'}
       ];
-    } else if (platform === "rover") {
+    } else if ($page.data.user?.platform === "rover") {
       upload_options = [
-        { label: "Screenshot", href: "/protected/upload/rover-upload" }
+        // { label: "Screenshot", href: "/protected/upload/rover-upload" }
+        { label: "Manual", href: "/protected/upload/manual" }
       ];
-    } else if (platform === "upwork") {
+    } else if ($page.data.user?.platform === "upwork") {
       upload_options = [
-        { label: "Jobs", href: "/protected/upload/upwork-job" },
-        { label: "Profile", href: "/protected/upload/upwork-profile" }
+        // { label: "Jobs", href: "/protected/upload/upwork-job" },
+        // { label: "Profile", href: "/protected/upload/upwork-profile" }
+        { label: "Manual", href: "/protected/upload/manual" }
       ];
     }
 
     // Add common items
     upload_options.push(
-      { label: "Manual", href: "/protected/upload/manual" },
+      // { label: "Manual", href: "/protected/upload/manual" },
       { label: "Expenses", href: "/protected/upload/expenses" }
     );
     
-    const options = {"settings": settings, "sharing": sharing, "upload": upload_options} ;
+    const options = {
+      "settings": settings, 
+      "sharing": sharing, 
+      "upload": upload_options, 
+      "trends": trends,
+      "planner": planner
+    } ;
     export let option: string;
     export let title: string;
     
@@ -90,7 +109,7 @@
         <Dropdown {activeUrl} {activeClass} triggeredBy=".acs">
           <DropdownHeader>
             <span class="block text-sm text-gray-900 dark:text-white">Username</span>
-            <span class="block truncate text-sm font-medium">{$page.data.user?.credentials}</span>
+            <span class="block truncate text-sm font-medium">{$page.data.user?.username}</span>
           </DropdownHeader>
           <DropdownItem href="/protected">Home</DropdownItem>
           <DropdownItem href="/protected/settings/account">Account</DropdownItem>

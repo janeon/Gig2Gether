@@ -78,7 +78,7 @@
 				const docRef = doc(db, 'users', user.uid)
 				await setDoc(docRef, {
 					username: form.username.value,
-					auth: form.credentials.value,
+					credentials: form.credentials.value,
 					role: "worker",
 					platform: selectedPlatform
 				})

@@ -31,7 +31,7 @@
         {value: null, name: "Do not wish to share"}
     ]
     // Should check whether we can have undefined values, not zeroes
-    let dataToSetToStore = { age: 0, gender: '', race: '', ethnicity: '', householdIncome: 0, w2Hours: 0, otherGigHours: 0 };
+    let dataToSetToStore = { age: null, gender: '', race: ''};
 
     // TODO: For prepopulating 
     async function loadDemographics() {
@@ -64,7 +64,7 @@
 </script>
         <div class="py-5">
             <Label>Age</Label>
-            <NumberInput class = "border-2" bind:value={dataToSetToStore.age} type = "number"/>
+            <NumberInput bind:value={dataToSetToStore.age} type = "number"/>
         </div>
         
         <div class="py-5">
@@ -79,12 +79,13 @@
         
         <!-- <div class="py-5">
             <Label>Hours spent on a full time (W2) job per week</Label>
-            <NumberInput class = "border-2" bind:value={dataToSetToStore.w2Hours} type = "number"/>
+            <NumberInput bind:value={dataToSetToStore.w2Hours} type = "number"/>
         </div> -->
         
         <!-- <div class="py-5">
             <Label>Estimated hours spent on gigs not part of this platform</Label>
-            <NumberInput class = "border-2" bind:value={dataToSetToStore.otherGigHours} type = "number"/>
+            <NumberInput bind:value={dataToSetToStore.otherGigHours} type = "number"/>
         </div> -->
-        
-        <BlueButton onclick={submitDemographics} buttonText="Submit"/>
+        <div class="flex justify-center">
+            <BlueButton onclick={submitDemographics} buttonText="Submit"/>
+        </div>

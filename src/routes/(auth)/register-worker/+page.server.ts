@@ -17,7 +17,7 @@ export const actions = {
   const admin = getFirebaseServer();
   if (admin.error) {
       console.error("Error getting firebase admin");
-      throw redirect(303, "/register_worker");
+      throw redirect(303, "/register-worker");
   }
 
   // Expires in 5 days
@@ -30,7 +30,7 @@ export const actions = {
     sessionCookie = await admin_auth.createSessionCookie(token, { expiresIn: expiresIn * 1000 });
     } catch (error) {
       console.error("Error creating session cookie", (error as Error).message); 
-      throw redirect(303, "/register_worker");
+      throw redirect(303, "/register-worker");
     }
 
   // DO NOT RENAME COOKIE 

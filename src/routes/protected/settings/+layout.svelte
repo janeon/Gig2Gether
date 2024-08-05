@@ -29,7 +29,7 @@
             <div class="bg-white dark:bg-gray-800 px-5 pb-24 rounded-lg max-w-md w-full">
             <header class="pt-3">
             {#if !mobile}
-            <h1 class="text-2xl font-bold">{title}</h1>
+            <h1 class="text-2xl font-bold text-center">{title}</h1>
             {/if}
         </header>
         <slot/>
