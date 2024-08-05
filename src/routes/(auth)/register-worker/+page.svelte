@@ -3,7 +3,7 @@
 	import type { ActionData } from './$types'; 
 	import { onMount } from 'svelte';
 	
-	import { type ConfirmationResult, PhoneAuthProvider, signInWithCredential, createUserWithEmailAndPassword } from "firebase/auth";
+	import { type ConfirmationResult, PhoneAuthProvider, signInWithCredential, createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 	import { auth, RecaptchaVerifier, db, signInWithPhoneNumber } from '$lib/firebase/client';
 	import { collection, doc, getCountFromServer, query, setDoc, where } from 'firebase/firestore';
 
@@ -72,6 +72,10 @@
 			try {
 				if (signInMethod == 'email') {
 					cred = await createUserWithEmailAndPassword(auth, form.credentials.value, form.password.value);
+					sendEmailVerification(auth.currentUser)
+					.then(() => {
+						console.log('Email verification sent');
+					});
 				}
 				if (signInMethod == 'phone') {
 					const credential = PhoneAuthProvider.credential(confirmationResult.verificationId, form.code.value);

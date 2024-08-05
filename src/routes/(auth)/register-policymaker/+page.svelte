@@ -2,7 +2,7 @@
 	import { enhance } from '$app/forms';
 	import type { ActionData } from './$types'; 
 
-	import { createUserWithEmailAndPassword } from 'firebase/auth';
+	import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 	import { auth, db } from '$lib/firebase/client'
 	import { doc, setDoc } from 'firebase/firestore';
 	import { Input } from 'flowbite-svelte';
@@ -24,8 +24,11 @@
 		}
         try {
 			const email = form!.email.value;
-			const password = form!.password.value
+			const password = form!.password.value;
             const cred = await createUserWithEmailAndPassword(auth, email, password);
+			sendEmailVerification(auth.currentUser).then(() => {
+				console.log('Email verification sent');
+			});
             token = await cred.user.getIdToken();
 			try {
 				const user = cred.user
