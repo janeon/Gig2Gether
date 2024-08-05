@@ -8,7 +8,7 @@
 	import { collection, doc, getCountFromServer, query, setDoc, where } from 'firebase/firestore';
 
 	import { Button, Input, Label, Radio, Alert } from 'flowbite-svelte';
-	import { EyeOutline, EyeSlashOutline } from 'flowbite-svelte-icons';
+	import { EyeOutline, EyeSlashOutline, FileCopySolid, ProfileCardSolid, UserCircleSolid } from 'flowbite-svelte-icons';
 	import BlueButton from '$lib/components/BlueButton.svelte';
 	
 	export let form : ActionData;
@@ -140,15 +140,25 @@
 			  </div>
 		</div>
 		{#if selectedPlatform}
-		<div class="relative inline-block">
-			<Input type="text" placeholder="Email or Phone Number" name="credentials" class="px-4 py-2 border border-gray-300 rounded-md" on:keypress={go} required />
-			<Button on:click={emailOrPhone} class="absolute top-0 right-0 h-full px-4 py-2 bg-blue-500 text-white rounded-r-md">Go</Button>
-		</div>
+		
+		<div class="relative flex items-stretch">
+			<Input type="text" placeholder="Email or Phone Number" name="credentials" class="px-4 py-2 border-t border-b border-gray-300 flex-grow" on:keypress={go} required>
+				<button slot="left" class="pointer-events-auto">
+					<UserCircleSolid class="w-6 h-6" />
+				</button>
+			</Input>
+			<Button on:click={emailOrPhone} class="px-4 py-2 bg-blue-500 text-white rounded-r-md">Go</Button>
+		  </div>
+		  
 		{/if}
 		
 		{#if signInMethod == 'email'}
 		<div>
-			<Input placeholder="Username" name="username" class="px-4 pt-2 border border-gray-300 rounded-md" />
+			<Input placeholder="Username" name="username" class="px-4 pt-2 border border-gray-300 rounded-md">
+				<button slot="left" class="pointer-events-auto">
+					  <ProfileCardSolid class="w-6 h-6" />
+				  </button>
+			</Input>
 			<p class="text-xs">Choose a username without any identifiable information.</p>
 		</div>
 			<Input name="password" id="show-password" type={show1 ? 'text' : 'password'} placeholder="Password" size="md" class="px-4 py-2 border border-gray-300 rounded-md">
@@ -172,10 +182,18 @@
 		<BlueButton onclick={register} type="submit" buttonText="Register" href="/protected"/>
 		{:else if signInMethod == 'phone'}
 		<div>
-			<Input placeholder="Username" name="username" class="px-4 pt-2 border border-gray-300 rounded-md" />
+			<Input placeholder="Username" name="username" class="px-4 pt-2 border border-gray-300 rounded-md">
+				<button slot="left" class="pointer-events-auto">
+					  <ProfileCardSolid class="w-6 h-6" />
+				  </button>
+			</Input>
 			<p class="text-xs">Choose a username without any identifiable information.</p>
 		</div>
-		<Input type="text" placeholder="Verification Code" name="code" class="px-4 py-2 border border-gray-300 rounded-md" required />
+		<Input type="text" placeholder="Verification Code" name="code" class="px-4 py-2 border border-gray-300 rounded-md" required>
+			<button slot="left" class="pointer-events-auto">
+				<FileCopySolid class="w-6 h-6" />
+			</button>
+		</Input>
 		<BlueButton onclick={register} type="submit" buttonText="Register" href="/protected"/>
 		{/if}
 	
