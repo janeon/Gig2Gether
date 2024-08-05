@@ -2,11 +2,15 @@
 	import { enhance } from '$app/forms';
 	import type { ActionData } from './$types'; 
 
-	import { createUserWithEmailAndPassword } from 'firebase/auth';
+	import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 	import { auth, db } from '$lib/firebase/client'
 	import { doc, setDoc } from 'firebase/firestore';
 	import { Input } from 'flowbite-svelte';
+	import { EnvelopeSolid, EyeOutline, EyeSlashOutline } from 'flowbite-svelte-icons';
 	import BlueButton from '$lib/components/BlueButton.svelte';
+
+	let show1 = false;
+	let show2 = false;
 
 	export let form : ActionData;
 	let token: string;
@@ -14,10 +18,18 @@
 
 	async function register(event: Event): Promise<void> {
 		event.preventDefault(); // Prevent the default form submission
+		if (form.password.value != form.confirm.value) {
+			form.formErrors = "Passwords do not match"
+			return
+		}
         try {
+			auth.useDeviceLanguage();
 			const email = form!.email.value;
-			const password = form!.password.value
+			const password = form!.password.value;
             const cred = await createUserWithEmailAndPassword(auth, email, password);
+			sendEmailVerification(auth.currentUser).then(() => {
+				console.log('Email verification sent');
+			});
             token = await cred.user.getIdToken();
 			try {
 				const user = cred.user
@@ -58,14 +70,29 @@
 		name="email"
 		label="Email"
 		required
-	  />
-	  <Input
-		type="password"
-		placeholder="Password"
-		name="password"
-		label="Password"
-		required
-	  />
+	  >
+	  <button slot="left" class="pointer-events-auto">
+		<EnvelopeSolid class="w-6 h-6" />
+	</button>
+	  </Input>
+	  <Input name="password" id="show-password" type={show1 ? 'text' : 'password'} placeholder="Password" size="md" class="px-4 py-2 border border-gray-300 rounded-md">
+		<button slot="left" on:click={() => (show1 = !show1)} class="pointer-events-auto">
+		  {#if show1}
+			<EyeOutline class="w-6 h-6" />
+		  {:else}
+			<EyeSlashOutline class="w-6 h-6" />
+		  {/if}
+		</button>
+	  </Input>
+	  <Input name="confirm" id="confirm-password" type={show2 ? 'text' : 'password'} placeholder="Confirm Password" size="md" class="px-4 py-2 border border-gray-300 rounded-md">
+		  <button slot="left" on:click={() => (show2 = !show2)} class="pointer-events-auto">
+			{#if show2}
+			  <EyeOutline class="w-6 h-6" />
+			{:else}
+			  <EyeSlashOutline class="w-6 h-6" />
+			{/if}
+		  </button>
+		</Input>
   
 	  {#if form?.formErrors}
 		<article>

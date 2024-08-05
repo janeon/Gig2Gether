@@ -2,7 +2,11 @@
     import { Button } from 'flowbite-svelte';
     import "../app.css";
     import { goto } from '$app/navigation';    
-  
+    import { page } from '$app/stores';
+
+    let loggedIn = $page.data.user===undefined ? false : true;
+
+    
     const sections = [
       {
         title: 'For Gig Workers',
@@ -40,12 +44,20 @@
           Gig2Gether is a worker-centered app that empowers gig workers through data sharing and collective action. It enables workers to analyze their work data, connect with peers, and gain valuable insights, while providing policymakers with crucial information to improve work conditions in the gig economy.
         </p>
         <div class="flex flex-col sm:flex-row justify-center md:justify-start space-y-4 sm:space-y-0 sm:space-x-4">
+          {#key loggedIn}
+          {#if loggedIn}
+          <Button on:click={() => goto('protected')} color="dark" size="lg">
+            Begin Gigs Together
+          </Button>
+          {:else}
           <Button on:click={() => goto('register-worker')} color="dark" size="lg">
             Register As a Gig Worker
           </Button>
           <Button on:click={() => goto('register-policymaker')} color="dark" size="lg">
             Register As a Gig Policymaker
           </Button>
+          {/if}
+          {/key}
         </div>
       </div>
   
