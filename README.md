@@ -42,11 +42,13 @@ Hosting setup instructions can be found in src/lib/firebase/Firebase.md
 
 ## Todo 
 
-- [ ] Debug login page with upload on deploy 
-
-- [ ] How to store different types of workers' data, across different apps and work types (what if someone used both Uber and Rover?)
+- [ ] Decide what to do with unverified accounts: Should verifications email resends be allowed?
 
 - [ ] Tailwind
+
+- [X] How to store different types of workers' data, across different apps and work types (what if someone used both Uber and Rover?)
+      
+- [X] Debug login page with upload on deploy 
 
 - [X] Adapt for mobile
 
