@@ -26,12 +26,12 @@
     const closeDrawer = () => hidden2 = true;
 
     const settings = [
-            { label: "My Worker Profile", href: "/protected/settings/profile" },
-            { label: "My Account", href: "/protected/settings/account" },
-            { label: "Demographics", href: "/protected/settings/demographics" },
-            { label: "Sharing Preferences", href: "/protected/settings/sharing-preferences" },
-            { label: "Withdraw Data", href:"/protected/settings/withdraw" },
-            { label: "Notification" }
+      { label: "My Worker Profile", href: "/protected/settings/profile" },
+      { label: "My Account", href: "/protected/settings/account" },
+      { label: "Demographics", href: "/protected/settings/demographics" },
+      { label: "Sharing Preferences", href: "/protected/settings/sharing-preferences" },
+      { label: "Withdraw Data", href:"/protected/settings/withdraw" },
+      { label: "Notification" }
     ]
 
     const sharing = [
@@ -49,14 +49,13 @@
       { label: "Tax", href: "/protected/planner/tax" }
     ]
 
-    $: platform = $page.data.user?.platform;
     let upload_options = [];
 
     if ($page.data.user?.platform === "uber") {
       upload_options = [
-        { label: "Quests", href: "/protected/upload/manual-quests" },
-        { label: "Trips", href: "/protected/upload/manual-trips" },
-        { label: "CSV", href: '/protected/upload/csv-trips'}
+        { label: "CSV", href: '/protected/upload/CSV'},
+        { label: "Quests", href: "/protected/upload/quests" },
+        { label: "Trips", href: "/protected/upload/trips" },
       ];
     } else if ($page.data.user?.platform === "rover") {
       upload_options = [

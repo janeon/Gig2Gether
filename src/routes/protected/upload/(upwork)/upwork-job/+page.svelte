@@ -1,20 +1,20 @@
 <script lang="ts">
     import { Button } from 'flowbite-svelte';
-    import UploadSidebar from '$lib/components/UploadSidebar.svelte';
-    import { getFirestore, collection, doc, setDoc, writeBatch, Timestamp } from "firebase/firestore";
-    import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+    import { collection, doc, setDoc, writeBatch, Timestamp } from "firebase/firestore";
+    import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
     import { db, storage } from '$lib/firebase/client';
     import Papa from 'papaparse';
     import { page } from '$app/stores';
 
     let fileuploadprops = {
-        id: 'quest_csv'
+        id: 'job_csv'
     };
 
-    let selectedDate = new Date().toISOString().substring(0, 10); 
 
     let successMessage = '';
     let errorMessage ='';
+
+    let selectedDate = new Date().toISOString().substring(0, 10); // Default to today's date
 
     async function handleFileInputChange(event) {
         const fileInput = event.target;
@@ -39,7 +39,7 @@
                 await parseAndUploadCSV(file, downloadURL);
 
                 console.log('File uploaded and metadata saved:', file.name);
-                successMessage = 'File uploaded successfully!'; 
+                successMessage = 'File uploaded successfully!';
             } catch (error) {
                 console.error('Error uploading file:', error);
                 successMessage = '';
@@ -84,7 +84,7 @@
 
         const batch = writeBatch(db);
         data.forEach((row, index) => {
-            const subDocRef = doc(collection(csvDocRef, "quests"), `quest_${index}`);
+            const subDocRef = doc(collection(csvDocRef, "jobs"), `job_${index}`);
             const rowData = {
                 ...row,
                 date: currentDate,
@@ -108,27 +108,26 @@
 />
 
 <div class="flex flex-row">
-    <div class="w-1/4">
-        <UploadSidebar/>
-    </div>
 
     <div class="w-3/4 rounded-md p-6">
         <p class="mb-3">
-            We are collecting Quest offers to assess their quality, fairness, and achievability across drivers.
+            After screenshotting your completed job, add screenshots
         </p>
 
         <p>
-            Quests include those that were:
+            Make sure the following are visible:
         </p>
 
         <ul class="max-w-md mx-auto space-y-1 list-disc list-inside">
-            <li>Received and not accepted</li>
-            <li>Received but not completed</li>
-            <li>Received and completed</li>
+            <li>Job start/end date</li>
+            <li>Hourly Charge/ Fixed Price</li>
+            <li>Hours Per Week</li>
+            <li>Client History</li>
+            <li>Job Category</li>
         </ul>
 
         <p class="mt-4">
-            Quest information can be entered manually or via screenshot uploads.
+            Job information can be entered manually or via screenshot uploads.
         </p>
 
         <div class="flex justify-start mt-6">
@@ -141,15 +140,13 @@
                 {#if errorMessage}
                     <p class = "text-red-600 mt-2">{errorMessage}</p>
                 {/if}
-                <Button class="bg-black text-white rounded px-6 py-3" size="xl" href = "/protected/quest-screenshot">Upload Screenshots</Button>
-                <Button class="bg-black text-white rounded px-6 py-3" size="xl" href="/protected/manual-quests">Manual Upload</Button>
+                <Button class="bg-black text-white rounded px-6 py-3" size="xl" href="/protected/upwork-job-screenshot">Upload Screenshots</Button>
             </div>
         </div>
 
-        <div class="flex items-center mt-4 ml-59 text-black cursor-pointer">
+        <div class="flex items-center mt-4 ml-49 text-black cursor-pointer">
             <i class="fas fa-play fa-2x mr-2"></i>
             <span>Learn more on how to add files or enter details</span>
         </div>
     </div>
 </div>
-

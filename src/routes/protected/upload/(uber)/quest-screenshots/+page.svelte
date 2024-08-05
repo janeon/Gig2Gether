@@ -1,21 +1,26 @@
 <script lang="ts">
-    import { Button } from 'flowbite-svelte';
-    import UploadSidebar from '$lib/components/UploadSidebar.svelte';
-    import { getFirestore, collection, doc, setDoc, writeBatch, Timestamp } from "firebase/firestore";
-    import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+    import { Button, Gallery } from 'flowbite-svelte';
+    import { collection, doc, setDoc, writeBatch, Timestamp } from "firebase/firestore";
+    import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
     import { db, storage } from '$lib/firebase/client';
     import Papa from 'papaparse';
     import { page } from '$app/stores';
 
     let fileuploadprops = {
-        id: 'job_csv'
+        id: 'quest_csv'
     };
 
+    let selectedDate = new Date().toISOString().substring(0, 10); 
 
     let successMessage = '';
     let errorMessage ='';
 
-    let selectedDate = new Date().toISOString().substring(0, 10); // Default to today's date
+    const images = [
+        { alt: 'ubersc4', src: '/quest4.jpg' },
+        { alt: 'ubersc3', src: '/quest3.jpg' },
+        { alt: 'ubersc2', src: '/quest2.jpg' },
+        { alt: 'ubersc1', src: '/quest1.png' }
+    ];
 
     async function handleFileInputChange(event) {
         const fileInput = event.target;
@@ -40,7 +45,7 @@
                 await parseAndUploadCSV(file, downloadURL);
 
                 console.log('File uploaded and metadata saved:', file.name);
-                successMessage = 'File uploaded successfully!';
+                successMessage = 'File uploaded successfully!'; 
             } catch (error) {
                 console.error('Error uploading file:', error);
                 successMessage = '';
@@ -85,7 +90,7 @@
 
         const batch = writeBatch(db);
         data.forEach((row, index) => {
-            const subDocRef = doc(collection(csvDocRef, "jobs"), `job_${index}`);
+            const subDocRef = doc(collection(csvDocRef, "quests"), `quest_${index}`);
             const rowData = {
                 ...row,
                 date: currentDate,
@@ -109,30 +114,33 @@
 />
 
 <div class="flex flex-row">
-    <div class="w-1/4">
-        <UploadSidebar />
-    </div>
 
     <div class="w-3/4 rounded-md p-6">
         <p class="mb-3">
-            After screenshotting your completed job, add screenshots
+            We are collecting Quest offers to assess their quality, fairness, and achievability across drivers.
         </p>
 
         <p>
-            Make sure the following are visible:
+            Quests include those that were:
         </p>
 
         <ul class="max-w-md mx-auto space-y-1 list-disc list-inside">
-            <li>Job start/end date</li>
-            <li>Hourly Charge/ Fixed Price</li>
-            <li>Hours Per Week</li>
-            <li>Client History</li>
-            <li>Job Category</li>
+            <li>Received and not accepted</li>
+            <li>Received but not completed</li>
+            <li>Received and completed</li>
         </ul>
 
-        <p class="mt-4">
-            Job information can be entered manually or via screenshot uploads.
+        <p class="mb-3">
+            Upload screenshots related to quest options, progress, and details/criteria. Below are a few examples:
         </p>
+
+        <Gallery class="gap-2 grid grid-cols-4">
+            {#each images as { alt, src }}
+                <div class="w-full h-70 overflow-hidden">
+                    <img src={src} alt={alt} class="object-contain w-full h-full" />
+                </div>
+            {/each}
+        </Gallery>
 
         <div class="flex justify-start mt-6">
             <div class="flex flex-col items-center space-y-4 ml-56">
@@ -144,13 +152,15 @@
                 {#if errorMessage}
                     <p class = "text-red-600 mt-2">{errorMessage}</p>
                 {/if}
-                <Button class="bg-black text-white rounded px-6 py-3" size="xl" href="/protected/upwork-job-screenshot">Upload Screenshots</Button>
+                <Button class="bg-black text-white rounded px-6 py-3" size="xl" href = "/protected/quest-screenshot">Upload Screenshots</Button>
+                <Button class="bg-black text-white rounded px-6 py-3" size="xl" href="/protected/quests">Manual Upload</Button>
             </div>
         </div>
 
-        <div class="flex items-center mt-4 ml-49 text-black cursor-pointer">
+        <div class="flex items-center mt-4 ml-59 text-black cursor-pointer">
             <i class="fas fa-play fa-2x mr-2"></i>
             <span>Learn more on how to add files or enter details</span>
         </div>
     </div>
 </div>
+

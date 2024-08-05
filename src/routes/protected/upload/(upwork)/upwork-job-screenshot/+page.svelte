@@ -1,30 +1,30 @@
 <script lang="ts">
-    import { Button } from 'flowbite-svelte';
-    import UploadSidebar from '$lib/components/UploadSidebar.svelte';
     import { Gallery, Label } from 'flowbite-svelte';
-    import { getFirestore, collection, doc, setDoc } from "firebase/firestore";
-    import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+    import { collection, doc, setDoc } from "firebase/firestore";
+    import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
     import { db, storage } from '$lib/firebase/client'; 
     import { page } from '$app/stores';
 
     let fileuploadprops = {
-        id: 'quest_screenshot'
+        id: 'job_screenshot'
     };
+
+    let selectedDate = new Date().toISOString().substring(0, 10); // Default to today's date
 
     let successMessage = '';
     let errorMessage ='';
 
     const images = [
-        { alt: 'ubersc4', src: '../quest4.jpg' },
-        { alt: 'ubersc3', src: '../quest3.jpg' },
-        { alt: 'ubersc2', src: '../quest2.jpg' },
-        { alt: 'ubersc1', src: '../quest1.png' }
+        { alt: 'Job Screenshot example 1', src: '../job1.jpg' },
+        { alt: 'Job Screenshot example 2', src: '../job2.jpg' },
+        { alt: 'Job Screenshot example 3', src: '../job3.jpg' },
     ];
 
     async function handleFileInputChange(event) {
         const fileInput = event.target;
         if (fileInput.files.length > 0) {
             const file = fileInput.files[0];
+
             if (!['image/png', 'image/jpeg'].includes(file.type)) {
                 errorMessage = 'Only PNG or JPEG files are allowed.';
                 successMessage = '';
@@ -72,13 +72,13 @@
         }
 
         const collectionRef = collection(db, "users", user.uid, "uploads");
-        const docRef = doc(collectionRef, `quest_${new Date().getTime()}`);
+        const docRef = doc(collectionRef, `screenshot_${new Date().getTime()}`);
 
         const fileData = {
             name: fileName,
             url: downloadURL,
             timestamp: new Date(),
-            date: new Date() // Assign the current date
+            date: new Date(selectedDate)
         };
 
         await setDoc(docRef, fileData);
@@ -92,18 +92,19 @@
 />
 
 <div class="flex flex-row">
-    <div class="w-1/4">
-        <UploadSidebar />
-    </div>
 
     <div class="w-3/4 rounded-md p-6">
         <p class="mb-3">
-            Upload screenshots related to quest options, progress, and details/criteria. Below are a few examples:
+            After screenshotting your completed job, add screenshots
+        </p>
+
+        <p>
+            Here are a couple examples:
         </p>
 
         <Gallery class="gap-2 grid grid-cols-4">
             {#each images as { alt, src }}
-                <div class="w-full h-70 overflow-hidden">
+                <div class="w-full h-100 overflow-hidden">
                     <img src={src} alt={alt} class="object-contain w-full h-full" />
                 </div>
             {/each}
@@ -116,10 +117,11 @@
                 {#if successMessage}
                     <p class="text-green-600 mt-2">{successMessage}</p>
                 {/if}
-                {#if errorMessage}
-                    <p class = "text-red-600 mt-2">{errorMessage}</p>
-                {/if}
+               {#if errorMessage}
+                     <p class = "text-red-600 mt-2">{errorMessage}</p>
+               {/if}
             </div>
+
         </div>
 
         <div class="flex items-center mt-4 ml-49 text-black cursor-pointer">
