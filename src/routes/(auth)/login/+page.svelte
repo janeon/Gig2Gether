@@ -6,7 +6,7 @@
 	import { enhance } from '$app/forms';
 	import { Button, Input, Alert } from 'flowbite-svelte';
 	import BlueButton from '$lib/components/BlueButton.svelte';
-  	import { EyeOutline, EyeSlashOutline } from 'flowbite-svelte-icons';
+  	import { BlenderPhoneSolid, EnvelopeSolid, EyeOutline, EyeSlashOutline, FileCopySolid, PhoneOutline, PhoneSolid } from 'flowbite-svelte-icons';
   	
 	let show = false;
 	export let form : ActionData;
@@ -106,7 +106,17 @@
 <div class="flex justify-center min-h-screen pt-16">
 	<form method="POST" use:enhance bind:this={form} class="flex flex-col gap-4 p-8 space-y-4 bg-white rounded-md w-full max-w-md">
 		<div class="relative inline-block">
-			<Input type="text" placeholder="Email or Phone Number" name="credentials" class="px-4 py-2 border border-gray-300 rounded-md" on:keypress={go} required />
+			<Input type="text" placeholder="Email or Phone Number" name="credentials" class="px-4 py-2 border border-gray-300 rounded-md" on:keypress={go} required>
+				<button slot="left" class="pointer-events-auto">
+					{#if signInMethod == 'email'}
+						<EnvelopeSolid class="w-6 h-6" />
+					{:else if signInMethod == 'phone'}
+						<PhoneSolid class="w-6 h-6" />
+					{:else}
+						<BlenderPhoneSolid class="w-6 h-6" />
+					{/if}
+				</button>
+			</Input>
 			<Button on:click={emailOrPhone} class="absolute top-0 right-0 h-full px-4 py-2 bg-blue-500 text-white rounded-r-md">Go</Button>
 		</div>
 	
@@ -126,7 +136,11 @@
 		<button type="button" class="text-blue-500" on:click={() => passwordReset()}>Forgot Password?</button>
 		
 		{:else if signInMethod == 'phone'}
-		<Input type="text" placeholder="Verification Code" name="code" class="px-4 py-2 border border-gray-300 rounded-md" required />
+		<Input type="text" placeholder="Verification Code" name="code" class="px-4 py-2 border border-gray-300 rounded-md" required>
+			<button slot="left" class="pointer-events-auto">
+				<FileCopySolid class="w-6 h-6" />
+			</button>
+		</Input>
 		{/if}
 		<BlueButton onclick={login} type="submit" buttonText="Login"></BlueButton>
 	
