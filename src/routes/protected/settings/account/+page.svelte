@@ -5,19 +5,34 @@
     import { updateTitle } from "$lib/stores/title";
     import BlueButton from "$lib/components/BlueButton.svelte";
     import { collection, getCountFromServer, query, where, updateDoc, doc } from "firebase/firestore";
-    import { db } from "$lib/firebase/client";
+    import { auth, db } from "$lib/firebase/client";
+	import { sendPasswordResetEmail } from "firebase/auth";
     updateTitle("My Account");
     let credentials = $page.data.user?.credentials
     $: username = $page.data.user?.username
     let platform = capitalize($page.data.user?.platform)
 
     let changeUsername = false
+    let changePassword = false
     let newUsername = ""
     $:  usernameError = ""
 
     const setChangeUsername = () => {
         changeUsername = true
     }
+
+    function passwordReset() {
+        auth.useDeviceLanguage();
+		sendPasswordResetEmail(auth, $page.data.user.credentials)
+		.then(() => {
+			// ..
+		})
+		.catch((error) => {
+			const errorCode = error.code;
+			const errorMessage = error.message;
+		});
+        changePassword = true
+	}
 
     const submitUsername = async() => {
         if (newUsername.length < 4) {
@@ -44,6 +59,7 @@
         Platform: {platform}</Label>
     <Label class="block">
         Username: {username}</Label>
+    <div class="pt-4">
     {#if changeUsername}
         <Input bind:value={newUsername} placeholder="Username" name="username" class="px-4 pt-2 border border-gray-300 rounded-md" />
         <p class="text-xs">Choose a username without any identifiable information.</p>
@@ -52,6 +68,13 @@
     {:else}
     <BlueButton onclick={setChangeUsername} buttonText="Change Username"/>
     {/if}
+    </div>
+    <div class="py-4">
+    <BlueButton onclick={passwordReset} buttonText="Reset Password"/>
+    {#if changePassword}
+        <p class="text-xs">Password reset email sent to {credentials}</p>
+    {/if}
+    </div>
 </div>
 <!-- <div>
     <Label>My Phone</Label>

@@ -14,9 +14,14 @@
 	import { ChevronDownOutline } from 'flowbite-svelte-icons';
 	import { enhance } from '$app/forms';
 	import type { ActionData } from './protected/$types';
+	import Button from '$lib/components/ui/button/button.svelte';
 	
 	let mobile: boolean;
 	let protected_urls: boolean;
+	let loggedIn = $page.data.user===undefined ? false : true;
+	console.log("logged in", loggedIn);
+	
+	
 	onMount(() => {
 		mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(window.navigator.userAgent);
 		protected_urls = activeUrl.startsWith('/protected');
@@ -54,28 +59,43 @@
 <svelte:head>
     <title>{title}</title> 
 </svelte:head>
-{#key title} 
+{#key [title, loggedIn].join(';')} 
 	<!-- top nav bar for web -->
 	<div class={(mobile && protected_urls) ? 'hidden md:block' : 'block'}>
 		<header class="flex justify-between items-center p-4 bg-gray-100">
 			{#if ["register", "Register Worker", "Register Policymaker"].includes(title)}
 			<div>
-				<h1 class="text-lg font-bold">{title}</h1>
+				<Button href="/" class="bg-gray-200 text-black text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl font-bold py-1 px-2">Gig2Gether</Button>
 			</div>
+			<div class="whitespace-nowrap max-w-full overflow-hidden pl-2 pr-10">
+				<h1 class="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl font-bold">{title}</h1>
+			</div>
+			<div>
 				<BlueButton href="/login" buttonText="Login"/>
+			</div>
 			{:else if title==="Gig2Gether"}
 				<div>
 					{#if data.user===undefined}
-						<a href="/" class="text-lg font-bold">{title}</a>
+					<Button href="/" class="bg-gray-200 text-black text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl font-bold py-1 px-2">{title}</Button>
 					{:else}
-						<a href="/protected" class="text-lg font-bold">{title}</a>
+					<Button href="/protected" class="bg-gray-200 text-black text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl font-bold py-1 px-2">{title}</Button>
 					{/if}
 				</div>
+				{#if loggedIn}
+				<form action="/logout" method="POST" use:enhance bind:this={form}>
+				<BlueButton href="/" buttonText="Log Out" onclick={() => form.submit()}/>
+				</form>
+				{:else}
 				<BlueButton href="/login" buttonText="Login"/>
+				{/if}
 
 			{:else if title==="Login"}
 			<div>
-				<h1 class="text-lg font-bold">{title}</h1>
+				<Button href="/" class="bg-gray-200 text-black text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl font-bold py-2 px-2">Gig2Gether</Button>
+			</div>
+			  
+			<div class="whitespace-nowrap max-w-full overflow-hidden pl-2 pr-10">
+				<h1 class="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl font-bold">{title}</h1>
 			</div>
 			<BlueButton href="stay" buttonText="Register">
 				<ChevronDownOutline class="w-6 h-6 ms-2 text-white dark:text-white" />
@@ -90,7 +110,7 @@
 			<!-- Using native flowbite instead of flowbite-svelte bc height & break pt issues -->
 			<!-- https://github.com/themesberg/flowbite-svelte/issues/1156 -->
 			<div>
-				<a href="/protected" class="text-lg font-bold">{"Gig2Gether"}</a>
+				<a href="/protected" class="bg-gray-200 text-black text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl font-bold py-1 px-2">{"Gig2Gether"}</a>
 			</div>
 
 			<div class="flex justify-center w-7/8">
