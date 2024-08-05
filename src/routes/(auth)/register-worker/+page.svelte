@@ -70,6 +70,7 @@
         try {
 			let cred = null;
 			try {
+				auth.useDeviceLanguage();
 				if (signInMethod == 'email') {
 					cred = await createUserWithEmailAndPassword(auth, form.credentials.value, form.password.value);
 					sendEmailVerification(auth.currentUser)

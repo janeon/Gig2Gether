@@ -1,11 +1,10 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { auth, RecaptchaVerifier, signInWithPhoneNumber } from '$lib/firebase/client';
-	import { type ConfirmationResult, PhoneAuthProvider, signInWithCredential, signInWithEmailAndPassword } from "firebase/auth";
+	import { type ConfirmationResult, PhoneAuthProvider, signInWithCredential, signInWithEmailAndPassword, sendPasswordResetEmail} from "firebase/auth";
 	import type { ActionData } from './$types'; 
 	import { getUser } from '$lib/utils'
 	import { enhance } from '$app/forms';
-	import { Button, Label, Input, Alert } from 'flowbite-svelte';
+	import { Button, Input, Alert } from 'flowbite-svelte';
 	import BlueButton from '$lib/components/BlueButton.svelte';
   	import { EyeOutline, EyeSlashOutline } from 'flowbite-svelte-icons';
   	
@@ -18,9 +17,19 @@
 	let confirmationResult: ConfirmationResult;
 	let signInMethod : string = "";
   
-	onMount(() => {
-	  
-	});
+	function passwordReset() {
+		auth.useDeviceLanguage();
+		sendPasswordResetEmail(auth, form.credentials.value)
+		.then(() => {
+			form.formErrors = "Password reset email sent!";
+			// ..
+		})
+		.catch((error) => {
+			const errorCode = error.code;
+			const errorMessage = error.message;
+			form.formErrors = (error as Error).message;
+		});
+	}
   
 	const sendCode = async () => {
 	  try {
@@ -91,7 +100,8 @@
 			emailOrPhone();
 		}
 	}	
-  </script>
+  
+</script>
   
 <div class="flex justify-center min-h-screen pt-16">
 	<form method="POST" use:enhance bind:this={form} class="flex flex-col gap-4 p-8 space-y-4 bg-white rounded-md w-full max-w-md">
@@ -102,7 +112,6 @@
 	
 		{#if signInMethod == 'email'}
 		<div>
-			<Label for="show-password" class="mb-2">Your password</Label>
 			<Input name="password" id="show-password" type={show ? 'text' : 'password'} placeholder="Password" size="lg" class="px-4 py-2 border border-gray-300 rounded-md">
 			  <button slot="left" on:click={() => (show = !show)} class="pointer-events-auto">
 				{#if show}
@@ -112,12 +121,14 @@
 				{/if}
 			  </button>
 			</Input>
-		  </div>
-		<BlueButton onclick={login} type="submit" buttonText="Login"></BlueButton>
+		</div>
+
+		<button type="button" class="text-blue-500" on:click={() => passwordReset()}>Forgot Password?</button>
+		
 		{:else if signInMethod == 'phone'}
 		<Input type="text" placeholder="Verification Code" name="code" class="px-4 py-2 border border-gray-300 rounded-md" required />
-		<BlueButton onclick={login} type="submit" buttonText="Login"></BlueButton>
 		{/if}
+		<BlueButton onclick={login} type="submit" buttonText="Login"></BlueButton>
 	
 		{#if form?.formErrors}
 		<Alert type="danger" class="text-red-500">

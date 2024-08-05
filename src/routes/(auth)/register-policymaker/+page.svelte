@@ -23,6 +23,7 @@
 			return
 		}
         try {
+			auth.useDeviceLanguage();
 			const email = form!.email.value;
 			const password = form!.password.value;
             const cred = await createUserWithEmailAndPassword(auth, email, password);

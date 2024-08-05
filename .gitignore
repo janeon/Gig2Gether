@@ -140,3 +140,7 @@ dist
 # firebase
 .firebase/*
 
+**/.DS_Store
+
+
+
