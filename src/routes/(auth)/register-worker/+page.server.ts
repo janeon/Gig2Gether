@@ -36,7 +36,7 @@ export const actions = {
   // DO NOT RENAME COOKIE 
   // FIRBASE FUNCTIONS ALLOWS ONLY ONE COOKIE, IT MUST BE NAMED __session
   // https://stackoverflow.com/questions/76611381/how-to-forwarded-cookies-to-the-clound-function-when-deploying-sveltekit-to-fire
-  cookies.set("__session", sessionCookie, {
+    cookies.set("__session", sessionCookie, {
     maxAge: expiresIn,
     path: "/",
     httpOnly: true,
