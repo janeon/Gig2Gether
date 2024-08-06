@@ -1,13 +1,15 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import type { ActionData } from './$types'; 
+	import { goto } from '$app/navigation';
 
-	import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
+	import { createUserWithEmailAndPassword } from 'firebase/auth';
 	import { auth, db } from '$lib/firebase/client'
 	import { doc, setDoc } from 'firebase/firestore';
 	import { Input } from 'flowbite-svelte';
 	import { EnvelopeSolid, EyeOutline, EyeSlashOutline } from 'flowbite-svelte-icons';
 	import BlueButton from '$lib/components/BlueButton.svelte';
+	import { sendEmailVerificationWithContinueUrl } from '$lib/utils';
 
 	let show1 = false;
 	let show2 = false;
@@ -26,29 +28,19 @@
 			auth.useDeviceLanguage();
 			const email = form!.email.value;
 			const password = form!.password.value;
+			
             const cred = await createUserWithEmailAndPassword(auth, email, password);
-			sendEmailVerification(auth.currentUser).then(() => {
-				console.log('Email verification sent');
-			});
             token = await cred.user.getIdToken();
-			try {
-				const user = cred.user
+			const user = cred.user
 				const docRef = doc(db, 'users', user.uid)
 				await setDoc(docRef, {
 					email: email,
 					role: "policymaker",
 					platform: "policymaker"
 				})
-			} catch (error) {
-			console.error((error as Error).message)
-			}
-            await auth.signOut();
-            const input = document.createElement("input");
-            input.type = "hidden";
-            input.name = "token";
-            input.value = token;
-            form.appendChild(input);
-            form.submit();
+			await sendEmailVerificationWithContinueUrl(user, token);
+			goto(`/verify-email?email=${email}`);
+
         } catch (err) {
             console.error(err);
 			form!.formErrors = err.code.split('/')[1];

@@ -4,9 +4,10 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	
-	import { type ConfirmationResult, PhoneAuthProvider, signInWithCredential, createUserWithEmailAndPassword, sendEmailVerification, getRedirectResult } from "firebase/auth";
+	import { type ConfirmationResult, PhoneAuthProvider, signInWithCredential, createUserWithEmailAndPassword } from "firebase/auth";
 	import { auth, RecaptchaVerifier, db, signInWithPhoneNumber } from '$lib/firebase/client';
 	import { collection, doc, getCountFromServer, query, setDoc, where } from 'firebase/firestore';
+	import { sendEmailVerificationWithContinueUrl } from '$lib/utils';
 
 	import { Button, Input, Label, Radio, Alert } from 'flowbite-svelte';
 	import { EyeOutline, EyeSlashOutline, FileCopySolid, ProfileCardSolid, UserCircleSolid } from 'flowbite-svelte-icons';
@@ -49,14 +50,6 @@
 			sendCode();
 		}
 	}
-
-	const sendEmailVerificationWithContinueUrl = async (user, token) => {
-		const actionCodeSettings = {
-			url: `https://gigshare.web.app/verify-email?token=${token}`,
-			handleCodeInApp: true,
-		};
-		await sendEmailVerification(user, actionCodeSettings);
-	};
 
 	async function register(event: Event): Promise<void> {
 		event.preventDefault(); // Prevent the default form submission
@@ -115,8 +108,6 @@
 				form.appendChild(input);
 				form.submit();
 			}
-			
-
 
         } catch (err) {
             console.error(err);
