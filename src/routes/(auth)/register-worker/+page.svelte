@@ -3,12 +3,11 @@
 	import type { ActionData } from './$types'; 
 	import { onMount } from 'svelte';
 	
-	import { type ConfirmationResult, PhoneAuthProvider, signInWithCredential, createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
+	import { type ConfirmationResult, PhoneAuthProvider, signInWithCredential, createUserWithEmailAndPassword } from "firebase/auth";
 	import { auth, RecaptchaVerifier, db, signInWithPhoneNumber } from '$lib/firebase/client';
 	import { collection, doc, getCountFromServer, query, setDoc, where } from 'firebase/firestore';
 
 	import { Button, Input, Label, Radio, Alert } from 'flowbite-svelte';
-	import { EyeOutline, EyeSlashOutline, FileCopySolid, ProfileCardSolid, UserCircleSolid } from 'flowbite-svelte-icons';
 	import BlueButton from '$lib/components/BlueButton.svelte';
 	
 	export let form : ActionData;
@@ -17,8 +16,6 @@
 	let confirmationResult: ConfirmationResult;
 	let signInMethod : string;
 	let selectedPlatform : string = "";
-	let show1 = false;
-	let show2 = false;
 
 	onMount(() => {
 	  recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
@@ -62,21 +59,11 @@
 			return
 		}
 
-		if (form.password.value != form.confirm.value) {
-			form.formErrors = "Passwords do not match"
-			return
-		}
-
         try {
 			let cred = null;
 			try {
-				auth.useDeviceLanguage();
 				if (signInMethod == 'email') {
 					cred = await createUserWithEmailAndPassword(auth, form.credentials.value, form.password.value);
-					sendEmailVerification(auth.currentUser)
-					.then(() => {
-						console.log('Email verification sent');
-					});
 				}
 				if (signInMethod == 'phone') {
 					const credential = PhoneAuthProvider.credential(confirmationResult.verificationId, form.code.value);
@@ -140,60 +127,25 @@
 			  </div>
 		</div>
 		{#if selectedPlatform}
-		
-		<div class="relative flex items-stretch">
-			<Input type="text" placeholder="Email or Phone Number" name="credentials" class="px-4 py-2 border-t border-b border-gray-300 flex-grow" on:keypress={go} required>
-				<button slot="left" class="pointer-events-auto">
-					<UserCircleSolid class="w-6 h-6" />
-				</button>
-			</Input>
-			<Button on:click={emailOrPhone} class="px-4 py-2 bg-blue-500 text-white rounded-r-md">Go</Button>
-		  </div>
-		  
+		<div class="relative inline-block">
+			<Input type="text" placeholder="Email or Phone Number" name="credentials" class="px-4 py-2 border border-gray-300 rounded-md" on:keypress={go} required />
+			<Button on:click={emailOrPhone} class="absolute top-0 right-0 h-full px-4 py-2 bg-blue-500 text-white rounded-r-md">Go</Button>
+		</div>
 		{/if}
 		
 		{#if signInMethod == 'email'}
 		<div>
-			<Input placeholder="Username" name="username" class="px-4 pt-2 border border-gray-300 rounded-md">
-				<button slot="left" class="pointer-events-auto">
-					  <ProfileCardSolid class="w-6 h-6" />
-				  </button>
-			</Input>
+			<Input placeholder="Username" name="username" class="px-4 pt-2 border border-gray-300 rounded-md" />
 			<p class="text-xs">Choose a username without any identifiable information.</p>
 		</div>
-			<Input name="password" id="show-password" type={show1 ? 'text' : 'password'} placeholder="Password" size="md" class="px-4 py-2 border border-gray-300 rounded-md">
-			  <button slot="left" on:click={() => (show1 = !show1)} class="pointer-events-auto">
-				{#if show1}
-				  <EyeOutline class="w-6 h-6" />
-				{:else}
-				  <EyeSlashOutline class="w-6 h-6" />
-				{/if}
-			  </button>
-			</Input>
-			<Input name="confirm" id="confirm-password" type={show2 ? 'text' : 'password'} placeholder="Confirm Password" size="md" class="px-4 py-2 border border-gray-300 rounded-md">
-				<button slot="left" on:click={() => (show2 = !show2)} class="pointer-events-auto">
-				  {#if show2}
-					<EyeOutline class="w-6 h-6" />
-				  {:else}
-					<EyeSlashOutline class="w-6 h-6" />
-				  {/if}
-				</button>
-			  </Input>
+		<Input type="password" placeholder="Password" name="password" class="px-4 py-2 border border-gray-300 rounded-md" />
 		<BlueButton onclick={register} type="submit" buttonText="Register" href="/protected"/>
 		{:else if signInMethod == 'phone'}
 		<div>
-			<Input placeholder="Username" name="username" class="px-4 pt-2 border border-gray-300 rounded-md">
-				<button slot="left" class="pointer-events-auto">
-					  <ProfileCardSolid class="w-6 h-6" />
-				  </button>
-			</Input>
+			<Input placeholder="Username" name="username" class="px-4 pt-2 border border-gray-300 rounded-md" />
 			<p class="text-xs">Choose a username without any identifiable information.</p>
 		</div>
-		<Input type="text" placeholder="Verification Code" name="code" class="px-4 py-2 border border-gray-300 rounded-md" required>
-			<button slot="left" class="pointer-events-auto">
-				<FileCopySolid class="w-6 h-6" />
-			</button>
-		</Input>
+		<Input type="text" placeholder="Verification Code" name="code" class="px-4 py-2 border border-gray-300 rounded-md" required />
 		<BlueButton onclick={register} type="submit" buttonText="Register" href="/protected"/>
 		{/if}
 	
