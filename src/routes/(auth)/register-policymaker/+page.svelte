@@ -1,127 +1,108 @@
 <script lang="ts">
-    import { Gallery, Label } from 'flowbite-svelte';
-    import { collection, doc, setDoc } from "firebase/firestore";
-    import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-    import { db, storage } from '$lib/firebase/client'; 
-    import { page } from '$app/stores';
+	import { enhance } from '$app/forms';
+	import type { ActionData } from './$types'; 
 
-    let fileuploadprops = {
-        id: 'service_screenshot'
-    };
+	import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
+	import { auth, db } from '$lib/firebase/client'
+	import { doc, setDoc } from 'firebase/firestore';
+	import { Input } from 'flowbite-svelte';
+	import { EnvelopeSolid, EyeOutline, EyeSlashOutline } from 'flowbite-svelte-icons';
+	import BlueButton from '$lib/components/BlueButton.svelte';
 
-    let successMessage = '';
-    let errorMessage ='';
+	let show1 = false;
+	let show2 = false;
 
-    let selectedDate = new Date().toISOString().substring(0, 10); // Default to today's date in YYYY-MM-DD format
+	export let form : ActionData;
+	let token: string;
+	// $: console.log("token", token);
 
-    const images = [
-        { alt: 'Profile Screenshot example 1', src: '../rover1.jpg' },
-        { alt: 'Profile Screenshot example 2', src: '../rover2.jpg' },
-    ];
-
-    async function handleFileInputChange(event) {
-        const fileInput = event.target;
-        if (fileInput.files.length > 0) {
-            const file = fileInput.files[0];
-            if (!['image/png', 'image/jpeg'].includes(file.type)) {
-                errorMessage = 'Only PNG or JPEG files are allowed.';
-                successMessage = '';
-                return;
-            }
-
-            errorMessage = '';
-            await handleFileUpload(file);
+	async function register(event: Event): Promise<void> {
+		event.preventDefault(); // Prevent the default form submission
+		if (form.password.value != form.confirm.value) {
+			form.formErrors = "Passwords do not match"
+			return
+		}
+        try {
+			auth.useDeviceLanguage();
+			const email = form!.email.value;
+			const password = form!.password.value;
+            const cred = await createUserWithEmailAndPassword(auth, email, password);
+			sendEmailVerification(auth.currentUser).then(() => {
+				console.log('Email verification sent');
+			});
+            token = await cred.user.getIdToken();
+			try {
+				const user = cred.user
+				const docRef = doc(db, 'users', user.uid)
+				await setDoc(docRef, {
+					email: email,
+					role: "policymaker",
+					platform: "policymaker"
+				})
+			} catch (error) {
+			console.error((error as Error).message)
+			}
+            await auth.signOut();
+            const input = document.createElement("input");
+            input.type = "hidden";
+            input.name = "token";
+            input.value = token;
+            form.appendChild(input);
+            form.submit();
+        } catch (err) {
+            console.error(err);
+			form!.formErrors = err.code.split('/')[1];
         }
-    }
-
-    async function handleFileUpload(file) {
-        if (file) {
-            console.log("File selected for upload:", file.name);
-            try {
-                const storageRef = ref(storage, `uploads/${file.name}`);
-                await uploadBytes(storageRef, file);
-                console.log("File uploaded to storage:", file.name);
-
-                const downloadURL = await getDownloadURL(storageRef);
-                console.log("File download URL:", downloadURL);
-
-                // Save file metadata to Firestore
-                await saveFileMetadata(downloadURL, file.name);
-
-                console.log('File uploaded and metadata saved:', file.name);
-                successMessage = 'File uploaded successfully!'; 
-            } catch (error) {
-                console.error('Error uploading file:', error);
-                successMessage = '';
-                errorMessage = 'Error uploading file.';
-            }
-
-        } else {
-            console.error('No file selected');
-            errorMessage = "No file selected"
-            successMessage='';
-        }
-    }
-
-    async function saveFileMetadata(downloadURL, fileName) {
-        const user = $page.data.user;
-        if (!user || !user.uid) {
-            console.error("User is not logged in");
-            return;
-        }
-
-        const collectionRef = collection(db, "users", user.uid, "uploads");
-        const docRef = doc(collectionRef, `service_${new Date().getTime()}`);
-
-        const fileData = {
-            name: fileName,
-            url: downloadURL,
-            timestamp: new Date(),
-            date: new Date(selectedDate) // Include the selected date
-        };
-
-        await setDoc(docRef, fileData);
-        console.log("File metadata saved to Firestore:", fileData);
     }
 </script>
 
-<link
-  rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-/>
+<div class="flex justify-center min-h-screen pt-16">
+	<form
+	  class="flex flex-col gap-4 p-8 space-y-4 bg-white rounded-md w-full max-w-md"
+	  action="?/register"
+	  method="POST"
+	  use:enhance
+	  bind:this={form}
+	>
+	  <Input
+		type="email"
+		placeholder="Email"
+		name="email"
+		label="Email"
+		required
+	  >
+	  <button slot="left" class="pointer-events-auto">
+		<EnvelopeSolid class="w-6 h-6" />
+	</button>
+	  </Input>
+	  <Input name="password" id="show-password" type={show1 ? 'text' : 'password'} placeholder="Password" size="md" class="px-4 py-2 border border-gray-300 rounded-md">
+		<button slot="left" on:click={() => (show1 = !show1)} class="pointer-events-auto">
+		  {#if show1}
+			<EyeOutline class="w-6 h-6" />
+		  {:else}
+			<EyeSlashOutline class="w-6 h-6" />
+		  {/if}
+		</button>
+	  </Input>
+	  <Input name="confirm" id="confirm-password" type={show2 ? 'text' : 'password'} placeholder="Confirm Password" size="md" class="px-4 py-2 border border-gray-300 rounded-md">
+		  <button slot="left" on:click={() => (show2 = !show2)} class="pointer-events-auto">
+			{#if show2}
+			  <EyeOutline class="w-6 h-6" />
+			{:else}
+			  <EyeSlashOutline class="w-6 h-6" />
+			{/if}
+		  </button>
+		</Input>
+  
+	  {#if form?.formErrors}
+		<article>
+		  <div class="text-red-600">
+			{form.formErrors}
+		  </div>
+		</article>
+	  {/if}
+  
+	  <BlueButton onclick={register} type="submit" buttonText="Register" href="/protected"/>
 
-<div class="flex flex-row">
-
-    <div class="w-3/4 rounded-md p-6">
-        <p class="mb-3">
-            After completing a service, take a screenshot of the payment screen and the service details, as shown below:
-        </p>
-
-        <!-- Add images -->
-        <Gallery class="gap-2 grid grid-cols-4">
-            {#each images as { alt, src }}
-                <div class="w-full h-70 overflow-hidden">
-                    <img src={src} alt={alt} class="object-contain w-full h-full" />
-                </div>
-            {/each}
-        </Gallery>
-
-        <div class="flex justify-start mt-6">
-            <div class="flex flex-col items-center space-y-4 ml-56">
-                <Label class="pb-2" for={fileuploadprops.id}>Upload file</Label>
-                <input id={fileuploadprops.id} type="file" on:change={handleFileInputChange} autocomplete="off" class="mt-1" />
-                {#if successMessage}
-                    <p class="text-green-600 mt-2">{successMessage}</p>
-                {/if}
-                {#if errorMessage}
-                    <p class = "text-red-600 mt-2">{errorMessage}</p>
-                {/if}
-            </div>
-        </div>
-
-        <div class="flex items-center mt-4 ml-49 text-black cursor-pointer">
-            <i class="fas fa-play fa-2x mr-2"></i>
-            <span>Learn more on how to add files or enter details</span>
-        </div>
-    </div>
-</div>
+	</form>
+  </div>
