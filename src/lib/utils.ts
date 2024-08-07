@@ -5,6 +5,7 @@ import type { TransitionConfig } from "svelte/transition";
 import { db } from '$lib/firebase/client';
 import { doc, getDoc } from 'firebase/firestore';
 import type { User } from '../app';
+import { sendEmailVerification } from "firebase/auth";
 
 const date = new Date();
 const pad = (num) => num.toString().padStart(2, '0');
@@ -89,3 +90,11 @@ export const getUser = async(uid:string) => {
     // we'll handle this case in the login by providing error when user not found
     return null
 }
+
+export const sendEmailVerificationWithContinueUrl = async (user, token) => {
+	const actionCodeSettings = {
+		url: `https://gigshare.web.app/verify-email?token=${token}`,
+		handleCodeInApp: true,
+	};
+	await sendEmailVerification(user, actionCodeSettings);
+};

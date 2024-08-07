@@ -42,7 +42,7 @@
     <div class="grid grid-cols-1 xs:grid-cols-1 sm:grid-cols-2 gap-4 max-w-4xl w-full">
       {#each [
         { iconClass: 'fa-upload', title: 'Upload', route: '/protected/upload/manual' },
-        { iconClass: 'fa-book', title: 'Stories', route: '/protected/stories/story_feed' },
+        { iconClass: 'fa-book', title: 'Stories', route: '/protected/stories/story-feed' },
         { iconClass: 'fa-chart-line', title: 'Trends', route: '/protected/trends/personal' },
         { iconClass: 'fa-cog', title: 'Settings', route: '/protected/settings/profile' },
         { iconClass: 'fa-calendar', title: 'Planner', route: '/protected/planner/work-day' }
