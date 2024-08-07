@@ -63,7 +63,7 @@
 	<!-- top nav bar for web -->
 	<div class={(mobile && protected_urls) ? 'hidden md:block' : 'block'}>
 		<header class="flex justify-between items-center p-4 bg-gray-100">
-			{#if ["register", "Register Worker", "Register Policymaker"].includes(title)}
+			{#if ["Register Worker", "Register Policymaker", "Verify Email"].includes(title)}
 			<div>
 				<Button href="/" class="bg-gray-200 text-black text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl font-bold py-1 px-2">Gig2Gether</Button>
 			</div>

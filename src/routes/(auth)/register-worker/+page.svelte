@@ -2,10 +2,12 @@
 	import { enhance } from '$app/forms';
 	import type { ActionData } from './$types'; 
 	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
 	
-	import { type ConfirmationResult, PhoneAuthProvider, signInWithCredential, createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
+	import { type ConfirmationResult, PhoneAuthProvider, signInWithCredential, createUserWithEmailAndPassword } from "firebase/auth";
 	import { auth, RecaptchaVerifier, db, signInWithPhoneNumber } from '$lib/firebase/client';
 	import { collection, doc, getCountFromServer, query, setDoc, where } from 'firebase/firestore';
+	import { sendEmailVerificationWithContinueUrl } from '$lib/utils';
 
 	import { Button, Input, Label, Radio, Alert } from 'flowbite-svelte';
 	import { EyeOutline, EyeSlashOutline, FileCopySolid, ProfileCardSolid, UserCircleSolid } from 'flowbite-svelte-icons';
@@ -66,45 +68,47 @@
 			form.formErrors = "Passwords do not match"
 			return
 		}
+        
+		let cred = null;
+		try {
+			auth.useDeviceLanguage();
+			if (signInMethod == 'email') {
+				cred = await createUserWithEmailAndPassword(auth, form.credentials.value, form.password.value);
+			}
+			if (signInMethod == 'phone') {
+				const credential = PhoneAuthProvider.credential(confirmationResult.verificationId, form.code.value);
+				cred = await signInWithCredential(auth, credential);
+			}
+		} catch (error) {
+			form.formErrors = (error as Error).message;
+		}
+		try {
+			// Save user data to Firestore
+			const user = cred.user
+			const docRef = doc(db, 'users', user.uid)
+			await setDoc(docRef, {
+				username: form.username.value,
+				credentials: form.credentials.value,
+				role: "worker",
+				platform: selectedPlatform
+			})
+			await auth.signOut();
+			token = await cred.user.getIdToken();
 
-        try {
-			let cred = null;
-			try {
-				auth.useDeviceLanguage();
-				if (signInMethod == 'email') {
-					cred = await createUserWithEmailAndPassword(auth, form.credentials.value, form.password.value);
-					sendEmailVerification(auth.currentUser)
-					.then(() => {
-						console.log('Email verification sent');
-					});
-				}
-				if (signInMethod == 'phone') {
-					const credential = PhoneAuthProvider.credential(confirmationResult.verificationId, form.code.value);
-					cred = await signInWithCredential(auth, credential);
-				}
-			} catch (error) {
-				form.formErrors = (error as Error).message;
+			if (signInMethod == 'email') {
+				await sendEmailVerificationWithContinueUrl(user, token);
+				goto(`/verify-email?email=${form.credentials.value}`);
 			}
-            token = await cred.user.getIdToken();
-			try {
-				const user = cred.user
-				const docRef = doc(db, 'users', user.uid)
-				await setDoc(docRef, {
-					username: form.username.value,
-					credentials: form.credentials.value,
-					role: "worker",
-					platform: selectedPlatform
-				})
-			} catch (error) {
-			console.error((error as Error).message)
+			else {
+				// Save token to invisible form element and submit
+				const input = document.createElement("input");
+				input.type = "hidden";
+				input.name = "token";
+				input.value = token;
+				form.appendChild(input);
+				form.submit();
 			}
-            await auth.signOut();
-            const input = document.createElement("input");
-            input.type = "hidden";
-            input.name = "token";
-            input.value = token;
-            form.appendChild(input);
-            form.submit();
+
         } catch (err) {
             console.error(err);
 			form!.formErrors = err.code.split('/')[1];
