@@ -8,7 +8,7 @@
     import { updateTitle } from "$lib/stores/title";
     import { capitalize } from "$lib/utils";
     import { error } from "@sveltejs/kit";
-    updateTitle(capitalize($page.data.user?.platform) + " Manual Upload");
+    updateTitle(capitalize($page.data.user?.platform) + " Income");
 
     let successMessage = '';
     let errorMessage = '';
@@ -23,7 +23,6 @@
         date: new Date(),
         income: null,
         tips: null,
-        expenses: null,
         hoursSpent: null,
         withholdings: null,
         schedule: [],
@@ -36,7 +35,6 @@
         end_date: new Date(),
         income: null,
         tips: null,
-        expenses: null,
         timeSpent: null,
         platfromCut: null,
         type: [],
@@ -167,17 +165,12 @@
 
                 <div class="flex flex-col">
                     <Label>Income</Label>
-                    <NumberInput pattern="[0-9]*" bind:value={uberData.income} class="mt-1" />
+                    <NumberInput bind:value={uberData.income} class="mt-1" />
                 </div>
 
                 <div class="flex flex-col">
                     <Label>Tips</Label>
                     <NumberInput bind:value={uberData.tips} class="mt-1" />
-                </div>
-
-                <div class="flex flex-col">
-                    <Label>Expenses</Label>
-                    <NumberInput bind:value={uberData.expenses} class="mt-1" />
                 </div>
 
                 <div class="flex flex-col">
@@ -213,11 +206,6 @@
                     <Label>Income</Label>
                     <p class="text-red-500">{incomeError}</p>
                     <NumberInput bind:value={roverData.income} class="mt-1" />
-                </div>
-
-                <div class="flex flex-col">
-                    <Label>Expenses</Label>
-                    <NumberInput bind:value={roverData.expenses} class="mt-1" />
                 </div>
 
                 <div class="flex flex-col">

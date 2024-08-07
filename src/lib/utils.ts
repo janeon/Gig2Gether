@@ -7,6 +7,7 @@ import { doc, getDoc } from 'firebase/firestore';
 import type { User } from '../app';
 import { sendEmailVerification } from "firebase/auth";
 
+export const extractAfterEquals = (value) => value.split('=')[1]?.trim() || value;
 const now = new Date();
 const pad = (num) => num.toString().padStart(2, '0');
 export const currentDate = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;

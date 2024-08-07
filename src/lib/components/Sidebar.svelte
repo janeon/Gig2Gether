@@ -60,13 +60,13 @@
     } else if ($page.data.user?.platform === "rover") {
       upload_options = [
         // { label: "Screenshot", href: "/protected/upload/rover-upload" }
-        { label: "Manual", href: "/protected/upload/manual" }
+        { label: "Income", href: "/protected/upload/manual" }
       ];
     } else if ($page.data.user?.platform === "upwork") {
       upload_options = [
         // { label: "Jobs", href: "/protected/upload/upwork-job" },
         // { label: "Profile", href: "/protected/upload/upwork-profile" }
-        { label: "Manual", href: "/protected/upload/manual" }
+        { label: "Income", href: "/protected/upload/manual" }
       ];
     }
 
