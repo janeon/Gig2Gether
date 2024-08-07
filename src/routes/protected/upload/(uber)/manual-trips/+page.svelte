@@ -9,7 +9,6 @@
 
     updateTitle(capitalize($page.data.user?.platform) + " Trip Upload");
 
-
     let successMessage = '';
     let errorMessage = '';
 

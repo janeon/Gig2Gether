@@ -167,7 +167,7 @@
 
                 <div class="flex flex-col">
                     <Label>Income</Label>
-                    <NumberInput bind:value={uberData.income} class="mt-1" />
+                    <NumberInput pattern="[0-9]*" bind:value={uberData.income} class="mt-1" />
                 </div>
 
                 <div class="flex flex-col">

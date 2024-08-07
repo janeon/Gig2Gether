@@ -107,7 +107,7 @@
 	<form method="POST" use:enhance bind:this={form} class="flex flex-col gap-4 p-8 space-y-4 bg-white rounded-md w-full max-w-md">
 		<div class="relative inline-block">
 			<Input type="text" placeholder="Email or Phone Number" name="credentials" class="px-4 py-2 border border-gray-300 rounded-md" on:keypress={go} required>
-				<button slot="left" class="pointer-events-auto">
+				<span slot="left" class="pointer-events-auto">
 					{#if signInMethod == 'email'}
 						<EnvelopeSolid class="w-6 h-6" />
 					{:else if signInMethod == 'phone'}
@@ -115,7 +115,7 @@
 					{:else}
 						<BlenderPhoneSolid class="w-6 h-6" />
 					{/if}
-				</button>
+				</span>
 			</Input>
 			<Button on:click={emailOrPhone} class="absolute top-0 right-0 h-full px-4 py-2 bg-blue-500 text-white rounded-r-md">Go</Button>
 		</div>
@@ -136,11 +136,14 @@
 		<button type="button" class="text-blue-500" on:click={() => passwordReset()}>Forgot Password?</button>
 		
 		{:else if signInMethod == 'phone'}
+		<div>
 		<Input type="text" placeholder="Verification Code" name="code" class="px-4 py-2 border border-gray-300 rounded-md" required>
-			<button slot="left" class="pointer-events-auto">
+			<span slot="left" class="pointer-events-auto">
 				<FileCopySolid class="w-6 h-6" />
-			</button>
+			</span>
 		</Input>
+		<p class="text-xs">We sent a 6-digit verification code to {form.credentials.value}.</p>
+		</div>
 		{/if}
 		<BlueButton onclick={login} type="submit" buttonText="Login"></BlueButton>
 	
