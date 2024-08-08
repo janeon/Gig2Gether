@@ -5,7 +5,7 @@
     import MultiSelect from 'svelte-multiselect';
     import { goto } from '$app/navigation';
     import { Label, Input, Textarea } from "flowbite-svelte";
-    import { currentDate, currentTime } from "$lib/utils";
+    import { convertToLocalDate, currentDate, currentTime } from "$lib/utils";
     import { updateTitle } from "$lib/stores/title";
     import { capitalize, extractAfterEquals } from "$lib/utils";
     import IconNumberInput from '$lib/components/IconNumberInput.svelte';
@@ -42,13 +42,13 @@
         }
 
         errorMessage = "";
-        const collectionRef = collection(db, "upload", "expenses", "entries");
+        const collectionRef = collection(db, "upload", "expenses", $page.data.user.platform);
         const docRef = doc(collectionRef);
 
-        data.date = new Date(date);
+        data.date = convertToLocalDate(date);
         data.amount = extractAfterEquals(data.amount);
         successMessage = "Submission Successful!";
-        submitClicked = true; // Set submitClicked to true after successful submission
+        submitClicked = true; 
         await setDoc(docRef, data, { merge: true });
 
         // Update initial data after successful submission
@@ -103,7 +103,7 @@
 
             <div class="flex flex-col">
                 <Label>Description</Label>
-                <Textarea bind:value={data.description} rows="4" 
+                <Textarea bind:value={data.description} rows="4" placeholder="Briefly describe what the expense was used for"
                 class="mt-1 border border-gray-300 rounded-lg px-3 py-2 bg-gray-50"/>
             </div>
 

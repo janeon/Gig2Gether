@@ -1,307 +1,302 @@
 <script lang="ts">
-    import { page } from "$app/stores";
-    import { db } from "$lib/firebase/client";
-    import { collection, doc, setDoc } from "firebase/firestore";
+    import { page } from '$app/stores';
+    import { db } from '$lib/firebase/client';
+    import { collection, doc, setDoc } from 'firebase/firestore';
+    import { goto } from '$app/navigation';
     import MultiSelect from 'svelte-multiselect';
-    import { Label, NumberInput, Input} from "flowbite-svelte";
-    import { currentDate } from "$lib/utils";
-    import { updateTitle } from "$lib/stores/title";
-    import { capitalize } from "$lib/utils";
-    import { error } from "@sveltejs/kit";
-    updateTitle(capitalize($page.data.user?.platform) + " Income");
+    import { Label, Input, NumberInput, Select } from 'flowbite-svelte';
+    import { convertToLocalDate, currentDate, extractAfterEquals } from '$lib/utils';
+    import { updateTitle } from '$lib/stores/title';
+    import { capitalize } from '$lib/utils';
+    import IconNumberInput from '$lib/components/IconNumberInput.svelte';
+    import Duration from '$lib/components/Duration.svelte';
+    updateTitle(capitalize($page.data.user?.platform) + ' Manual Upload');
+    import job_categories from "$lib/job_categories.json";
 
     let successMessage = '';
     let errorMessage = '';
-    let timeError = ''
-    let typeError = ''
-    let incomeError = ''
+    let timeError = '';
+    let typeError = '';
+    let incomeError = '';
+    let dateError = '';
 
-    let date = currentDate
-    let end_date = currentDate
-    // Uber Manual
-    let uberData = {
-        date: new Date(),
-        income: null,
-        tips: null,
-        hoursSpent: null,
-        withholdings: null,
-        schedule: [],
+    let date = currentDate;
+    let end_date = currentDate;
+
+    let submitClicked = false;
+
+    // Common base data structure
+    const baseData = {
+        date: new Date(), // Default start date
+        end_date: new Date(), 
         uid: $page.data.user.uid
-    }
+    };
 
-    // Rover Manual
-    let roverData = {
-        date: new Date(), //Called date for same values for other uploads (but is start date)
-        end_date: new Date(),
+    // Rover Data
+    const roverData = {
+        ...baseData,
         income: null,
         tips: null,
-        timeSpent: null,
-        platfromCut: null,
+        platformCut: null,
+        workedHours: null,
+        workedMinutes: null,
+        travelHours: null,
+        travelMinutes: null,
+        type: []
+    };
+    
+    const roverServices = [
+        'Boarding',
+        'House Sitting',
+        'Drop-In Visits',
+        'Doggy Day Care',
+        'Dog Walking'
+    ];
+
+    // Upwork Data
+    const upworkData = {
+        ...baseData,
         type: [],
-        travelTime: null,
-        uid: $page.data.user.uid
-    }
-
-    // UpWork Manual
-    let upworkData = {
-        date: new Date(), //Called date for same values for other uploads (but is start date)
-        end_date: new Date(),
-        type: '',
         hourlyCharge: null,
-        hoursPerWeek: null,
-        clientHistory: '',
-        experience: [],
-        jobDuration: '',
+        jobDuration: { hours: null, minutes: null }, // Updated to use Duration type
         clientLocation: '',
-        uid: $page.data.user.uid
-    }
+        hoursPerWeek: { hours: null, minutes: null }, // Updated to use Duration type
+        clientHistory: '',
+        experience: []
+    };
 
-    const uberSchedule = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+    const upworkExperience = [
+        {value: "entry", name:'Entry-Level'},
+        {value: "intermediate", name:'Intermediate'},
+        {value: "expert", name:'Expert'}
+    ];
 
-    const roverServices = [ "Boarding", "House Sitting", "Drop-In Visits", "Doggy Day Care", "Dog Walking"]
+    const upworkJobCategories = Object.keys(job_categories);
 
-    const upworkExperience = ["Entry-Level", "Intermediate-Level", "Expert Level"]
+    let initialData = $page.data.user?.platform == "rover" ? { ...roverData } : { ...upworkData };
+    
+    // Track if data has changed
+    $: dataChanged = JSON.stringify($page.data.user?.platform == "rover" ? roverData:upworkData) !== JSON.stringify(initialData);
+
+    const dollar = `<svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 17.345a4.76 4.76 0 0 0 2.558 1.618c2.274.589 4.512-.446 4.999-2.31.487-1.866-1.273-3.9-3.546-4.49-2.273-.59-4.034-2.623-3.547-4.488.486-1.865 2.724-2.899 4.998-2.31.982.236 1.87.793 2.538 1.592m-3.879 12.171V21m0-18v2.2"/>
+    </svg>`;
 
     async function submitManual() {
-        // if ($page.data.user?.platform == "uber") {
-        //     if (uberData.income == 0) {
-        //         incomeError = "Please Input Income" 
-        //     }
-        //     else {
-        //         incomeError = ""
-        //     }
-        //     if (uberData.hoursSpent == 0) {
-        //         timeError = "Please Add Hours Spent"
-        //     }
-        //     else {
-        //         timeError = ""
-        //     }
-        //     if (uberData.hoursSpent == 0) {
-        //         timeError = "Please Add Hours Spent"
-        //     }
-        //     else {
-        //         timeError = ""
-        //     }
-        // }
-        if ($page.data.user?.platform == "rover") {
-            if (!roverData.timeSpent) {
-                console.log('time')
-                timeError = "Please Add Hours Spent"
-            }
-            else {
-                timeError = ""
-            }
-            if (!roverData.income) {
-                console.log('income')
-                incomeError = "Please Add Income"
-            }
-            else {
-                incomeError = ""
-            }
-            if (!roverData.type.length) {
-                console.log('s')
-                typeError = "Please Add Service(s)"
-            }
-            else {
-                typeError = ""
-            }
-            if (typeError !== "" || incomeError !== "" || timeError !== "") {
-                console.log('here')
-                return
-            }
-        }
-        else if ($page.data.user?.platform === "upwork") {
-            if (!upworkData.hoursPerWeek) {
-                timeError = "Please Add Hours Spent per Week"
-            }
-            else {
-                timeError = ""
-            }
-            if (!upworkData.hourlyCharge) {
-                incomeError = "Please Add Hourly Rate"
-            }
-            else {
-                incomeError = ""
-            }
-            if (upworkData.type === "") {
-                typeError = "Please Add Job Category"
-            }
-            else {
-                typeError = ""
-            }
-            if (typeError == "" || incomeError == "" || timeError == "") {
-                console.log('here')
-                return
+        if ($page.data.user) {
+            const platform = $page.data.user.platform;
+
+            // Reset error messages
+            timeError = '';
+            incomeError = '';
+            typeError = '';
+            dateError = '';
+
+            const checkErrors = (errors: { field: any; message: string; type: string }[]) => {
+                let hasError = false;
+                errors.forEach((error) => {
+                    if (!error.field) {
+                        hasError = true;
+                        if (error.type === 'type') {
+                            typeError = error.message;
+                        } else if (error.type === 'income') {
+                            incomeError = error.message;
+                        } else if (error.type === 'time') {
+                            // Special handling for timeError
+                            if ((roverData.workedHours === null && roverData.workedMinutes === null) || 
+                                (upworkData.hoursPerWeek.hours === null && upworkData.hoursPerWeek.minutes === null)) {
+                                timeError = error.message;
+                            }
+                        } else if (error.type === 'date') {
+                            dateError = error.message;
+                        }
+                    }
+                });
+                return hasError;
+            };
+
+            const errorChecks = {
+                rover: [
+                    { field: roverData.income, message: 'Please Add Income', type: 'income' },
+                    { field: roverData.type.length, message: 'Please Add Service(s)', type: 'type' },
+                    { field: roverData.workedHours || roverData.workedMinutes, message: 'Please Add Time Spent Working', type: 'time' },
+                    { field: new Date(date) <= new Date(end_date), message: 'Start date cannot be after end date', type: 'date' }
+                ],
+                upwork: [
+                    { field: upworkData.hourlyCharge, message: 'Please Add Hourly Rate', type: 'income' },
+                    { field: upworkData.type.length, message: 'Please Add Job Category', type: 'type' },
+                    { field: upworkData.hoursPerWeek.hours || upworkData.hoursPerWeek.minutes, message: 'Please Add Hours Spent per Week', type: 'time' }
+                ]
+            };
+
+            const errors = errorChecks[platform];
+            if (errors && checkErrors(errors)) {
+                return;
             }
         }
-        const collectionRef = collection(db, "upload", "manual", "entries")
-        const docRef = doc(collectionRef) // Separate by gig work manual inputs?
-        successMessage = "Input Submitted Successfully!"
-        if ($page.data.user?.platform == "uber") {
-            uberData.date = new Date(date)
-            setDoc(docRef, uberData, { merge: true })
-        }
-        else if ($page.data.user?.platform == "rover") {
-            roverData.date = new Date(date)
-            roverData.end_date = new Date(end_date)
-            setDoc(docRef, roverData, { merge: true })
-        }
-        else if ($page.data.user?.platform == "upwork") {
-            upworkData.date = new Date(date)
-            upworkData.end_date = new Date(end_date)
-            setDoc(docRef, upworkData, { merge: true })
-        }
+
+        const platform = $page.data.user.platform;
+        const collectionRef = collection(db, 'upload', 'manual', platform);
+
+        const roverMoneyFields = ['income', 'platformCut', 'tips'];
+        roverMoneyFields.forEach(property => {
+            if (roverData[property] !== null) {
+                roverData[property] = extractAfterEquals(roverData[property]);
+            }
+        });
+        upworkData.hourlyCharge = extractAfterEquals(upworkData.hourlyCharge);
+
+        const docRef = doc(collectionRef);
+        successMessage = 'Submission Successful!';
+        submitClicked = true; 
+        const updateDataObject = (platform: string, date: any, end_date?: any) => {
+            const dataObjects = {
+                rover: {
+                    ...roverData,
+                    date: convertToLocalDate(date),
+                    end_date: end_date ? convertToLocalDate(end_date) : roverData.end_date
+                },
+                upwork: {
+                    ...upworkData,
+                    date: convertToLocalDate(date),
+                    end_date: end_date ? convertToLocalDate(end_date) : upworkData.end_date
+                }
+            };
+            const dataToUpdate = dataObjects[platform];
+            if (dataToUpdate) {
+                setDoc(docRef, dataToUpdate, { merge: true });
+            }
+        };
+        updateDataObject($page.data.user?.platform, date, end_date);
     }
 </script>
 
 <div class="flex flex-row">
-    <div class="py-2 flex flex-col items-center w-full">
-        {#if $page.data.user?.platform == "uber"}
-            <div class="w-full max-w-md space-y-5">
-                <div class="flex flex-col">
-                    <Label>Date</Label>
-                    <Input type="date" bind:value={date} class="mt-1" />
-                </div>
-
-                <div class="flex flex-col">
-                    <Label>Income</Label>
-                    <NumberInput bind:value={uberData.income} class="mt-1" />
-                </div>
-
-                <div class="flex flex-col">
-                    <Label>Tips</Label>
-                    <NumberInput bind:value={uberData.tips} class="mt-1" />
-                </div>
-
-                <div class="flex flex-col">
-                    <Label>Hours Spent</Label>
-                    <NumberInput bind:value={uberData.hoursSpent} class="mt-1" />
-                </div>
-
-                <div class="flex flex-col">
-                    <Label>Withholdings</Label>
-                    <NumberInput bind:value={uberData.withholdings} class="mt-1" />
-                </div>
-
-                <div class="flex flex-col">
-                    <Label>Weekly Driving Schedule</Label>
-                    <MultiSelect options={uberSchedule} bind:value={uberData.schedule} 
-                    style="--sms-bg: rgb(249, 250, 251); padding: 8px; border-radius: 8px;"
-                    --sms-focus-border="2px solid blue"/>
-                </div>
+	<div class="py-2 flex flex-col items-center w-full">
+        <div class="w-full max-w-md space-y-5">
+            <div class="flex flex-col">
+                <Label>Start Date</Label>
+                <Input type="date" bind:value={date} class="mt-1 min-h-5" />
             </div>
-
-        {:else if $page.data.user?.platform == "rover"}
-            <div class="w-full max-w-md space-y-5">
-                <div class="flex flex-col">
-                    <Label>Start Date</Label>
-                    <Input type="date" bind:value={date} class="mt-1 min-h-5" />
-                </div>
-                <div class="flex flex-col">
-                    <Label>End Date</Label>
-                    <Input type="date" bind:value={end_date} class="mt-1 min-h-5" />
-                </div>
-
-                <div class="flex flex-col">
-                    <Label>Income</Label>
-                    <p class="text-red-500">{incomeError}</p>
-                    <NumberInput bind:value={roverData.income} class="mt-1" />
-                </div>
-
-                <div class="flex flex-col">
-                    <Label>Time Spent</Label>
-                    <p class="text-red-500">{timeError}</p>
-                    <NumberInput bind:value={roverData.timeSpent} class="mt-1" />
-                </div>
-
-                <div class="flex flex-col">
-                    <Label>Tips</Label>
-                    <NumberInput bind:value={roverData.tips} class="mt-1" />
-                </div>
-
-                <div class="flex flex-col">
-                    <Label>Platform Cut</Label>
-                    <NumberInput bind:value={roverData.platfromCut} class="mt-1" />
-                </div>
-
-                <div class="flex flex-col">
-                    <Label>Services Offered</Label>
-                    <p class="text-red-500">{typeError}</p>
-                    <MultiSelect options={roverServices} bind:value={roverData.type} 
-                    style="--sms-bg: rgb(249, 250, 251); padding: 8px; border-radius: 8px;"
-                    --sms-focus-border="2px solid blue"/>
-                </div>
-
-                <div class="flex flex-col">
-                    <Label>Time spent traveling to gig in minutes</Label>
-                    <NumberInput bind:value={roverData.travelTime} class="mt-1" />
-                </div>
+            <p class="text-red-500">{dateError}</p>
+            <div class="flex flex-col">
+                <Label>End Date</Label>
+                <Input type="date" bind:value={end_date} class="m-1 min-h-5" />
             </div>
-
-        {:else if $page.data.user?.platform == "upwork"}
+        </div>
+        {#if $page.data.user?.platform == 'rover'}
             <div class="w-full max-w-md space-y-5">
-                <div class="flex flex-col">
-                    <Label>Start Date</Label>
-                    <Input type="date" bind:value={date} class="mt-1 min-h-5" />
-                </div>
+				<div class="flex flex-col">
+					<Label>Income</Label>
+					<p class="text-red-500">{incomeError}</p>
+                    <IconNumberInput bind:value={roverData.income} icon={dollar} />
+				</div>
 
                 <div class="flex flex-col">
-                    <Label>End Date</Label>
-                    <Input type="date" bind:value={end_date} class="mt-1 min-h-5" />
-                </div>
-                
-                <div class="flex flex-col">
-                    <Label>Job Category</Label>
-                    <p class="text-red-500">{typeError}</p>
-                    <Input type="text" bind:value={upworkData.type} class="mt-1" />
+					<Label>Platform Cut</Label>
+                    <IconNumberInput bind:value={roverData.platformCut} icon={dollar} />
+				</div>
+
+				<div class="flex flex-col">
+					<Label>Tips</Label>
+                    <IconNumberInput bind:value={roverData.tips} icon={dollar} />
+				</div>
+
+				<div class="flex flex-col">
+					<Label>Time Spent Working</Label>
+					<p class="text-red-500">{timeError}</p>
+					<Duration bind:hours={roverData.workedHours} bind:minutes={roverData.workedMinutes} />
+				</div>
+
+				<div class="flex flex-col">
+                    <Label>Time Spent Traveling to Gig</Label>
+                    <Duration bind:hours={roverData.travelHours} bind:minutes={roverData.travelMinutes} />
                 </div>
 
-                <div class="flex flex-col">
-                    <Label>Hourly Charge/ Fixed price</Label>
-                    <p class="text-red-500">{incomeError}</p>
-                    <NumberInput bind:value={upworkData.hourlyCharge} class="mt-1" />
-                </div>
+				<div class="flex flex-col">
+					<Label>Services Offered</Label>
+					<p class="text-red-500">{typeError}</p>
+					<MultiSelect
+						options={roverServices}
+						bind:value={roverData.type}
+						style="--sms-bg: rgb(249, 250, 251); padding: 8px; border-radius: 8px;"
+						--sms-focus-border="2px solid blue"
+					/>
+				</div>
+			</div> 
+        {:else if $page.data.user?.platform == 'upwork'}
+            <div class="w-full max-w-md space-y-5">
+				<div class="flex flex-col">
+					<Label>Job Category</Label>
+					<p class="text-red-500">{typeError}</p>
+                    <MultiSelect
+						options={upworkJobCategories}
+						bind:value={upworkData.type}
+						style="--sms-bg: rgb(249, 250, 251); padding: 8px; border-radius: 8px;"
+						--sms-focus-border="2px solid blue"
+					/>
+				</div>
 
-                <div class="flex flex-col">
-                    <Label>Hours Per Week</Label>
-                    <p class="text-red-500">{timeError}</p>
-                    <NumberInput bind:value={upworkData.hoursPerWeek} class="mt-1" />
-                </div>
+				<div class="flex flex-col">
+					<Label>Hourly Charge/ Fixed price</Label>
+					<p class="text-red-500">{incomeError}</p>
+                    <IconNumberInput bind:value={upworkData.hourlyCharge} icon={dollar} />
+				</div>
 
-                <div class="flex flex-col">
-                    <Label>Client History</Label>
-                    <Input type="text" bind:value={upworkData.clientHistory} class="mt-1" />
-                </div>
+				<div class="flex flex-col">
+					<Label>Hours Worked</Label>
+					<p class="text-red-500">{timeError}</p>
+					<Duration bind:hours={upworkData.hoursPerWeek.hours} bind:minutes={upworkData.hoursPerWeek.minutes} />
+				</div>
 
-                <div class="flex flex-col">
-                    <Label>Experience Level</Label>
-                    <MultiSelect options={upworkExperience} bind:value={upworkData.experience} style="--sms-bg: rgb(249, 250, 251); padding: 8px; border-radius: 8px;"
-                    --sms-focus-border="2px solid blue"/>
-                </div>
+				<div class="flex flex-col">
+					<Label>History of Working with Client</Label>
+					<Input type="text" bind:value={upworkData.clientHistory} class="mt-1" />
+				</div>
 
-                <div class="flex flex-col">
-                    <Label>Job Duration</Label>
-                    <Input type="text" bind:value={upworkData.jobDuration} class="mt-1" />
-                </div>
+				<div class="flex flex-col">
+					<Label>Experience Level</Label>
+					<Select
+						items={upworkExperience}
+						bind:value={upworkData.experience}
+						style="--sms-bg: rgb(249, 250, 251); padding: 8px; border-radius: 8px;"
+						--sms-focus-border="2px solid blue"
+					/>
+				</div>
 
-                <div class="flex flex-col">
-                    <Label>Client Location</Label>
-                    <Input type="text" bind:value={upworkData.clientLocation} class="mt-1" />
-                </div>
+				<div class="flex flex-col">
+					<Label>Job Duration</Label>
+					<Duration bind:hours={upworkData.jobDuration.hours} bind:minutes={upworkData.jobDuration.minutes} />
+				</div>
+
+				<!-- <div class="flex flex-col">
+					<Label>Client Location</Label>
+					<Input type="text" bind:value={upworkData.clientLocation} class="mt-1" />
+				</div> -->
             </div>
-        {/if}
-        {#if successMessage}
-                <p class="text-green-600 mt-2">{successMessage}</p>
-             {/if}
-            {#if errorMessage}
-                <p class = "text-red-600 mt-2">{errorMessage}</p>
-            {/if}
-        <div class="flex justify-center mt-6">
-            <button
-                class="bg-black text-white py-2 px-4 rounded"
-                on:click={submitManual}>
+		{/if}
+		{#if successMessage}
+			<p class="text-green-600 mt-2">{successMessage}</p>
+		{/if}
+		{#if errorMessage}
+			<p class="text-red-600 mt-2">{errorMessage}</p>
+		{/if}
+		<div class="flex flex-row items-center gap-4 mt-6">
+			<button
+                class={`flex-1 py-2 rounded ${dataChanged ? 'bg-black text-white' : 'bg-gray-400 text-gray-600 cursor-not-allowed opacity-50'} text-sm md:text-base lg:text-lg truncate`}
+                on:click={submitManual}
+                disabled={!dataChanged}
+                style="min-width: 120px;">
                 Submit
             </button>
-        </div>
-    </div>
+            {#if submitClicked}
+                <button
+                    class="flex-1 py-2 rounded bg-blue-500 text-white hover:bg-blue-600 text-sm md:text-base lg:text-base truncate"
+                    on:click={() => goto("/protected/trends/personal")}
+                    style="min-width: 120px;">
+                    See in Trends
+                </button>
+            {/if}
+		</div>
+	</div>
 </div>
