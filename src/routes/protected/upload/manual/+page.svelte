@@ -4,8 +4,8 @@
     import { collection, doc, setDoc } from 'firebase/firestore';
     import { goto } from '$app/navigation';
     import MultiSelect from 'svelte-multiselect';
-    import { Label, Input, NumberInput, Select } from 'flowbite-svelte';
-    import { convertToLocalDate, currentDate, extractAfterEquals } from '$lib/utils';
+    import { Label, Input, Select } from 'flowbite-svelte';
+    import { currentDate, extractAfterEquals } from '$lib/utils';
     import { updateTitle } from '$lib/stores/title';
     import { capitalize } from '$lib/utils';
     import IconNumberInput from '$lib/components/IconNumberInput.svelte';
@@ -20,19 +20,13 @@
     let incomeError = '';
     let dateError = '';
 
-    let date = currentDate;
-    let end_date = currentDate;
-
-    let submitClicked = false;
-
-    // Common base data structure
+    // Platform specific data stuff
     const baseData = {
-        date: new Date(), // Default start date
-        end_date: new Date(), 
+        date: currentDate, // Default start date
+        end_date: currentDate, 
         uid: $page.data.user.uid
     };
 
-    // Rover Data
     const roverData = {
         ...baseData,
         income: null,
@@ -53,7 +47,6 @@
         'Dog Walking'
     ];
 
-    // Upwork Data
     const upworkData = {
         ...baseData,
         type: [],
@@ -73,14 +66,11 @@
 
     const upworkJobCategories = Object.keys(job_categories);
 
+    // Document tracking stuff
+    let docID: string | null = null;
     let initialData = $page.data.user?.platform == "rover" ? { ...roverData } : { ...upworkData };
-    
     // Track if data has changed
     $: dataChanged = JSON.stringify($page.data.user?.platform == "rover" ? roverData:upworkData) !== JSON.stringify(initialData);
-
-    const dollar = `<svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 17.345a4.76 4.76 0 0 0 2.558 1.618c2.274.589 4.512-.446 4.999-2.31.487-1.866-1.273-3.9-3.546-4.49-2.273-.59-4.034-2.623-3.547-4.488.486-1.865 2.724-2.899 4.998-2.31.982.236 1.87.793 2.538 1.592m-3.879 12.171V21m0-18v2.2"/>
-    </svg>`;
 
     async function submitManual() {
         if ($page.data.user) {
@@ -120,7 +110,7 @@
                     { field: roverData.income, message: 'Please Add Income', type: 'income' },
                     { field: roverData.type.length, message: 'Please Add Service(s)', type: 'type' },
                     { field: roverData.workedHours || roverData.workedMinutes, message: 'Please Add Time Spent Working', type: 'time' },
-                    { field: new Date(date) <= new Date(end_date), message: 'Start date cannot be after end date', type: 'date' }
+                    { field: new Date(roverData.date) <= new Date(roverData.end_date), message: 'Start date cannot be after end date', type: 'date' }
                 ],
                 upwork: [
                     { field: upworkData.hourlyCharge, message: 'Please Add Hourly Rate', type: 'income' },
@@ -140,6 +130,7 @@
 
         const roverMoneyFields = ['income', 'platformCut', 'tips'];
         roverMoneyFields.forEach(property => {
+            console.log(property, roverData[property]);
             if (roverData[property] !== null) {
                 roverData[property] = extractAfterEquals(roverData[property]);
             }
@@ -147,27 +138,25 @@
         upworkData.hourlyCharge = extractAfterEquals(upworkData.hourlyCharge);
 
         const docRef = doc(collectionRef);
-        successMessage = 'Submission Successful!';
-        submitClicked = true; 
-        const updateDataObject = (platform: string, date: any, end_date?: any) => {
+        const updateDataObject = (platform: string) => {
             const dataObjects = {
                 rover: {
                     ...roverData,
-                    date: convertToLocalDate(date),
-                    end_date: end_date ? convertToLocalDate(end_date) : roverData.end_date
                 },
                 upwork: {
                     ...upworkData,
-                    date: convertToLocalDate(date),
-                    end_date: end_date ? convertToLocalDate(end_date) : upworkData.end_date
-                }
+               }
             };
             const dataToUpdate = dataObjects[platform];
             if (dataToUpdate) {
                 setDoc(docRef, dataToUpdate, { merge: true });
+                successMessage = docID ? 'Update Successful!' : 'Submission Successful!';
+		        docID = docRef.id;
+                // Update initial data after successful submission
+                initialData = { ...dataToUpdate };         
             }
         };
-        updateDataObject($page.data.user?.platform, date, end_date);
+        updateDataObject($page.data.user?.platform);
     }
 </script>
 
@@ -176,12 +165,12 @@
         <div class="w-full max-w-md space-y-5">
             <div class="flex flex-col">
                 <Label>Start Date</Label>
-                <Input type="date" bind:value={date} class="mt-1 min-h-5" />
+                <Input type="date" bind:value={baseData.date} class="mt-1 min-h-5" />
             </div>
             <p class="text-red-500">{dateError}</p>
             <div class="flex flex-col">
                 <Label>End Date</Label>
-                <Input type="date" bind:value={end_date} class="m-1 min-h-5" />
+                <Input type="date" bind:value={baseData.end_date} class="m-1 min-h-5" />
             </div>
         </div>
         {#if $page.data.user?.platform == 'rover'}
@@ -189,17 +178,17 @@
 				<div class="flex flex-col">
 					<Label>Income</Label>
 					<p class="text-red-500">{incomeError}</p>
-                    <IconNumberInput bind:value={roverData.income} icon={dollar} />
+                    <IconNumberInput bind:value={roverData.income} className="mt-1" />
 				</div>
 
                 <div class="flex flex-col">
 					<Label>Platform Cut</Label>
-                    <IconNumberInput bind:value={roverData.platformCut} icon={dollar} />
+                    <IconNumberInput bind:value={roverData.platformCut} className="mt-1" />
 				</div>
 
 				<div class="flex flex-col">
 					<Label>Tips</Label>
-                    <IconNumberInput bind:value={roverData.tips} icon={dollar} />
+                    <IconNumberInput bind:value={roverData.tips} className="mt-1" />
 				</div>
 
 				<div class="flex flex-col">
@@ -240,7 +229,7 @@
 				<div class="flex flex-col">
 					<Label>Hourly Charge/ Fixed price</Label>
 					<p class="text-red-500">{incomeError}</p>
-                    <IconNumberInput bind:value={upworkData.hourlyCharge} icon={dollar} />
+                    <IconNumberInput bind:value={upworkData.hourlyCharge} className="mt-1" />
 				</div>
 
 				<div class="flex flex-col">
@@ -275,28 +264,32 @@
 				</div> -->
             </div>
 		{/if}
-		{#if successMessage}
-			<p class="text-green-600 mt-2">{successMessage}</p>
-		{/if}
-		{#if errorMessage}
-			<p class="text-red-600 mt-2">{errorMessage}</p>
-		{/if}
+        <div class="flex justify-center mt-2">
+            {#if successMessage}
+                <p class="text-green-600 mt-2">{successMessage}</p>
+            {/if}
+            {#if errorMessage}
+                <p class="text-red-600 mt-2">{errorMessage}</p>
+            {/if}
+        </div>
 		<div class="flex flex-row items-center gap-4 mt-6">
-			<button
+            <button
                 class={`flex-1 py-2 rounded ${dataChanged ? 'bg-black text-white' : 'bg-gray-400 text-gray-600 cursor-not-allowed opacity-50'} text-sm md:text-base lg:text-lg truncate`}
                 on:click={submitManual}
                 disabled={!dataChanged}
-                style="min-width: 120px;">
-                Submit
+                style="min-width: 120px;"
+            >
+                {docID ? 'Update' : 'Submit'}
             </button>
-            {#if submitClicked}
+            {#if docID}
                 <button
                     class="flex-1 py-2 rounded bg-blue-500 text-white hover:bg-blue-600 text-sm md:text-base lg:text-base truncate"
-                    on:click={() => goto("/protected/trends/personal")}
-                    style="min-width: 120px;">
+                    on:click={() => goto('/protected/trends/personal')}
+                    style="min-width: 120px;"
+                >
                     See in Trends
                 </button>
             {/if}
-		</div>
-	</div>
+        </div>
+    </div>
 </div>

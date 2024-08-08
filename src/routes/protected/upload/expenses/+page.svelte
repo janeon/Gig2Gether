@@ -1,11 +1,11 @@
 <script lang="ts">
     import { page } from "$app/stores";
     import { db } from "$lib/firebase/client";
-    import { collection, doc, setDoc } from "firebase/firestore";
+    import { collection, doc, setDoc, updateDoc } from "firebase/firestore";
     import MultiSelect from 'svelte-multiselect';
     import { goto } from '$app/navigation';
     import { Label, Input, Textarea } from "flowbite-svelte";
-    import { convertToLocalDate, currentDate, currentTime } from "$lib/utils";
+    import { currentDate, currentTime } from "$lib/utils";
     import { updateTitle } from "$lib/stores/title";
     import { capitalize, extractAfterEquals } from "$lib/utils";
     import IconNumberInput from '$lib/components/IconNumberInput.svelte';
@@ -15,19 +15,16 @@
     let successMessage = '';
     let errorMessage = '';
 
-    let date = currentDate;
-    let time = currentTime;
-
-    let submitClicked = false;
-
     let data = {
-        date: new Date(),
-        time: '',
+        date: currentDate,
+        time: currentTime,
         expenseType: [],
         description: '',
         amount: null,
         uid: $page.data.user.uid
     };
+
+    let docID:string | null = null;
 
     // Store the initial data for comparison
     let initialData = { ...data };
@@ -43,14 +40,12 @@
 
         errorMessage = "";
         const collectionRef = collection(db, "upload", "expenses", $page.data.user.platform);
-        const docRef = doc(collectionRef);
-
-        data.date = convertToLocalDate(date);
+        const docRef = docID ? doc(collectionRef, docID) : doc(collectionRef);
         data.amount = extractAfterEquals(data.amount);
-        successMessage = "Submission Successful!";
-        submitClicked = true; 
-        await setDoc(docRef, data, { merge: true });
 
+        await setDoc(docRef, data, { merge: true });
+        successMessage = docID ? 'Update Successful!' : 'Submission Successful!';
+        docID = docRef.id;
         // Update initial data after successful submission
         initialData = { ...data };
     }
@@ -70,12 +65,12 @@
         <div class="w-full max-w-md space-y-5">
             <div class="flex flex-col">
                 <Label>Expense Date</Label>
-                <Input type="date" bind:value={date} class="mt-1" />
+                <Input type="date" bind:value={data.date} class="mt-1" />
             </div>
 
             <div class="flex flex-col">
                 <Label>Expense Timestamp (time of transaction)</Label> 
-                <Input type="time" bind:value={time} class="mt-1" />
+                <Input type="time" bind:value={data.time} class="mt-1" />
             </div>
 
             {#if $page.data.user?.platform == "uber"}
@@ -109,16 +104,18 @@
 
             <div class="flex flex-col">
                 <Label>Amount</Label>
-                <IconNumberInput bind:value={data.amount} icon={dollar} />
+                <IconNumberInput bind:value={data.amount} icon={dollar} className="mt-1" />
             </div>
         </div>
         
-        {#if successMessage}
-            <p class="text-green-600 mt-2">{successMessage}</p>
-        {/if}
-        {#if errorMessage}
-            <p class="text-red-600 mt-2">{errorMessage}</p>
-        {/if}
+        <div class="flex justify-center mt-2">
+            {#if successMessage}
+                <p class="text-green-600 mt-2">{successMessage}</p>
+            {/if}
+            {#if errorMessage}
+                <p class="text-red-600 mt-2">{errorMessage}</p>
+            {/if}
+        </div>  
         
         <div class="flex flex-row items-center gap-4 mt-6">
             <button
@@ -126,9 +123,9 @@
                 on:click={submitExpenses}
                 disabled={!dataChanged}
                 style="min-width: 120px;">
-                Submit
+                {docID ? "Update" : "Submit"}
             </button>
-            {#if submitClicked}
+            {#if docID}
                 <button
                     class="flex-1 py-2 rounded bg-blue-500 text-white hover:bg-blue-600 text-sm md:text-base lg:text-base truncate"
                     on:click={() => goto("/protected/trends/personal")}
