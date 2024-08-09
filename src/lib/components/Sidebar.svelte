@@ -9,7 +9,8 @@
 	  import type { ActionData } from '../../routes/protected/$types';
     
     let form : ActionData;
-    $: activeUrl = $page.url.pathname;
+    $: activeUrl = equivalent_urls.includes($page.url.pathname) ? "/protected/planner/work-day" : $page.url.pathname;
+    const equivalent_urls = ["/protected/planner/work-breakdown", "/protected/planner/work-results"]
     let activeClass = 'text-green-500 dark:text-green-300 hover:text-green-700 dark:hover:text-green-500';
     let mobile: boolean;
     onMount(() => {
@@ -49,7 +50,6 @@
       { label: "Tax", href: "/protected/planner/tax" }
     ]
 
-    $: platform = $page.data.user?.platform;
     let upload_options = [];
 
     if ($page.data.user?.platform === "uber") {

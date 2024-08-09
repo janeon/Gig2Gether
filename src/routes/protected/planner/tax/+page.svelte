@@ -1,14 +1,14 @@
 <script lang="ts">
-    import { goto } from "$app/navigation";
+	import { updateTitle } from "$lib/stores/title";
     import '@fortawesome/fontawesome-free/css/all.min.css';
-    import { Button } from "flowbite-svelte";
+    updateTitle("The next tax day is April 18th");
 </script>
 
 <div class="flex flex-row">
     <div class="w-3/4 flex flex-col p-2 space-y-2">
         <div class="flex flex-col items-start">
             <div class="text-left mb-4">
-                <h1 class="text-xl font-bold mb-4">The next tax day is April 18th</h1>
+                <!-- <h1 class="text-xl font-bold mb-4">The next tax day is April 18th</h1> -->
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-center">
                     <div>
                         <div class="font-bold text-2xl">12</div>

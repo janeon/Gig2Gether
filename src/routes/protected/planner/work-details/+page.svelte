@@ -5,6 +5,9 @@
     import { MultiSelect, Label, NumberInput, Input } from "flowbite-svelte";
     import { get } from 'svelte/store';
     import { goto } from "$app/navigation";
+	import { updateTitle } from "$lib/stores/title";
+
+    updateTitle("Work Details")
 
     let successMessage = '';
     let errorMessage = '';
@@ -13,7 +16,7 @@
         goto('./work-breakdown')
     }
     async function previousPage () {
-        goto('./work-time')
+        goto('./work-day')
     }
 
     // Uber Details
@@ -32,7 +35,6 @@
     // Rover Details
     let roverData = {
         transportation: [],
-        times: [],
         platformCut: 0,
         internetHome: 0,
         gas: 0,
@@ -59,37 +61,6 @@
         { value: "Own", name: "Own" },
     ];
 
-    const roverTransportationTypes = [
-        { value: "bus", name: "Bus" },
-        { value: "drive", name: "Drive" },
-        { value: "uber", name: "Uber" },
-        { value: "walk", name: "Walk" },
-    ];
-
-    const roverTimesTypes = [
-        { value: "8am-9am", name: "8am-9am" },
-        { value: "9am-10am", name: "9am-10am" },
-        { value: "10am-11am", name: "10am-11am" },
-        { value: "11am-12pm", name: "11am-12pm" },
-        { value: "12pm-1pm", name: "12pm-1pm" },
-        { value: "1pm-2pm", name: "1pm-2pm" },
-        { value: "2pm-3pm", name: "2pm-3pm" },
-        { value: "3pm-4pm", name: "3pm-4pm" },
-        { value: "4pm-5pm", name: "4pm-5pm" },
-        { value: "5pm-6pm", name: "5pm-6pm" },
-        { value: "6pm-7pm", name: "6pm-7pm" },
-        { value: "7pm-8pm", name: "7pm-8pm" },
-        { value: "8pm-after", name: "8pm-after" },
-    ];
-
-    const roverPetType = [
-        { value: "puppy", name: "Small Dog (0-15bs)" },
-        { value: "mediumDog", name: "Medium Dog (16-40lbs)" },
-        { value: "largeDog", name: "Large Dog (41-100lbs)" },
-        { value: "giantDog", name: "Giant Dog (101+lbs)" },
-        { value: "cat", name: "Cat" },
-    ];
-
     async function submitDetails() {
 
         const user = get(page).data.user;
@@ -111,9 +82,6 @@
             if (platform === 'uber') {
                 data = uberData;
                 collectionName = 'uber';
-            } else if (platform === 'rover') {
-                data = roverData;
-                collectionName = 'rover';
             } else if (platform === 'upwork') {
                 data = upworkData;
                 collectionName = 'upwork';
@@ -139,9 +107,7 @@
 
 <div class="flex flex-row">
     <div class="p-8 flex flex-col items-center w-full">
-        <h1 class="text-2xl font-bold mb-6">Other Variables</h1>
         {#if $page.data.user?.platform == "uber"}
-            <h2 class="text-xl font-semibold mb-4">Uber</h2>
 
             <div class="w-full max-w-md space-y-5">
                 <div class="flex flex-col">
@@ -191,58 +157,7 @@
 
             </div> 
 
-        {:else if $page.data.user?.platform == "rover"}
-            <h2 class="text-xl font-semibold mb-4">Rover</h2>
-
-            <div class="w-full max-w-md space-y-5">
-                <div class="flex flex-col">
-                    <Label>What is your transportation type?</Label>
-                    <MultiSelect items={roverTransportationTypes} type="text" bind:value={roverData.transportation} class="mt-1" />
-                </div>
-
-                <div class="flex flex-col">
-                    <Label>What are your preffered times?</Label>
-                    <MultiSelect items={roverTimesTypes} bind:value={roverData.times} class="mt-1" />
-                </div>
-
-                <div class="flex flex-col">
-                    <Label>Platform's cut</Label>
-                    <NumberInput bind:value={roverData.platformCut} class="mt-1" />
-                </div>
-
-                <div class="flex flex-col">
-                    <Label>Price of gas</Label>
-                    <NumberInput bind:value={roverData.gas} class="mt-1" />
-                </div>
-
-                <div class="flex flex-col">
-                    <Label>Equipment Purchase</Label>
-                    <NumberInput bind:value={roverData.equipment} class="mt-1" />
-                </div>
-
-                <div class="flex flex-col">
-                    <Label>Miscellaneous espenses</Label>
-                    <NumberInput bind:value={roverData.miscellanenous} class="mt-1" />
-                </div>
-
-                <div class="flex flex-col">
-                    <Label>Healthcare</Label>
-                    <NumberInput bind:value={roverData.healthcare} class="mt-1" />
-                </div>
-
-                <div class="flex flex-col">
-                    <Label>Costs of damage</Label>
-                    <NumberInput bind:value={roverData.damageCost} class="mt-1" />
-                </div>
-
-                <div class="flex flex-col">
-                    <Label>Costs of damage</Label>
-                    <MultiSelect items={roverPetType} bind:value={roverData.pet} class="mt-1" />
-                </div>
-            </div>
-
         {:else if $page.data.user?.platform == "upwork"}
-            <h2 class="text-xl font-semibold mb-4">UpWork</h2>
 
             <div class="w-full max-w-md space-y-5">
                 <div class="flex flex-col">
