@@ -1,10 +1,12 @@
 <script lang="ts">
-  import { Chart, Card, Button, Tooltip } from 'flowbite-svelte';
+  import { Chart, Card } from 'flowbite-svelte';
   import { page } from "$app/stores";
-  import Sidebar from '$lib/components/Sidebar.svelte';
   import CalHeatmap from 'cal-heatmap';
   import 'cal-heatmap/cal-heatmap.css';
   import { onMount } from 'svelte';
+  import { updateTitle } from "$lib/stores/title";
+
+  updateTitle("My Trends");
 
   let cal: CalHeatmap;
   let seriesData = [];
@@ -95,7 +97,14 @@
         padding: [10, 10, 10, 10],
         label: { 
           position: 'top', 
-          style: { fontFamily: 'Inter, sans-serif', fontSize: '30px', fontWeight: 'normal', textAlign: 'center', class: 'text-lg font-semibold text-gray-900 dark:text-white px-3 py-2' } 
+          // height: 100,
+          // width: 100,
+          style: { 
+            fontFamily: 'Inter, sans-serif', 
+            // fontSize: '100px', 
+            // fontWeight: 'normal', 
+            textAlign: 'center', 
+            class: 'text-2lg font-semibold text-gray-900 dark:text-white px-3 py-2' } 
         }
       },
       subDomain: {
@@ -108,20 +117,17 @@
       }
     });
   });
+  let mobile: boolean;
+    onMount(() => {
+        mobile = window.navigator.userAgent.match(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i) !== null;
+    });
 </script>
 
-<div class="flex flex-col md:flex-row">
-  <div class="md:w-1/4 p-2">
-    <Sidebar title="Trends" option="trends" />
-  </div>
-
-  <div class="flex flex-col items-center md:w-3/4 p-2">
-    <h1 class="text-3xl font-bold text-gray-900 mb-4 text-center">Configure Visualization</h1>
-
-    <h3 class="text-sm text-gray-900 text-center mb-4">The content displayed is an example of breakdowns layout. It does not contain real user data.</h3>
-
-    <div class="flex flex-col md:flex-row justify-between mt-3 w-full">
-      <div class="md:w-1/2 p-2">
+    <h1 class="text-lg font-bold text-red-600 mb-4 text-center">
+      The content displayed is an example of breakdowns layout. It does not contain real user data.
+    </h1>
+    <div class="flex flex-col md:flex-row justify-center">      
+      <div class="flex justify-center p-2">
         <Card>
           <div class="flex justify-center pb-4 mb-4 border-b border-gray-200 dark:border-gray-700">
             <h3 class="text-2xl font-bold text-gray-900 dark:text-white">
@@ -139,7 +145,7 @@
         </Card>
       </div>
 
-      <div class="md:w-1/2 p-2 mt-6 md:mt-0">
+      <div class="flex justify-center p-2">
         <Card>
           <div class="flex flex-col">
             <h1 class="text-2xl font-bold text-gray-900 mb-3 text-center">Calendar</h1>
@@ -175,24 +181,16 @@
           </div>
         </Card>
       </div>
-    </div>
 
-    <div class="justify-center mt-4 w-full">
-      <Card>
-        <div class="flex flex-col items-center">
-          <h1 class="text-2xl font-bold text-gray-900 mb-3 text-center">Other Information</h1>
-          <p class="text-sm font-normal text-gray-700 dark:text-gray-400 leading-tight mb-3">Average Job Length: XXXX</p>
-          <p class="text-sm font-normal text-gray-700 dark:text-gray-400 leading-tight mb-3">Average Work/Day: XXXX</p>
-          <p class="text-sm font-normal text-gray-700 dark:text-gray-400 leading-tight mb-3">Average Hourly Pay: XXXX</p>
-        </div>
-      </Card>
-    </div>
+      
   </div>
+  <div class="flex justify-center p-2">
+    <Card>
+    <div class="flex flex-col items-center">
+      <h1 class="text-2xl font-bold text-gray-900 mb-3 text-center">Other Information</h1>
+      <p class="text-sm font-normal text-gray-700 dark:text-gray-400 leading-tight mb-3">Average Job Length: XXXX</p>
+      <p class="text-sm font-normal text-gray-700 dark:text-gray-400 leading-tight mb-3">Average Work/Day: XXXX</p>
+      <p class="text-sm font-normal text-gray-700 dark:text-gray-400 leading-tight mb-3">Average Hourly Pay: XXXX</p>
+    </div>
+  </Card>
 </div>
-
-<style>
-  .cal-heatmap-container .graph-label {
-    font-size: 30px;
-
-  }
-</style>

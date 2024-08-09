@@ -1,8 +1,10 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import { Chart, Card, Radio, Checkbox, Button, Tooltip } from 'flowbite-svelte';
+  import { Chart, Card, Radio, Checkbox } from 'flowbite-svelte';
   import { writable } from 'svelte/store';
-  import Sidebar from "$lib/components/Sidebar.svelte";
+  import { updateTitle } from "$lib/stores/title";
+
+  updateTitle("Collective Insights");
 
   let seriesData = writable([]);
   let selectedCompareBy = 'Hourly income rates';
@@ -167,19 +169,16 @@
   $: options.series[0].name = chartTitle;
 </script>
 
-<div class="flex flex-col md:flex-row">
-  <div class="w-full md:w-1/4 p-2">
-      <Sidebar title="Trends" option="trends"/>
-  </div>
-
+<div class="flex flex-col md:flex-row justify-center">
   <div class="flex flex-col items-center w-full md:w-3/4 p-2">
-      <h1 class="text-3xl font-bold text-gray-900 mb-4 text-center">Configure Visualization</h1>
-      <h3 class="text-sm text-gray-900 text-center">The content displayed is an example of breakdowns layout. It does not contain real user data.</h3>
+    <h1 class="text-lg font-bold text-red-600 mb-4 text-center">
+      The content displayed is an example of breakdowns layout. It does not contain real user data.
+    </h1>
 
       <div class="flex flex-col md:flex-row w-full mt-3">
           <div class="w-full md:w-1/3 p-2">
               <div>
-                  <h1 class="text-sm">Data Selection</h1>
+                  <h1 class="text-lg">Data Selection</h1>
               </div>
               <div class="mt-3">
                   <h1 class="mt-2">Dimensions/Outcome</h1>
