@@ -75,11 +75,11 @@
 </script>
 
 <div class="flex flex-row">
-    <div class="w-3/4 flex flex-col p-2 space-y-2">
+    <div class="w-full flex flex-col p-2 space-y-2">
         <div class="flex flex-col items-start">
             <div class="text-left mb-4">
                 <h1 class="text-xl font-bold mb-4">The next tax day is {getNextTaxDate().toLocaleDateString()}</h1>
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-center">
+                <div class="flex justify-center space-x-4 text-center">
                     <div>
                         <div class="font-bold text-2xl">{countdown.days}</div>
                         <div>Days</div>

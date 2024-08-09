@@ -62,7 +62,7 @@
     grid: { show: false, strokeDashArray: 4, padding: { left: 2, right: 2, top: -14 } },
     dataLabels: { enabled: false },
     legend: { show: false },
-    xaxis: { floating: false, labels: { show: true, style: { fontFamily: 'Inter, sans-serif', cssClass: 'text-xs font-normal fill-gray-500 dark:fill-gray-400' } }, axisBorder: { show: false }, axisTicks: { show: false } },
+    xaxis: { floating: false, labels: { show: true, style: { fontFamily: 'Inter, sans-serif', cssClass: 'text-sm font-normal fill-gray-500 dark:fill-gray-400' } }, axisBorder: { show: false }, axisTicks: { show: false } },
     yaxis: { show: false },
     fill: { opacity: 1 }
   };
@@ -93,40 +93,45 @@
       domain: {
         type: 'month',
         padding: [10, 10, 10, 10],
-        label: { position: 'top' }
+        label: { 
+          position: 'top', 
+          style: { fontFamily: 'Inter, sans-serif', fontSize: '30px', fontWeight: 'normal', textAlign: 'center', class: 'text-lg font-semibold text-gray-900 dark:text-white px-3 py-2' } 
+        }
       },
       subDomain: {
         type: 'xDay',
-        radius: 6,
-        width: 30,
-        height: 30,
+        radius: 8,  // Made blocks larger
+        width: 40,  // Made blocks larger
+        height: 40, // Made blocks larger
         label: 'D',
+        style: { fontFamily: 'Inter, sans-serif', fontWeight: 'normal', textAlign: 'center', class: 'text-sm font-semibold text-gray-900 dark:text-white px-3 py-2' }
       }
-    }
-  )
+    });
   });
 </script>
 
-<div class="flex flex-row">
-  <div class="w-1/4 p-2">
+<div class="flex flex-col md:flex-row">
+  <div class="md:w-1/4 p-2">
     <Sidebar title="Trends" option="trends" />
   </div>
 
-  <div class="flex flex-col items-center w-3/4 p-2">
-    <h1 class="font-bold">Configure Visualization</h1>
+  <div class="flex flex-col items-center md:w-3/4 p-2">
+    <h1 class="text-3xl font-bold text-gray-900 mb-4 text-center">Configure Visualization</h1>
 
-    <div class="flex flex-row justify-between mt-3 w-full">
-      <div class="w-1/2 p-2">
+    <h3 class="text-sm text-gray-900 text-center mb-4">The content displayed is an example of breakdowns layout. It does not contain real user data.</h3>
+
+    <div class="flex flex-col md:flex-row justify-between mt-3 w-full">
+      <div class="md:w-1/2 p-2">
         <Card>
-          <div class="flex justify-between pb-4 mb-4 border-b border-gray-200 dark:border-gray-700">
-            <h3 class="leading-none text-2xl font-bold text-gray-900 dark:text-white pb-1">
+          <div class="flex justify-center pb-4 mb-4 border-b border-gray-200 dark:border-gray-700">
+            <h3 class="text-2xl font-bold text-gray-900 dark:text-white">
               {title}
             </h3>
           </div>
           <Chart {options} />
           <div class="grid grid-cols-1 items-center border-gray-200 border-t dark:border-gray-700 justify-between">
-            <div class="flex justify-between items-center pt-5">
-              <h1 class="uppercase text-sm font-semibold hover:text-primary-700 dark:hover:text-primary-500 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700 px-3 py-2 hover:no-underline">
+            <div class="flex justify-center items-center pt-5">
+              <h1 class="text-sm font-semibold text-gray-900 dark:text-white px-3 py-2">
                 {subtitle}
               </h1>
             </div>
@@ -134,28 +139,39 @@
         </Card>
       </div>
 
-      <div class="w-1/2 p-2">
+      <div class="md:w-1/2 p-2 mt-6 md:mt-0">
         <Card>
           <div class="flex flex-col">
-            <h1 class="font-bold text-black mb-3">Calendar</h1>
-            <div id="cal-heatmap" class="w-full h-128 mb-4"></div> <!-- Larger container size -->
+            <h1 class="text-2xl font-bold text-gray-900 mb-3 text-center">Calendar</h1>
+            <div id="cal-heatmap" class="w-full h-128 mb-4 flex justify-center"></div> <!-- Larger container size -->
 
-  <!-- Buttons for navigation -->
-  <div class="flex items-center space-x-2">
-    <button
-      class="bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300"
-      on:click={handlePrevious}
-    >
-      ← Previous
-    </button>
-    <button
-      class="bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300"
-      on:click={handleNext}
-    >
-      Next →
-    </button>
-  </div>
+            <!-- Legend for the Heatmap -->
+            <div class="flex flex-col items-start space-y-1 mt-15">
+              <div class="flex items-center space-x-2">
+                <div class="w-4 h-4" style="background-color: #B6E1B0;"></div> <!-- Color matching heatmap -->
+                <span class="text-sm font-semibold text-gray-900">Earnings</span>
+              </div>
+              <div class="flex items-center space-x-2">
+                <div class="w-4 h-4" style="background-color: #EFE8EE;"></div> <!-- Color matching heatmap -->
+                <span class="text-sm font-semibold text-gray-900">Expenses</span>
+              </div>
+            </div>
 
+            <!-- Buttons for navigation -->
+            <div class="flex justify-center items-center space-x-4 mt-4">
+              <button
+                class="text-white font-semibold bg-blue-400 px-4 py-2 rounded hover:bg-blue-500"
+                on:click={handlePrevious}
+              >
+                ← Previous
+              </button>
+              <button
+                class="text-white font-semibold bg-blue-400 px-4 py-2 rounded hover:bg-blue-500"
+                on:click={handleNext}
+              >
+                Next →
+              </button>
+            </div>
           </div>
         </Card>
       </div>
@@ -164,19 +180,19 @@
     <div class="justify-center mt-4 w-full">
       <Card>
         <div class="flex flex-col items-center">
-          <h1 class="font-bold text-black mb-3">Other Information</h1>
-          <p class="font-normal text-gray-700 dark:text-gray-400 leading-tight mb-3">Average Job Length: XXXX</p>
-          <p class="font-normal text-gray-700 dark:text-gray-400 leading-tight mb-3">Average Work/Day: XXXX</p>
-          <p class="font-normal text-gray-700 dark:text-gray-400 leading-tight mb-3">Average Hourly Pay: XXXX</p>
+          <h1 class="text-2xl font-bold text-gray-900 mb-3 text-center">Other Information</h1>
+          <p class="text-sm font-normal text-gray-700 dark:text-gray-400 leading-tight mb-3">Average Job Length: XXXX</p>
+          <p class="text-sm font-normal text-gray-700 dark:text-gray-400 leading-tight mb-3">Average Work/Day: XXXX</p>
+          <p class="text-sm font-normal text-gray-700 dark:text-gray-400 leading-tight mb-3">Average Hourly Pay: XXXX</p>
         </div>
       </Card>
     </div>
-
-    <div class="mt-4 flex justify-center">
-      <Button class="text-white bg-blue-400">Content</Button>
-      <Tooltip type="custom" defaultClass="" class="p-4 text-lg font-medium bg-blue-500 text-gray-100" arrow={false}>
-        The content displayed is an example of breakdowns layout. It does not contain real user data.
-      </Tooltip>
-    </div>
   </div>
 </div>
+
+<style>
+  .cal-heatmap-container .graph-label {
+    font-size: 30px;
+
+  }
+</style>
