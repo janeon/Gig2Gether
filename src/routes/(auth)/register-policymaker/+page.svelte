@@ -63,9 +63,9 @@
 		label="Email"
 		required
 	  >
-	  <button slot="left" class="pointer-events-auto">
+	  <span slot="left" class="pointer-events-auto">
 		<EnvelopeSolid class="w-6 h-6" />
-	</button>
+	  </span>
 	  </Input>
 	  <Input name="password" id="show-password" type={show1 ? 'text' : 'password'} placeholder="Password" size="md" class="px-4 py-2 border border-gray-300 rounded-md">
 		<button slot="left" on:click={() => (show1 = !show1)} class="pointer-events-auto">
