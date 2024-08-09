@@ -209,7 +209,7 @@
 
             <!-- Navigation Buttons -->
 			<div class="w-full flex justify-between mt-4">
-                <Button on:click={() => navigatePage('work-details')} color="dark">Previous</Button>
+                <Button on:click={() => navigatePage('work-day')} color="dark">Previous</Button>
 				<Button 
 				class="bg-blue-500 text-white hover:bg-blue-600 disabled:bg-blue-500 disabled:cursor-not-allowed" 
 				disabled>

@@ -6,7 +6,7 @@
 	import { Button } from "flowbite-svelte";
     
     let next = false;
-    const handleClick = () => next ? goto('./work-details') : next = true;
+    const handleClick = () => next ? goto('./work-breakdown') : next = true;
   
     const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
     next ? updateTitle("What time would you like to work?") : updateTitle("What days are you planning work for?");

@@ -7,9 +7,10 @@ import { doc, getDoc } from 'firebase/firestore';
 import type { User } from '../app';
 import { sendEmailVerification } from "firebase/auth";
 
-const date = new Date();
+const now = new Date();
 const pad = (num) => num.toString().padStart(2, '0');
-export const currentDate = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+export const currentDate = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+export const currentTime = `${pad(now.getHours())}:${pad(now.getMinutes())}`;
 
 export function capitalize(string: string) {
     return string.charAt(0).toUpperCase() + string.slice(1);

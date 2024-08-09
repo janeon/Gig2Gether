@@ -4,7 +4,7 @@
     import { collection, doc, getDoc, setDoc } from "firebase/firestore";
     import { Label, NumberInput, Input, MultiSelect as FBMS } from "flowbite-svelte";
     import { updateTitle } from "$lib/stores/title";
-    import { capitalize, currentDate } from "$lib/utils";
+    import { capitalize, currentDate, currentTime } from "$lib/utils";
 	import { onMount } from "svelte";
     import MultiSelect from 'svelte-multiselect';
     import BlueButton from "$lib/components/BlueButton.svelte";
@@ -14,13 +14,13 @@
     let successMessage = ""
 
     let uberData = {
-        rating: null, car: '', services: [], cities: [], dateJoined: currentDate, timestamp: new Date()
+        rating: null, car: '', services: [], cities: [], dateJoined: currentDate, timestamp: currentTime, carSit: [], vehicleType: '', percentPassenger: null, gas: null, mileage: null, payments: null, healthcare: null, equipmentAmount: null, equipment: ''
     };
     let roverData = {
         rating: null, healthcare: null, healthcare_freq: '', other: '', platformCut: 20, equipment: null, pets: [], services: [], cities: [], transportation: [], times : [], dateJoined: currentDate, timestamp: new Date()
     };
     let upworkData = {
-        rating: null, services: [], jss:null, hourlyCharge: null, dateJoined: currentDate, timestamp: new Date()
+        rating: null, services: [], platformCut: null, internetHome: null, healthcare:null, insurance:null, software: null, jss:null, hourlyCharge: null, dateJoined: currentDate, timestamp: currentTime, equipmentAmount: null, equipment: ''
     };
 
     const uberServices = ["UberX", "UberXL", "UberX Share", "UberX Comfort", "Uber Black", "Uber Black SUV", "WAV", "Uber Car Seat X", "Uber Green", "Uber Taxi"];
@@ -29,6 +29,7 @@
     const upworkCategories = ["Development & IT", "Design & Creative", "Finance & Accounting", "Admin & Customer Support", "Engineering & Architecture", "Legal", "Sales & Marketing", "Writing & Translation"];
     const roverTransportationTypes = ["Bus", "Drive", "Uber", "Walk"];
     const roverTimesTypes = ["Morning", "Afternoon", "Evening", "Night"];
+    const uberCar = ["Own", "Rent/Lease/Financing","Other"];
 
     // for prepopulating
     async function loadProfile() {
@@ -92,6 +93,50 @@
             style="--sms-bg: rgb(249, 250, 251); padding: 8px; border-radius: 8px;"
             --sms-focus-border="2px solid blue"
         />
+    </div>
+
+    <div class="py-5">
+        <Label>What is you car situation?</Label>
+        <MultiSelect options={uberCar} bind:value={uberData.carSit} />
+    </div>
+
+    <div class="py-5">
+        <Label>Vehicle Type</Label>
+        <Input type = "text" bind:value={uberData.vehicleType} class="mt-1" />
+    </div>
+
+
+    <div class="py-5">
+        <Label>Estimated % of time with passengers</Label>
+        <NumberInput bind:value={uberData.percentPassenger} class="mt-1" />
+    </div>
+
+    <div class="py-5">
+        <Label>Estimated Price of gas</Label>
+        <NumberInput bind:value={uberData.gas} class="mt-1" />
+    </div>
+
+    <div class="py-5">
+        <Label>Your car's mileage</Label>
+        <NumberInput bind:value={uberData.mileage} class="mt-1" />
+    </div>
+
+    <div class="py-5">
+        <Label>Monthly car/ rental payments</Label>
+        <NumberInput bind:value={uberData.payments} class="mt-1" />
+    </div>
+
+    <div class="py-5">
+        <Label>Healthcare</Label>
+        <NumberInput bind:value={uberData.healthcare} class="mt-1" />
+    </div>
+
+
+    <div class="py-5">
+        <Label>Other Equipment/Expenses</Label>
+        <NumberInput bind:value={uberData.equipmentAmount} class="mt-1" />
+        <Label>Describe expense</Label>
+        <Input type="text" bind:value={uberData.equipment} class="mt-1" />
     </div>
 
     <div class="py-5">
@@ -195,6 +240,38 @@
 <div class="py-5">
     <Label>Hourly Charge</Label>
     <NumberInput type="number" bind:value={upworkData.hourlyCharge} />
+</div>
+
+<div class="py-5">
+    <Label>Platform's cut/ Fees</Label>
+    <NumberInput bind:value={upworkData.platformCut} class="mt-1" />
+</div>
+
+<div class="py-5">
+    <Label>Software costs</Label>
+    <NumberInput type="text" bind:value={upworkData.software} class="mt-1" />
+</div>
+
+<div class="py-5">
+    <Label>Healthcare</Label>
+    <NumberInput bind:value={upworkData.healthcare} class="mt-1" />
+</div>
+
+<div class="py-5">
+    <Label>Insurance expenses</Label>
+    <NumberInput bind:value={upworkData.insurance} class="mt-1" />
+</div>
+
+<div class="py-5">
+    <Label>Home Internet</Label>
+    <NumberInput bind:value={upworkData.internetHome} class="mt-1" />
+</div>
+
+<div class="flex flex-col">
+    <Label>Other Equipment/Expenses</Label>
+    <NumberInput bind:value={upworkData.equipmentAmount} class="mt-1" />
+    <Label>Describe expense</Label>
+    <Input type="text" bind:value={upworkData.equipment} class="mt-1" />
 </div>
 
 <div class="py-5">
