@@ -29,6 +29,7 @@
     $: errorMessageType = " "
     $: errorMessageTags = " "
     $: errorMessageSharing = " "
+    $: errorMessageContent = " "
 
 
     const commonTags = [
@@ -72,20 +73,20 @@
     ];
 
     function handleClick() {
-    const fileInput = document.getElementById('selectedFile');
-    if (fileInput) {
-      (fileInput as HTMLInputElement).click();
+      const fileInput = document.getElementById('selectedFile');
+      if (fileInput) {
+        (fileInput as HTMLInputElement).click();
+      }
     }
-  }
 
     async function handleFileChange (event: Event) {
-    const fileInput = event.target as HTMLInputElement;
-    imageUrlPreview = URL.createObjectURL(fileInput.files[0])
-    if (fileInput.files && fileInput.files.length > 0) {
-      file = fileInput.files[0];
-      fileName = file.name;
+      const fileInput = event.target as HTMLInputElement;
+      imageUrlPreview = URL.createObjectURL(fileInput.files[0])
+      if (fileInput.files && fileInput.files.length > 0) {
+        file = fileInput.files[0];
+        fileName = file.name;
+      }
     }
-  }
 
     async function uploadContent() {
       if (uploading) {
@@ -113,7 +114,14 @@
             errorMessageSharing = ""
         }
 
-        if (errorMessageSharing != "" || errorMessageTags != "" || errorMessageType != "") {
+        if (!file && !title.length && !description.length) {
+            errorMessageContent = "Please add content to share"
+        }
+        else {
+            errorMessageContent = ""
+        }
+
+        if (errorMessageSharing != "" || errorMessageTags != "" || errorMessageType != "" || errorMessageContent != "") {
             return
         }
         //end of error catching
@@ -222,6 +230,7 @@
   <Tags tags={upworkTags} bind:bindGroup={tags} />
 {/if}
 
+<p class="text-red-500 pt-5">{errorMessageContent}</p>
 <div class="py-5">
 Title:
 <Input placeholder="Short summary" bind:value={title}/>

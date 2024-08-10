@@ -1,9 +1,7 @@
 <script lang="ts">
-    import { Button } from 'flowbite-svelte';
-    import UploadSidebar from '$lib/components/UploadSidebar.svelte';
     import { Gallery, Label } from 'flowbite-svelte';
-    import { getFirestore, collection, doc, setDoc } from "firebase/firestore";
-    import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+    import { collection, doc, setDoc } from "firebase/firestore";
+    import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
     import { db, storage } from '$lib/firebase/client'; 
     import { page } from '$app/stores';
 
@@ -92,9 +90,6 @@
 />
 
 <div class="flex flex-row">
-    <div class="w-1/4">
-        <UploadSidebar />
-    </div>
 
     <div class="w-3/4 rounded-md p-6">
         <p class="mb-3">

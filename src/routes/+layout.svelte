@@ -19,7 +19,7 @@
 	let mobile: boolean;
 	let protected_urls: boolean;
 	let loggedIn = $page.data.user===undefined ? false : true;
-	console.log("logged in", loggedIn);
+	// console.log("logged in", loggedIn);
 	
 	
 	onMount(() => {
@@ -47,7 +47,7 @@
 		: parsePageNameFromUrl(activeUrl));
 
 	const navItems = [
-		{ label: "Upload", icon: "fas fa-upload", href: '/protected/upload/manual' },
+		{ label: "Upload", icon: "fas fa-upload", href: $page.data.user?.platform === 'uber'? '/protected/upload/CSV' : '/protected/upload/manual' },
 		{ label: "Stories", icon: "fas fa-book", href: '/protected/stories/story-feed' },
 		{ label: "Trends", icon: "fas fa-chart-line", href: '/protected/trends/personal' },
 		{ label: "Settings", icon: "fas fa-cog", href: '/protected/settings/profile' },
