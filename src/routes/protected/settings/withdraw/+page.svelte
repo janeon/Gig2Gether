@@ -13,21 +13,19 @@
     let modal = false
     const deleteData = async()=> {
         for (let dataDoc of toDelete) {
-            if (dataDoc.type === "Story") {
-                const docRef = doc(db, 'stories', data.user.platform, "posts", dataDoc.id)
-                await deleteDoc(docRef)
-                
+            let docRef: any;
+            switch (dataDoc.type) {
+                case "Story":
+                    docRef = doc(db, 'stories', data.user.platform, "posts", dataDoc.id)
+                    break;
+                case "Manual":
+                    docRef = doc(db, 'upload', 'manual', 'entries', dataDoc.id)
+                    break;
+                case "Expense":
+                    docRef = doc(db, 'upload', 'expenses', 'entries', dataDoc.id)
+                    break;
             }
-            else if (dataDoc.type === "Manual") {
-                const docRef = doc(db, 'upload', 'manual', 'entries', dataDoc.id)
-                await deleteDoc(docRef)
-                
-            }
-            else if (dataDoc.type === "Expense") {
-                const docRef = doc(db, 'upload', 'expenses', 'entries', dataDoc.id)
-                await deleteDoc(docRef)
-                
-            }
+            await deleteDoc(docRef)
         }
         invalidateAll()
     }
@@ -44,7 +42,7 @@
         <BlueButton onclick={()=>{if (toDelete.length > 0) {modal=true}}} buttonText="Delete Data" />
     </div>
     <Modal title="Are you sure you want to delete these uploads?" bind:open={modal} autoclose>
-        <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">If you delete the selected data, you will have to reupload all content included.</p>
+        <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">Deleting the selected data will permanently remove it from the database, to see it again in trends, you would need to reupload all content included.</p>
         <div class="flex flex-row space-x-2">
             <Button color="red" on:click={deleteData}>Yes I'm Sure</Button>
             <Button color="dark">Change My Selection</Button>

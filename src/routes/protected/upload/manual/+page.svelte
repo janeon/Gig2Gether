@@ -22,9 +22,10 @@
 
     // Platform specific data stuff
     const baseData = {
-        date: currentDate, // Default start date
+        date: currentDate, 
         end_date: currentDate, 
-        uid: $page.data.user.uid
+        uid: $page.data.user.uid,
+        timestamp: new Date()
     };
 
     const roverData = {

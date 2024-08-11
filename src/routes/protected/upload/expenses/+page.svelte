@@ -1,7 +1,7 @@
 <script lang="ts">
     import { page } from "$app/stores";
     import { db } from "$lib/firebase/client";
-    import { collection, doc, setDoc, updateDoc } from "firebase/firestore";
+    import { collection, doc, setDoc, Timestamp, updateDoc } from "firebase/firestore";
     import MultiSelect from 'svelte-multiselect';
     import { goto } from '$app/navigation';
     import { Label, Input, Textarea } from "flowbite-svelte";
@@ -21,7 +21,8 @@
         expenseType: [],
         description: '',
         amount: null,
-        uid: $page.data.user.uid
+        uid: $page.data.user.uid,
+        timestamp: new Date()
     };
 
     let docID:string | null = null;
