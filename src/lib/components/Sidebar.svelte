@@ -32,7 +32,7 @@
       { label: "Demographics", href: "/protected/settings/demographics" },
       { label: "Sharing Preferences", href: "/protected/settings/sharing-preferences" },
       { label: "Withdraw Data", href:"/protected/settings/withdraw" },
-      { label: "Notification" }
+      { label: "Reminders", href:"/protected/settings/notifications"  }
     ]
 
     const sharing = [
