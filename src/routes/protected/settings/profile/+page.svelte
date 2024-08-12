@@ -2,16 +2,17 @@
     import { page } from "$app/stores";
     import { db } from "$lib/firebase/client";
     import { collection, doc, getDoc, setDoc } from "firebase/firestore";
-    import { Label, NumberInput, Input, MultiSelect as FBMS } from "flowbite-svelte";
+    import { Label, NumberInput, Input, Button } from "flowbite-svelte";
     import { updateTitle } from "$lib/stores/title";
     import { capitalize, currentDate, currentTime } from "$lib/utils";
 	import { onMount } from "svelte";
     import MultiSelect from 'svelte-multiselect';
-    import BlueButton from "$lib/components/BlueButton.svelte";
     import us_cities from "$lib/us_cities.json";
     
     updateTitle(`My ${capitalize($page.data.user?.platform)} Profile`);
     let successMessage = ""
+    let uploading:boolean = false;
+    
 
     let uberData = {
         rating: null, car: '', services: [], cities: [], dateJoined: currentDate, timestamp: currentTime, carSit: [], vehicleType: '', percentPassenger: null, gas: null, mileage: null, payments: null, healthcare: null, equipmentAmount: null, equipment: ''
@@ -31,6 +32,8 @@
     const roverTimesTypes = ["Morning", "Afternoon", "Evening", "Night"];
     const uberCar = ["Own", "Rent/Lease/Financing","Other"];
 
+    let initialData:any = $page.data.user?.platform === "upwork"? upworkData: $page.data.user?.platform === "uber" ? uberData : roverData
+
     // for prepopulating
     async function loadProfile() {
         const collectionRef = collection(db, "users", $page.data.user?.uid, "settings");
@@ -40,6 +43,7 @@
             console.log("No profile found");
         } else {
             const data = docSnap.data();
+            initialData = { ...data };
             if ($page.data.user?.platform === "uber") {
                 uberData = data;
             } else if ($page.data.user?.platform === "rover") {
@@ -50,36 +54,47 @@
         }
     }
 
+    $: dataChanged = JSON.stringify($page.data.user?.platform === "upwork"? upworkData: $page.data.user?.platform === "uber" ? uberData : roverData) !== JSON.stringify(initialData);
+
     async function submitProfile() {
+        uploading = true;
         try {
             const collectionRef = collection(db, "users", $page.data.user?.uid, "settings");
             const docRef = doc(collectionRef, "profile");
             const data = $page.data.user?.platform === "uber" ? uberData : roverData;
             await setDoc(docRef, data, { merge: true });
             successMessage = "Profile Updated!"
+            // Update initial data after successful submission
+            initialData = {...data}
         }
         catch (error) {
+            uploading = false;
             console.error("Error updating profile", error);
         }
+        
+        uploading = false;
     }
 
     onMount(() => {
         loadProfile();
     });
 </script>
-
+<div class="flex flex-row">
+    <div class="py-2 flex flex-col items-center w-full">
+        <div class="w-full max-w-md space-y-5">
 {#if $page.data.user?.platform === "uber"}
-    <div class="py-5">
+
+    <div class="flex flex-col">
         <Label>Uber Rating</Label>
         <NumberInput type="number" bind:value={uberData.rating} />
     </div>
 
-    <div class="py-5">
+    <div class="flex flex-col">
         <Label>Car Driven</Label>
         <Input bind:value={uberData.car} />
     </div>
 
-    <div class="py-5">
+    <div class="flex flex-col">
         <Label>Services Provided</Label>
         <MultiSelect options={uberServices} bind:selected={uberData.services}
             style="--sms-bg: rgb(249, 250, 251); padding: 8px; border-radius: 8px;"
@@ -87,7 +102,7 @@
         />
     </div>
 
-    <div class="py-5">
+    <div class="flex flex-col">
         <Label>Cities Served</Label>
         <MultiSelect options={us_cities.cities} bind:selected={uberData.cities}
             style="--sms-bg: rgb(249, 250, 251); padding: 8px; border-radius: 8px;"
@@ -95,51 +110,56 @@
         />
     </div>
 
-    <div class="py-5">
+    <div class="flex flex-col">
         <Label>What is you car situation?</Label>
-        <MultiSelect options={uberCar} bind:value={uberData.carSit} />
+        <MultiSelect options={uberCar} bind:value={uberData.carSit} 
+        style="--sms-bg: rgb(249, 250, 251); padding: 8px; border-radius: 8px;"
+            --sms-focus-border="2px solid blue"/>
     </div>
 
-    <div class="py-5">
+    <div class="flex flex-col">
         <Label>Vehicle Type</Label>
         <Input type = "text" bind:value={uberData.vehicleType} class="mt-1" />
     </div>
 
 
-    <div class="py-5">
+    <div class="flex flex-col">
         <Label>Estimated % of time with passengers</Label>
         <NumberInput bind:value={uberData.percentPassenger} class="mt-1" />
     </div>
 
-    <div class="py-5">
+    <div class="flex flex-col">
         <Label>Estimated Price of gas</Label>
         <NumberInput bind:value={uberData.gas} class="mt-1" />
     </div>
 
-    <div class="py-5">
+    <div class="flex flex-col">
         <Label>Your car's mileage</Label>
         <NumberInput bind:value={uberData.mileage} class="mt-1" />
     </div>
 
-    <div class="py-5">
+    <div class="flex flex-col">
         <Label>Monthly car/ rental payments</Label>
         <NumberInput bind:value={uberData.payments} class="mt-1" />
     </div>
 
-    <div class="py-5">
+    <div class="flex flex-col">
         <Label>Healthcare</Label>
         <NumberInput bind:value={uberData.healthcare} class="mt-1" />
     </div>
 
 
-    <div class="py-5">
+    <div class="flex flex-col">
         <Label>Other Equipment/Expenses</Label>
         <NumberInput bind:value={uberData.equipmentAmount} class="mt-1" />
-        <Label>Describe expense</Label>
+    </div>
+
+    <div class="flex flex-col">
+    <Label>Describe expense</Label>
         <Input type="text" bind:value={uberData.equipment} class="mt-1" />
     </div>
 
-    <div class="py-5">
+    <div class="flex flex-col">
         <Label>Date of Joining Uber</Label>
         <Input type="date" size="md" bind:value={uberData.dateJoined} />
     </div>
@@ -219,12 +239,12 @@
     </div>
 {:else if $page.data.user?.platform === "upwork"}
 
-<div class="py-5">
+<div class="flex flex-col">
     <Label>Upwork Rating</Label>
     <NumberInput type="number" bind:value={upworkData.rating} />
 </div>
 
-<div class="py-5">
+<div class="flex flex-col">
     <Label>Work Categories</Label>
     <MultiSelect options={upworkCategories} bind:selected={roverData.services}
         style="--sms-bg: rgb(249, 250, 251); padding: 8px; border-radius: 8px;"
@@ -232,37 +252,37 @@
     />
 </div>
 
-<div class="py-5">
+<div class="flex flex-col">
     <Label>Job Success Score</Label>
     <NumberInput type="number" bind:value={upworkData.jss} />
 </div>
 
-<div class="py-5">
+<div class="flex flex-col">
     <Label>Hourly Charge</Label>
     <NumberInput type="number" bind:value={upworkData.hourlyCharge} />
 </div>
 
-<div class="py-5">
+<div class="flex flex-col">
     <Label>Platform's cut/ Fees</Label>
     <NumberInput bind:value={upworkData.platformCut} class="mt-1" />
 </div>
 
-<div class="py-5">
+<div class="flex flex-col">
     <Label>Software costs</Label>
     <NumberInput type="text" bind:value={upworkData.software} class="mt-1" />
 </div>
 
-<div class="py-5">
+<div class="flex flex-col">
     <Label>Healthcare</Label>
     <NumberInput bind:value={upworkData.healthcare} class="mt-1" />
 </div>
 
-<div class="py-5">
+<div class="flex flex-col">
     <Label>Insurance expenses</Label>
     <NumberInput bind:value={upworkData.insurance} class="mt-1" />
 </div>
 
-<div class="py-5">
+<div class="flex flex-col">
     <Label>Home Internet</Label>
     <NumberInput bind:value={upworkData.internetHome} class="mt-1" />
 </div>
@@ -274,13 +294,35 @@
     <Input type="text" bind:value={upworkData.equipment} class="mt-1" />
 </div>
 
-<div class="py-5">
+<div class="flex flex-col">
     <Label>Date of Joining Upwork</Label>
     <Input type="date" bind:value={upworkData.dateJoined} />
 </div>
 {/if}
 
-<div class="flex justify-center">
+
+    {#if uploading}
+    <div class="flex justify-center">
+    <Button 
+    class="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700"
+    on:click={submitProfile}>
+    <i class="fa-solid fa-spinner loadingSpinner animate-spin" />
+    </Button>
+    </div>
+    
+    {:else}
+    <div class="flex justify-center mt-2">
     <p class="text-green-600 m-2">{successMessage}</p>
-        <BlueButton onclick={submitProfile} buttonText="Submit"/>
+    </div>
+    <div class="flex flex-col items-center gap-4 mt-6">
+    <button
+        class={`flex-1 py-2 px-5 rounded ${dataChanged ? 'bg-black text-white' : 'bg-gray-400 text-gray-600 cursor-not-allowed opacity-50'} text-sm md:text-base lg:text-lg truncate`}
+        on:click={submitProfile}
+        disabled={!dataChanged}>
+        Submit
+    </button>
+    </div>
+    {/if}
+</div>
+</div>
 </div>

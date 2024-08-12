@@ -2,11 +2,9 @@
     import { db } from "$lib/firebase/client";
     import { doc, getDoc, setDoc } from "firebase/firestore";
     import {onMount} from 'svelte'
-    import { goto } from '$app/navigation';
     import { page } from "$app/stores";
     import { Label, NumberInput, Select } from "flowbite-svelte";
     import { updateTitle } from "$lib/stores/title";
-    import BlueButton from "$lib/components/BlueButton.svelte";
     
     updateTitle("My Demographics");
 
@@ -15,7 +13,7 @@
         {value: "female", name: "Female"},
         {value: "non-binary", name: "Non-Binary"},
         {value: "other", name: "Other"},
-        {value: null, name: "Do not wish to share"}
+        {value: null, name: "Do not wish to disclose"}
     ]
     
     let races = [
@@ -30,10 +28,12 @@
         {value: "other", name: 'Other'},
         {value: null, name: "Do not wish to share"}
     ]
-    // Should check whether we can have undefined values, not zeroes
     let dataToSetToStore = { age: null, gender: '', race: ''};
+    let initialData:any;
 
-    // TODO: For prepopulating 
+    $: dataChanged = JSON.stringify(dataToSetToStore) !== JSON.stringify(initialData);
+
+    // For prepopulating 
     async function loadDemographics() {
         const docRef = doc(db, "demographics", $page.data.user.uid)
         const docSnap = await getDoc(docRef);
@@ -45,16 +45,19 @@
             const userData = docSnap.data();
             dataToSetToStore = userData;
         }
-
+        initialData = { ...dataToSetToStore };
     }
+    
     async function submitDemographics() {
         try {
             const userRef = doc(db, "demographics", $page.data.user.uid);
             await setDoc(userRef, dataToSetToStore, {merge: true})
+            // Update initial data after successful submission
+            initialData = {...dataToSetToStore}
         } catch (error) {
             console.log("There was an error saving your information")
         }
-        goto('/protected')
+        
     }
 
     onMount(() => {
@@ -86,6 +89,11 @@
             <Label>Estimated hours spent on gigs not part of this platform</Label>
             <NumberInput bind:value={dataToSetToStore.otherGigHours} type = "number"/>
         </div> -->
-        <div class="flex justify-center">
-            <BlueButton onclick={submitDemographics} buttonText="Submit"/>
+
+        <div class="flex justify-center ">
+            <button
+            class={`flex-1 py-2 rounded ${dataChanged ? 'bg-black text-white' : 'bg-gray-400 text-gray-600 cursor-not-allowed opacity-50'} text-sm md:text-base lg:text-lg truncate`}
+            on:click={submitDemographics}>
+            Submit
+            </button>
         </div>

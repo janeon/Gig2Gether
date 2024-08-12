@@ -12,7 +12,7 @@
     let selectedOption: string = '';
 </script>
 
-<div>
+<div class="py-5">
     <Checkbox bind:checked={isChecked} class="text-lg font-bold">
         Allow Reminder Notifications
     </Checkbox>
