@@ -57,7 +57,6 @@
         } catch (error) {
             console.log("There was an error saving your information")
         }
-        
     }
 
     onMount(() => {

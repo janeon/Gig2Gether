@@ -12,7 +12,6 @@
     updateTitle(`My ${capitalize($page.data.user?.platform)} Profile`);
     let successMessage = ""
     let uploading:boolean = false;
-    
 
     let uberData = {
         rating: null, car: '', services: [], cities: [], dateJoined: currentDate, timestamp: currentTime, carSit: [], vehicleType: '', percentPassenger: null, gas: null, mileage: null, payments: null, healthcare: null, equipmentAmount: null, equipment: ''
@@ -39,11 +38,14 @@
         const collectionRef = collection(db, "users", $page.data.user?.uid, "settings");
         const docRef = doc(collectionRef, "profile");
         const docSnap = await getDoc(docRef);
+        let data;
         if (!docSnap.exists()) {
-            console.log("No profile found");
+            data = $page.data.user?.platform === "upwork"? upworkData: $page.data.user?.platform === "uber" ? uberData : roverData
+            await setDoc(docRef, data), {merge: true}
         } else {
-            const data = docSnap.data();
-            initialData = { ...data };
+            data = docSnap.data();
+        }
+        initialData = { ...data };
             if ($page.data.user?.platform === "uber") {
                 uberData = data;
             } else if ($page.data.user?.platform === "rover") {
@@ -51,7 +53,6 @@
             } else if ($page.data.user?.platform === "upwork") {
                 upworkData = data;
             }
-        }
     }
 
     $: dataChanged = JSON.stringify($page.data.user?.platform === "upwork"? upworkData: $page.data.user?.platform === "uber" ? uberData : roverData) !== JSON.stringify(initialData);

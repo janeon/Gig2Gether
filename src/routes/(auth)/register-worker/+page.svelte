@@ -9,7 +9,7 @@
 	import { collection, doc, getCountFromServer, query, setDoc, where } from 'firebase/firestore';
 	import { sendEmailVerificationWithContinueUrl } from '$lib/utils';
 
-	import { Button, Input, Label, Radio, Alert, Checkbox} from 'flowbite-svelte';
+	import { NumberInput, Select, Button, Input, Label, Radio, Alert, Checkbox} from 'flowbite-svelte';
 	import { EyeOutline, EyeSlashOutline, FileCopySolid, ProfileCardSolid, BlenderPhoneSolid } from 'flowbite-svelte-icons';
 	import BlueButton from '$lib/components/BlueButton.svelte';
 	
@@ -22,6 +22,30 @@
 	let show1 = false;
 	let show2 = false;
 	let isChecked = true;
+	let age: number = null;
+	let gender: string = '';
+	let race: string = '';
+
+	let genders = [
+        {value: "male", name: "Male"},
+        {value: "female", name: "Female"},
+        {value: "non-binary", name: "Non-Binary"},
+        {value: "other", name: "Other"},
+        {value: null, name: "Do not wish to disclose"}
+    ]
+
+	let races = [
+        {value: "american indian/alaska", name: 'American Indian or Alaska Native'},
+        {value: "asian", name: 'Asian'},
+        {value: "black/african american", name: 'Black or African American'},
+        {value: "hispanic/latino", name: 'Hispanic or Latino'}, //Question on whether to include?
+        {value: "mena", name: 'Middle Eastern or North African'},
+        {value: "hawaiian/pi", name: 'Native Hawaiian or Pacific Islander'},
+        {value: "white", name: 'White'},
+        {value: "multi", name: 'Multi-Racial'},
+        {value: "other", name: 'Other'},
+        {value: null, name: "Do not wish to share"}
+    ]
 
 	onMount(() => {
 	  recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
@@ -93,6 +117,13 @@
 				role: "worker",
 				platform: selectedPlatform,
 				notifications: isChecked? 'everyday': 'never',
+			})
+			// Save demographics data to Firestore
+			const demographicsRef = doc(db, 'demographics', user.uid)
+			await setDoc(demographicsRef, {
+				age:age,
+				gender:gender,
+				race:race
 			})
 			await auth.signOut();
 			token = await cred.user.getIdToken();
@@ -167,6 +198,20 @@
 			</Input>
 			<p class="text-xs">Choose a username without any identifiable information.</p>
 		</div>
+		<div class="flex flex-col">
+            <Label>Age</Label>
+            <NumberInput bind:value={age} type = "number" required/>
+        </div>
+        
+        <div class="flex flex-col">
+            <Label>Gender</Label>
+            <Select items={genders} bind:value={gender} required/>
+        </div>
+        
+        <div class="flex flex-col">
+            <Label>Race</Label>
+            <Select items={races} bind:value={race} required/>
+        </div>
 			<Input name="password" id="show-password" type={show1 ? 'text' : 'password'} placeholder="Password" size="md" class="px-4 py-2 border border-gray-300 rounded-md">
 			  <button slot="left" on:click={() => (show1 = !show1)} class="pointer-events-auto">
 				{#if show1}
