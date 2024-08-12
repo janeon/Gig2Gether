@@ -50,7 +50,7 @@
 		{ label: "Upload", icon: "fas fa-upload", href: $page.data.user?.platform === 'uber'? '/protected/upload/CSV' : '/protected/upload/manual' },
 		{ label: "Stories", icon: "fas fa-book", href: '/protected/stories/story-feed' },
 		{ label: "Trends", icon: "fas fa-chart-line", href: '/protected/trends/personal' },
-		{ label: "Settings", icon: "fas fa-cog", href: '/protected/settings/account' },
+		{ label: "Settings", icon: "fas fa-cog", href: '/protected/settings/profile' },
 		{ label: "Planner", icon: "fas fa-calendar", href: '/protected/planner/work-day' }
   	];
 
@@ -63,6 +63,7 @@
 	<!-- top nav bar for web -->
 	<div class={(mobile && protected_urls) ? 'hidden md:block' : 'block'}>
 		<header class="flex justify-between items-center p-4 bg-gray-100">
+			
 			{#if ["Register Worker", "Register Policymaker", "Verify Email"].includes(title)}
 			<div>
 				<Button href="/" class="bg-gray-200 text-black text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl font-bold py-1 px-2">Gig2Gether</Button>
@@ -74,9 +75,15 @@
 				<BlueButton href="/login" buttonText="Login"/>
 			</div>
 			{:else if title==="Gig2Gether"}
-				<div>
+				<div class="flex flex-row">
 					{#if data.user===undefined}
-					<Button href="/" class="bg-gray-200 text-black text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl font-bold py-1 px-2">{title}</Button>
+					<a href="/" class="block">
+						<img src="/logo.png" alt="Logo" class="h-10 rounded-lg" />
+					</a>
+					<Button href="/" class="bg-gray-200 text-black text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl font-bold py-1 px-2">{
+					title
+					}</Button>
+					
 					{:else}
 					<Button href="/protected" class="bg-gray-200 text-black text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl font-bold py-1 px-2">{title}</Button>
 					{/if}
@@ -90,7 +97,10 @@
 				{/if}
 
 			{:else if title==="Login"}
-			<div>
+			<div class="flex flex-row">
+				<a href="/" class="block">
+					<img src="/logo.png" alt="Logo" class="h-10 rounded-lg" />
+				</a>
 				<Button href="/" class="bg-gray-200 text-black text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl font-bold py-2 px-2">Gig2Gether</Button>
 			</div>
 			  
@@ -109,7 +119,10 @@
 			{:else} <!-- usually user is authenticated -->
 			<!-- Using native flowbite instead of flowbite-svelte bc height & break pt issues -->
 			<!-- https://github.com/themesberg/flowbite-svelte/issues/1156 -->
-			<div>
+			<div class="flex flex-row">
+				<a href="/protected" class="block">
+					<img src="/logo.png" alt="Logo" class="h-10 rounded-lg" />
+				</a>
 				<a href="/protected" class="bg-gray-200 text-black text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl font-bold py-1 px-2">{"Gig2Gether"}</a>
 			</div>
 

@@ -1,7 +1,7 @@
 <script lang="ts">
     import { page } from "$app/stores";
     import { db } from "$lib/firebase/client";
-    import { collection, doc, setDoc, updateDoc } from "firebase/firestore";
+    import { collection, doc, setDoc, Timestamp, updateDoc } from "firebase/firestore";
     import MultiSelect from 'svelte-multiselect';
     import { goto } from '$app/navigation';
     import { Label, Input, Textarea } from "flowbite-svelte";
@@ -21,7 +21,8 @@
         expenseType: [],
         description: '',
         amount: null,
-        uid: $page.data.user.uid
+        uid: $page.data.user.uid,
+        timestamp: new Date()
     };
 
     let docID:string | null = null;
@@ -134,5 +135,16 @@
                 </button>
             {/if}
         </div>      
+        {#if docID}
+        <form method="POST">
+            <button
+            class="flex-1 my-2 py-3 rounded bg-blue-500 text-white hover:bg-blue-600 text-sm md:text-base lg:text-base truncate"
+            style="min-width: 120px;"
+            type="submit"
+            >
+            New Expense
+            </button>
+        </form>
+        {/if}
         </div>
 </div>

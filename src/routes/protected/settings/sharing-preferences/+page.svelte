@@ -4,9 +4,8 @@
     import ToggleGroup from "$lib/components/ui/toggle-group/toggle-group.svelte";
     import { db } from "$lib/firebase/client";
     import { collection, doc, getDoc, setDoc } from "firebase/firestore";
-    import { Label, Select} from "flowbite-svelte";
     import { updateTitle } from "$lib/stores/title";
-	import BlueButton from "$lib/components/BlueButton.svelte";
+    import BlueButton from "$lib/components/BlueButton.svelte";
     import { onMount } from "svelte";
 
     updateTitle("Sharing Preferences");
@@ -24,6 +23,9 @@
         location_granularity: "1 mile",
         date: new Date()
     }
+
+    let initialData:any;
+    $: dataChanged = JSON.stringify(sharingData) !== JSON.stringify(initialData);
 
     $: sharePrivate = false
     const lifespanOptions = [
@@ -46,6 +48,7 @@
         const collectionRef = collection(db, "users", $page.data.user?.uid, "settings")
         const docRef = doc(collectionRef, "sharing")
         setDoc(docRef, uploadData, {merge: true})
+        initialData = uploadData.sharing;
     }
 
     function changeSharingPreferencesSingle() {
@@ -76,6 +79,7 @@
         if (sharingData.includes('private')) {
             sharePrivate = true
         }
+        initialData = sharingData;
     })
 </script>
 
@@ -121,5 +125,10 @@
 </div>
 
 <div class = "py-5 flex justify-center">
-<BlueButton onclick={submitPreferences} buttonText="Submit"/>
+<!-- <BlueButton onclick={submitPreferences} buttonText="Submit"/> -->
+  <button
+  class={`flex-1 py-2 rounded ${dataChanged ? 'bg-black text-white' : 'bg-gray-400 text-gray-600 cursor-not-allowed opacity-50'} text-sm md:text-base lg:text-lg truncate`}
+  on:click={submitPreferences}>
+  Submit
+  </button>
 </div>

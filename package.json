@@ -19,6 +19,7 @@
 		"@sveltejs/vite-plugin-svelte": "^3.0.0",
 		"@types/eslint": "^8.56.7",
 		"autoprefixer": "^10.4.19",
+		"date-picker-svelte": "^2.13.0",
 		"eslint": "^9.0.0",
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-svelte": "^2.36.0",
@@ -41,6 +42,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@beyonk/svelte-datepicker": "^13.0.4",
 		"@capacitor/ios": "^6.0.0",
 		"@fortawesome/fontawesome-free": "^6.6.0",
 		"bits-ui": "^0.21.12",
@@ -58,8 +60,10 @@
 		"react-youtube": "^10.1.0",
 		"styled-components": "^6.1.12",
 		"svelte-calendar": "^3.1.6",
+		"svelte-datepicker": "^1.0.0",
 		"svelte-multiselect": "^10.3.0",
 		"svelte-preprocess-react": "^0.17.1",
+		"svelty-picker": "^5.2.9",
 		"tailwind-fontawesome": "^0.7.1",
 		"tailwind-merge": "^2.4.0",
 		"tailwind-variants": "^0.2.1"

@@ -1,13 +1,13 @@
 import { db } from "$lib/firebase/client";
 import type { Data } from "$lib/types.js";
-import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
 
 export async function load({parent}) {
     let postedData = []
-    let data = await parent()
+    const data = await parent()
     let snapshot = await getDocs(query(collection(db, 'stories', data.user.platform, "posts"), where('uid', "==", data.user.uid)))
     snapshot.forEach((doc) => {
-        let post : Data = {date: new Date, type: "", title: "", id: ""}
+        const post : Data = {date: new Date, type: "", title: "", id: ""}
         post.date = doc.data().date.toDate()
         post.type = "Story"
         post.title = doc.data().title
@@ -15,11 +15,11 @@ export async function load({parent}) {
         postedData.push(post)
     })
 
-    snapshot = await getDocs(query(collection(db, "upload", "expenses", "entries"), where('uid', "==", data.user.uid)))
+    snapshot = await getDocs(query(collection(db, "upload", "expenses", data.user.platform), where('uid', "==", data.user.uid)))
     let num = 1
     snapshot.forEach((doc) => {
-        let post : Data = {date: new Date, type: "", title: "", id: ""}
-        post.date = doc.data().date.toDate()
+        const post : Data = {date: new Date, type: "", title: "", id: ""}
+        post.date = doc.data().timestamp.toDate()
         post.type = "Expense"
         post.title = "Expense #"+num
         post.id = doc.id
@@ -27,15 +27,15 @@ export async function load({parent}) {
         num++
     })
 
-    snapshot = await getDocs(query(collection(db, "upload", "manual", "entries"), where('uid', "==", data.user.uid)))
+    snapshot = await getDocs(query(collection(db, "upload", "manual", data.user.platform), where('uid', "==", data.user.uid)))
     snapshot.forEach((doc) => {
-        let post : Data = {date: new Date, type: "", title: "", id: ""}
-        post.date = doc.data().date.toDate()
+        const post : Data = {date: new Date, type: "", title: "", id: ""}
+        post.date = doc.data().timestamp.toDate()
         post.type = "Manual"
         post.title = ""
         if ((typeof doc.data().type) === "object") {
             let title = ""
-            for (let item of doc.data().type) {
+            for (const item of doc.data().type) {
                 title += item+", "
             }
             post.title = title.substring(0, title.length - 2)
@@ -50,15 +50,13 @@ export async function load({parent}) {
 
     snapshot = await getDocs(query(collection(db, "upload", "csv", "entries"), where('uid', "==", data.user.uid)))
     snapshot.forEach((doc) => {
-        let post : Data = {date: new Date, type: "", title: "", id: ""}
+        const post : Data = {date: new Date, type: "", title: "", id: ""}
         post.date = doc.data().date.toDate()
         post.type = "CSV"
         post.title = doc.data().title
         post.id = doc.id
         postedData.push(post)
     })
-
-
 
     postedData = postedData.sort((a: Data, b: Data) =>{
         return (a.date.getTime() - b.date.getTime())

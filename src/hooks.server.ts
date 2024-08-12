@@ -32,8 +32,6 @@ export const handle: Handle = async ({ event, resolve }) => {
     console.error("Error getting firebase admin");
     throw redirect(303, "/login");
   }
-
-  // log("got firebase admin: ")
   
   // verify the session with admin sdk
   let decodedClaims: DecodedIdToken;
@@ -47,7 +45,7 @@ export const handle: Handle = async ({ event, resolve }) => {
   
   // find the user based on the session
   event.locals.user = await getUser(decodedClaims.uid)
-  // log("setting user at end of hook: ")
+  log("uid: ", decodedClaims.uid)
 
   // load page as normal
   const response = await resolve(event)
