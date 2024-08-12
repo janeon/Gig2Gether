@@ -78,7 +78,7 @@
     <div class="w-full flex flex-col p-2 space-y-2">
         <div class="flex flex-col items-start">
             <div class="text-left mb-4">
-                <h1 class="text-xl font-bold mb-4">The next tax day is {getNextTaxDate().toLocaleDateString()}</h1>
+                <h1 class="text-xl font-bold mb-4">The next <a href="https://www.irs.gov/businesses/small-businesses-self-employed/estimated-taxes" target="_blank" class="text-blue-500 underline">estimated tax payment</a> day is {getNextTaxDate().toLocaleDateString()}</h1>
                 <div class="flex justify-center space-x-4 text-center">
                     <div>
                         <div class="font-bold text-2xl">{countdown.days}</div>
