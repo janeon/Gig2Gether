@@ -9,7 +9,7 @@
 	import { collection, doc, getCountFromServer, query, setDoc, where } from 'firebase/firestore';
 	import { sendEmailVerificationWithContinueUrl } from '$lib/utils';
 
-	import { Button, Input, Label, Radio, Alert } from 'flowbite-svelte';
+	import { Button, Input, Label, Radio, Alert, Checkbox} from 'flowbite-svelte';
 	import { EyeOutline, EyeSlashOutline, FileCopySolid, ProfileCardSolid, BlenderPhoneSolid } from 'flowbite-svelte-icons';
 	import BlueButton from '$lib/components/BlueButton.svelte';
 	
@@ -21,6 +21,7 @@
 	let selectedPlatform : string = "";
 	let show1 = false;
 	let show2 = false;
+	let isChecked = true;
 
 	onMount(() => {
 	  recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
@@ -90,7 +91,8 @@
 				username: form.username.value,
 				credentials: form.credentials.value,
 				role: "worker",
-				platform: selectedPlatform
+				platform: selectedPlatform,
+				notifications: isChecked? 'everyday': 'never',
 			})
 			await auth.signOut();
 			token = await cred.user.getIdToken();
@@ -183,6 +185,11 @@
 				  {/if}
 				</button>
 			  </Input>
+		
+		<Checkbox bind:checked={isChecked}>
+			I agree to receive reminder notifications via {signInMethod}.
+		</Checkbox>
+  
 		<BlueButton onclick={register} type="submit" buttonText="Register" href="/protected"/>
 		{:else if signInMethod == 'phone'}
 		<div>
