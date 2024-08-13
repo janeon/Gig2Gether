@@ -65,7 +65,10 @@
 		<header class="flex justify-between items-center p-4 bg-gray-100">
 			
 			{#if ["Register Worker", "Register Policymaker", "Verify Email"].includes(title)}
-			<div>
+			<div class="flex flex-row">
+			<a href="/" class="block">
+				<img src="/logo.png" alt="Logo" class="h-10 rounded-lg" />
+			</a>
 				<Button href="/" class="bg-gray-200 text-black text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl font-bold py-1 px-2">Gig2Gether</Button>
 			</div>
 			<div class="whitespace-nowrap max-w-full overflow-hidden pl-2 pr-10">
@@ -75,22 +78,12 @@
 				<BlueButton href="/login" buttonText="Login"/>
 			</div>
 			{:else if title==="Gig2Gether"}
-				<div class="flex flex-row">
-					{#if data.user===undefined}
-					<a href="/" class="block">
-						<img src="/logo.png" alt="Logo" class="h-10 rounded-lg" />
-					</a>
-					<Button href="/" class="bg-gray-200 text-black text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl font-bold py-1 px-2">{
-					title
-					}</Button>
-					
-					{:else}
-					<Button href="/protected" class="bg-gray-200 text-black text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl font-bold py-1 px-2">{title}</Button>
-					{/if}
-				</div>
+				<a href={loggedIn ? "/protected":"/"} class="block">
+					<img src="/logo.png" alt="Logo" class="h-10 rounded-lg" />
+				</a>
 				{#if loggedIn}
 				<form action="/logout" method="POST" use:enhance bind:this={form}>
-				<BlueButton href="/" buttonText="Log Out" onclick={() => form.submit()}/>
+					<BlueButton href="/" buttonText="Log Out" onclick={() => form.submit()}/>
 				</form>
 				{:else}
 				<BlueButton href="/login" buttonText="Login"/>
@@ -120,10 +113,10 @@
 			<!-- Using native flowbite instead of flowbite-svelte bc height & break pt issues -->
 			<!-- https://github.com/themesberg/flowbite-svelte/issues/1156 -->
 			<div class="flex flex-row">
-				<a href="/protected" class="block">
+				<a href={activeUrl === "/protected" ? '/': "/protected"} class="block">
 					<img src="/logo.png" alt="Logo" class="h-10 rounded-lg" />
 				</a>
-				<a href="/protected" class="bg-gray-200 text-black text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl font-bold py-1 px-2">{"Gig2Gether"}</a>
+				<a href={activeUrl === "/protected" ? '/': "/protected"} class="bg-gray-200 text-black text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl font-bold py-1 px-2">{"Gig2Gether"}</a>
 			</div>
 
 			<div class="flex justify-center w-7/8">
