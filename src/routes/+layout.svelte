@@ -5,7 +5,6 @@
 	import { page } from '$app/stores'
 	/** @type {import('./$types').LayoutData} */
 	export let form : ActionData;
-	export let data;
 	$: activeUrl = $page.url.pathname;
   	let activeClass = 'text-green-500 dark:text-green-300 hover:text-green-700 dark:hover:text-green-500';
 
