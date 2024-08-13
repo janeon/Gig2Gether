@@ -106,14 +106,12 @@
                     <i class="fas fa-clipboard-list w-6 h-6"></i>
                     <div>
                         <h2 class="text-sm font-semibold mb-1">What are my tax obligations?</h2>
-                        <p class="text-xs font-light">
-                            As a self-employed individual, generally you are required to file an annual income tax return and pay estimated taxes quarterly. 
-                            {#if showMoreObligations}
-                                Self-employed individuals generally must pay self-employment (SE) tax as well as income tax. SE tax is a Social Security and Medicare tax primarily for individuals who work for themselves. It is similar to the Social Security and Medicare taxes withheld from the pay of most wage earners. In general, the wording "self-employment tax" only refers to Social Security and Medicare taxes and not any other tax (like income tax).
-                                Before you can determine if you are subject to self-employment tax and income tax, you must figure any net profit or net loss from your business. You do this by subtracting your business expenses from your business income. If your expenses are less than your income, the difference is net profit and becomes part of your income on page 1 of Form 1040 or 1040-SR. If your expenses are more than your income, the difference is a net loss. You usually can deduct your loss from gross income on page 1 of Form 1040 or 1040-SR. But in some situations your loss is limited. See Publication 334, Tax Guide for Small Business (For Individuals Who Use Schedule C), for more information.
-                                You have to file an income tax return if your net earnings from self-employment were $400 or more. If your net earnings from self-employment were less than $400, you still have to file an income tax return if you meet any other filing requirement listed in the Form 1040 and 1040-SR instructions PDF.
-                            {/if}
-                        </p>
+                        <p class="text-xs font-light">As a self-employed individual, generally you are required to file an annual income tax return and pay <a href="https://www.irs.gov/businesses/small-businesses-self-employed/estimated-taxes" target="_blank" class="text-blue-500 underline">estimated tax</a> quarterly.</p> 
+                        {#if showMoreObligations}
+                            <p class="text-xs font-light">Self-employed individuals generally must pay self-employment (SE) tax as well as income tax. SE tax is a Social Security and Medicare tax primarily for individuals who work for themselves. It is similar to the Social Security and Medicare taxes withheld from the pay of most wage earners. In general, the wording "self-employment tax" only refers to Social Security and Medicare taxes and not any other tax (like income tax).</p>
+                            <p class="text-xs font-light">Before you can determine if you are subject to self-employment tax and income tax, you must figure any net profit or net loss from your business. You do this by subtracting your business expenses from your business income. If your expenses are less than your income, the difference is net profit and becomes part of your income on page 1 of Form 1040 or 1040-SR. If your expenses are more than your income, the difference is a net loss. You usually can deduct your loss from gross income on page 1 of Form 1040 or 1040-SR. But in some situations your loss is limited. See <a href="https://www.irs.gov/forms-pubs/about-publication-334" target="_blank" class="text-blue-500 underline">Publication 334, Tax Guide for Small Business (For Individuals Who Use Schedule C)</a>, for more information.</p>
+                            <p class="text-xs font-light">You have to file an income tax return if your net earnings from self-employment were $400 or more. If your net earnings from self-employment were less than $400, you still have to file an income tax return if you meet any other filing requirement listed in the <a href="https://www.irs.gov/pub/irs-pdf/i1040gi.pdf" target="_blank" class="text-blue-500 underline">Form 1040 and 1040-SR instructions</a>.</p>
+                        {/if}
                         <button on:click={() => showMoreObligations = !showMoreObligations} on:keydown={handleKeydown} class="text-xs text-blue-500 underline mb-4 cursor-pointer">
                             {showMoreObligations ? 'Show Less' : 'Show More'}
                         </button>
@@ -123,16 +121,13 @@
                     <i class="fas fa-calendar-alt w-6 h-6"></i>
                     <div>
                         <h2 class="text-sm font-semibold mb-1">How do I make my quarterly payments?</h2>
-                        <p class="text-xs font-light">
-                            As a self-employed individual, estimated tax is the method used to pay Social Security, Medicare, and income taxes; this is because you do not have an employer withholding these taxes for you.
-                            {#if showMoreQuarterlyPayments}
-                                Form 1040-ES, Estimated Tax for Individuals PDF, is used to figure these taxes. Form 1040-ES contains a worksheet that is similar to Form 1040 or 1040-SR. You will need your prior year’s annual income tax return in order to fill out Form 1040-ES.
-                                Use the worksheet found in Form 1040-ES to find out if you are required to pay estimated taxes quarterly.
-                                
-                                Form 1040-ES PDF also contains blank vouchers you can use to mail your estimated tax payments. Other payment options, including pay by phone and online methods, can be found at IRS.gov/payments. If this is your first year being self-employed, you will need to estimate the amount of income you expect to earn for the year. If you estimated your annual earnings too high, simply complete another Form 1040-ES worksheet to refigure your estimated tax for the next quarter. If you estimated your annual earnings too low, again complete another Form 1040-ES worksheet to recalculate your estimated taxes for the next quarter.
-                                See the estimated taxes page for more information. The self-employment tax page has more information on Social Security and Medicare taxes.
-                            {/if}
-                        </p>
+                        <p class="text-xs font-light">As a self-employed individual, estimated tax is the method used to pay Social Security, Medicare, and income taxes; this is because you do not have an employer withholding these taxes for you.</p>
+                        {#if showMoreQuarterlyPayments}
+                            <p class="text-xs font-light"><a href="https://www.irs.gov/pub/irs-pdf/f1040es.pdf" target="_blank" class="text-blue-500 underline">Form 1040-ES, Estimated Tax for Individuals</a>, is used to figure these taxes. Form 1040-ES contains a worksheet that is similar to Form 1040 or 1040-SR. You will need your prior year’s annual income tax return in order to fill out Form 1040-ES.</p>
+                            <p class="text-xs font-light">Use the worksheet found in <a href="https://www.irs.gov/pub/irs-pdf/f1040es.pdf" target="_blank" class="text-blue-500 underline">Form 1040-ES</a> to find out if you are required to pay estimated taxes quarterly.</p>
+                            <p class="text-xs font-light"><a href="https://www.irs.gov/pub/irs-pdf/f1040es.pdf" target="_blank" class="text-blue-500 underline">Form 1040-ES</a> also contains blank vouchers you can use to mail your estimated tax payments. Other payment options, including pay by phone and online methods, can be found at IRS.gov/payments. If this is your first year being self-employed, you will need to estimate the amount of income you expect to earn for the year. If you estimated your annual earnings too high, simply complete another Form 1040-ES worksheet to refigure your estimated tax for the next quarter. If you estimated your annual earnings too low, again complete another Form 1040-ES worksheet to recalculate your estimated taxes for the next quarter.</p>
+                            <p class="text-xs font-light">See the <a href="https://www.irs.gov/businesses/small-businesses-self-employed/estimated-taxes" target="_blank" class="text-blue-500 underline">estimated tax</a> page for more information. The <a href="https://www.irs.gov/businesses/small-businesses-self-employed/self-employment-tax-social-security-and-medicare-taxes" target="_blank" class="text-blue-500 underline">self-employment</a> tax page has more information on Social Security and Medicare taxes.</p>
+                        {/if}
                         <button on:click={() => showMoreQuarterlyPayments = !showMoreQuarterlyPayments} on:keydown={handleKeydown} class="text-xs text-blue-500 underline mb-4 cursor-pointer">
                             {showMoreQuarterlyPayments ? 'Show Less' : 'Show More'}
                         </button>
@@ -142,13 +137,12 @@
                     <i class="fas fas fa-file-alt w-6 h-6"></i>
                     <div>
                         <h2 class="text-sm font-semibold mb-1">How do I file my annual return?</h2>
-                        <p class="text-xs font-light">
-                            To file your annual income tax return, you will need to use Schedule C (Form 1040), Profit or Loss from Business (Sole Proprietorship), to report any income or loss from a business you operated or profession you practiced as a sole proprietor, or gig work performed.
-                            {#if showMoreAnnualReturn}
-                                Schedule C instructions may be helpful in filling out this form.
-                                In order to report your Social Security and Medicare taxes, you must file Schedule SE (Form 1040 or 1040-SR), Self-Employment Tax PDF. Use the income or loss calculated on Schedule C to calculate the amount of Social Security and Medicare taxes you should have paid during the year. The instructions for Schedule SE PDF may be helpful in filing out the form.
-                            {/if}
-                        </p>
+                        <p class="text-xs font-light">To file your annual income tax return, you will need to use <a href="https://www.irs.gov/forms-pubs/about-schedule-c-form-1040" target="_blank" class="text-blue-500 underline">Schedule C (Form 1040), Profit or Loss from Business (Sole Proprietorship)</a>, to report any income or loss from a business you operated or profession you practiced as a sole proprietor, or <a href="https://www.irs.gov/businesses/gig-economy-tax-center" target="_blank" class="text-blue-500 underline">gig work</a> performed.</p>
+                        {#if showMoreAnnualReturn}
+                            <p class="text-xs font-light"><a href="https://www.irs.gov/pub/irs-pdf/i1040sc.pdf" target="_blank" class="text-blue-500 underline">Schedule C instructions</a> may be helpful in filling out this form.</p>
+                            <p class="text-xs font-light">In order to report your Social Security and Medicare taxes, you must file <a href="https://www.irs.gov/pub/irs-pdf/f1040sse.pdf" target="_blank" class="text-blue-500 underline">Schedule SE (Form 1040 or 1040-SR), Self-Employment Tax</a>. Use the income or loss calculated on Schedule C to calculate the amount of Social Security and Medicare taxes you should have paid during the year. The <a href="https://www.irs.gov/pub/irs-pdf/i1040sse.pdf" target="_blank" class="text-blue-500 underline">instructions for Schedule SE</a> may be helpful in filing out the form.</p>
+                        {/if}
+                
                         <button on:click={() => showMoreAnnualReturn = !showMoreAnnualReturn} on:keydown={handleKeydownScheduleC} class="text-xs text-blue-500 underline mb-4 cursor-pointer">
                             {showMoreAnnualReturn ? 'Show Less' : 'Show More'}
                         </button>
@@ -158,12 +152,11 @@
                     <i class="fas fas fa-info-circle w-6 h-6"></i>
                     <div>
                         <h2 class="text-sm font-semibold mb-1">Am I required to file an information return?</h2>
-                        <p class="text-xs font-light">
-                            If you made a payment as a small business or self-employed (individual), you are most likely required to file an information return to the IRS.
-                            {#if showMoreInformationReturn}
-                                In some situations, if you received a payment as a small business or self-employed (individual), you may be required to file an information return to the IRS. See, Am I required to file a Form 1099 or other information return, for additional information.
-                            {/if}
-                        </p>
+                        <p class="text-xs font-light">If you made a payment as a small business or self-employed (individual), you are most likely required to file an information return to the IRS.</p>
+                        {#if showMoreInformationReturn}
+                            <p class="text-xs font-light">In some situations, if you received a payment as a small business or self-employed (individual), you may be required to file an information return to the IRS. See, <a href="https://www.irs.gov/businesses/small-businesses-self-employed/am-i-required-to-file-a-form-1099-or-other-information-return" target="_blank" class="text-blue-500 underline">Am I required to file a Form 1099 or other information return</a>, for additional information.</p>
+                        {/if}
+                    
                         <button on:click={() => showMoreInformationReturn = !showMoreInformationReturn} on:keydown={handleKeydownScheduleC} class="text-xs text-blue-500 underline mb-4 cursor-pointer">
                             {showMoreInformationReturn ? 'Show Less' : 'Show More'}
                         </button>
