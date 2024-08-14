@@ -18,6 +18,15 @@ const config = {
 		},
 		extend: {
 			colors: {
+				customBeige: {
+					100: 'rgb(240, 221, 210)',  // Lightest shade
+					200: 'rgb(233, 209, 192)',  // Lighter shade
+					300: 'rgb(226, 197, 174)',  // Light shade
+					400: 'rgb(217, 172, 147)',  // Base color
+					500: 'rgb(196, 155, 133)',  // Darker shade
+					600: 'rgb(176, 138, 120)',  // Even darker shade
+					700: 'rgb(156, 122, 107)',  // Darkest shade
+				},
 				border: "hsl(var(--border) / <alpha-value>)",
 				input: "hsl(var(--input) / <alpha-value>)",
 				ring: "hsl(var(--ring) / <alpha-value>)",
