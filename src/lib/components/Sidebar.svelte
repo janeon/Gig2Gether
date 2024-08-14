@@ -8,7 +8,7 @@
   import { enhance } from '$app/forms';
   import type { ActionData } from '../../routes/protected/$types';
   import { goto } from '$app/navigation';
-
+  
   let form: ActionData;
   $: activeUrl = equivalent_urls.includes($page.url.pathname) ? "/protected/planner/work-day" : $page.url.pathname;
   const equivalent_urls = ["/protected/planner/work-breakdown", "/protected/planner/work-results"];
@@ -25,7 +25,11 @@
     duration: 200,
     easing: sineIn
   };
-  const closeDrawer = () => hidden2 = true;
+  
+  const closeDrawer = () => {
+    window.scrollTo(0, 0);  // Scroll to top when closing the drawer
+    hidden2 = true;
+  };
 
   const settings = [
     { label: "My Worker Profile", href: "/protected/settings/profile" },
@@ -84,6 +88,13 @@
 
   export let option: string;
   export let title: string;
+
+  function handleNavigation(href: string) {
+    window.scrollTo(0, 0); // Scroll to top
+    setTimeout(() => {
+      window.location.href = href; // Navigate to the href
+    }, 100); // Small delay to ensure scrolling completes
+  }
 </script>
 
 <!-- Hamburger button for smaller screensize -->
@@ -127,7 +138,12 @@
     <SidebarWrapper>
       <SidebarGroup>
         {#each options[option] as { label, href }}
-          <SidebarItem label={label} href={href} on:click={closeDrawer} />
+          <SidebarItem label={label} href={href} 
+          on:click={(e) => {
+            e.preventDefault();  // Prevent default behavior
+            handleNavigation(href);
+            closeDrawer();       // Close drawer after navigation
+          }} />
         {/each}
       </SidebarGroup>
     </SidebarWrapper>
@@ -149,7 +165,7 @@
       <SidebarWrapper>
         <SidebarGroup>
           {#each options[option] as { label, href }}
-            <SidebarItem label={label} href={href} on:click={closeDrawer} />
+            <SidebarItem label={label} href={href} on:click={() => { window.scrollTo(0, 0); goto(href); closeDrawer(); }} />
           {/each}
         </SidebarGroup>
       </SidebarWrapper>
@@ -163,12 +179,10 @@
         </div>
       </a>
       <Button
-        on:click={() => goto("/protected")}
+        on:click={() => { goto("/protected"); }}
         class="w-full text-sm rounded-lg bg-black text-white hover:bg-gray-800">
         Home
       </Button>
     </div>
-    
-    
   </div>
 </Drawer>
