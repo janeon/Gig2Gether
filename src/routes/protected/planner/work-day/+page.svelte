@@ -7,8 +7,7 @@
     
     let next = false;
     const handleClick = () => next ? goto('./work-breakdown') : next = true;
-  
-    const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
     next ? updateTitle("What time would you like to work?") : updateTitle("What days are you planning work for?");
   
     function calculateDaysBetween([start, end]: [string, string]): number {
@@ -50,7 +49,6 @@
       </div>
       <div class="flex justify-center mb-6">
         <SveltyPicker 
-          theme={isDarkMode ? "dark" : "light"}
           isRange={true}
           pickerOnly={true}
           startDate={today}
