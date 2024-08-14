@@ -6,8 +6,7 @@
 	/** @type {import('./$types').LayoutData} */
 	export let form : ActionData;
 	$: activeUrl = $page.url.pathname;
-  	let activeClass = 'text-green-500 dark:text-green-300 hover:text-green-700 dark:hover:text-green-500';
-
+  	let activeClass = 'text-customBeige-700 dark:text-customBeige-500 hover:text-customBeige-600 dark:hover:text-customBeige-300';
 	import BlueButton from "$lib/components/BlueButton.svelte";
 	import { Avatar, DropdownHeader, DropdownDivider, Navbar, NavLi, NavUl, Dropdown, DropdownItem, BottomNav, BottomNavItem} from 'flowbite-svelte';
 	import { ChevronDownOutline } from 'flowbite-svelte-icons';
@@ -61,14 +60,14 @@
 {#key [title, loggedIn].join(';')} 
 	<!-- top nav bar for web -->
 	<div class={(mobile && protected_urls) ? 'hidden md:block' : 'block'}>
-		<header class="flex justify-between items-center p-4 bg-gray-100">
+		<header class="flex justify-between items-center p-4 bg-gray-700 text-white">
 			
 			{#if ["Register Worker", "Register Policymaker", "Verify Email"].includes(title)}
 			<div class="flex flex-row">
 			<a href="/" class="block">
 				<img src="/logo.png" alt="Logo" class="h-10 rounded-lg" />
 			</a>
-				<Button href="/" class="bg-gray-200 text-black text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl font-bold py-1 px-2">Gig2Gether</Button>
+				<Button href="/" class="hidden md:block bg-gray-700 text-white text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl font-bold py-1 px-2">Gig2Gether</Button>
 			</div>
 			<div class="whitespace-nowrap max-w-full overflow-hidden pl-2 pr-10">
 				<h1 class="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl font-bold">{title}</h1>
@@ -93,7 +92,7 @@
 				<a href="/" class="block">
 					<img src="/logo.png" alt="Logo" class="h-10 rounded-lg" />
 				</a>
-				<Button href="/" class="bg-gray-200 text-black text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl font-bold py-2 px-2">Gig2Gether</Button>
+				<Button href="/" class="bg-gray-700 text-white text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl font-bold py-1 px-2">Gig2Gether</Button>
 			</div>
 			  
 			<div class="whitespace-nowrap max-w-full overflow-hidden pl-2 pr-10">
@@ -115,21 +114,22 @@
 				<a href={activeUrl === "/protected" ? '/': "/protected"} class="block">
 					<img src="/logo.png" alt="Logo" class="h-10 rounded-lg" />
 				</a>
-				<a href={activeUrl === "/protected" ? '/': "/protected"} class="bg-gray-200 text-black text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl font-bold py-1 px-2">{"Gig2Gether"}</a>
+				<Button href={activeUrl === "/protected" ? '/': "/protected"} class="bg-gray-700 text-white text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl font-bold py-1 px-2">Gig2Gether</Button>
+				<!-- <a href={activeUrl === "/protected" ? '/': "/protected"} class="bg-gray-700 text-white text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl font-bold py-1 px-2">{"Gig2Gether"}</a> -->
 			</div>
 
 			<div class="flex justify-center w-7/8">
-				<Navbar 
-				class="border-gray-200 dark:bg-gray-900 dark:border-gray-700 bg-transparent h-10 flex items-center w-full max-w-screen-lg mx-auto">
+				<Navbar class="border-gray-200 dark:bg-gray-900 dark:border-gray-700 bg-transparent h-10 flex items-center w-full max-w-screen-lg mx-auto">
 				  <NavUl>
 					{#each navItems as { label, href }}
-					<NavLi class={`cursor-pointer text-lg ${isActive(href) ? 'text-blue-700 dark:text-blue-500 dark:bg-gray-800' : 'text-gray-900 dark:text-gray-400'}`} href={href}>
-						<a href={href} class={href === activeUrl ? 'text-blue-700' : ''}>{label}</a>
+					<NavLi class={`cursor-pointer text-lg ${isActive(href) ? 'text-[rgb(239,213,156)] dark:bg-gray-800' : 'text-white dark:text-gray-400'}`} href={href}>
+					  <a href={href} class={isActive(href) ? 'text-[rgb(239,213,156)]' : 'text-white'}>{label}</a>
 					</NavLi>
 					{/each}
 				  </NavUl>
 				</Navbar>
-			</div>
+			  </div>
+							
 			<div class="mr-3">
 			<Avatar class="acs mr-3 w-8 h-8" dot={{ color: 'green' }} border/>
 			<Dropdown {activeUrl} {activeClass} triggeredBy=".acs">
@@ -139,7 +139,7 @@
 				</DropdownHeader>
 				<DropdownItem href="/protected">Home</DropdownItem>
 				<DropdownItem href="/protected/settings/account">Account</DropdownItem>
-				<DropdownItem>Notifications</DropdownItem>
+				<DropdownItem href="/protected/settings/notifications">Reminders</DropdownItem>
 				<DropdownDivider />
 
 				<form action="/logout" method="POST" use:enhance bind:this={form}>

@@ -12,7 +12,7 @@
   let form: ActionData;
   $: activeUrl = equivalent_urls.includes($page.url.pathname) ? "/protected/planner/work-day" : $page.url.pathname;
   const equivalent_urls = ["/protected/planner/work-breakdown", "/protected/planner/work-results"];
-  let activeClass = 'text-green-500 dark:text-green-300 hover:text-green-700 dark:hover:text-green-500';
+  let activeClass = 'text-customBeige-700 dark:text-customBeige-500 hover:text-customBeige-600 dark:hover:text-customBeige-300';
   let mobile: boolean;
   
   onMount(() => {
@@ -98,14 +98,14 @@
 </script>
 
 <!-- Hamburger button for smaller screensize -->
-<div class="relative flex items-center py-3">
+<div class="relative flex items-center py-3 bg-gray-700 text-white">
   {#if mobile}
     <Button 
       on:click={() => (hidden2 = false)} 
       class="absolute left-0 text-center font-medium focus-within:ring-4 
       flex items-center pl-5 pr-3 py-3 
       text-sm rounded-lg bg-transparent text-black block md:hidden h-12">
-      <i class="fas fa-bars text-2xl mb-2"></i>
+      <i class="fas fa-bars text-2xl mb-2 text-white"></i>
     </Button>
     <h1 
       class="absolute left-1/2 transform -translate-x-1/2 font-bold text-sm sm:text-sm md:text-base lg:text-lg xl:text-xl"

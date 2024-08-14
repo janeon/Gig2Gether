@@ -6,7 +6,7 @@
   import { page } from '$app/stores';
 	import type { ActionData } from "./$types";
   $: activeUrl = $page.url.pathname;
-  let activeClass = 'text-green-500 dark:text-green-300 hover:text-green-700 dark:hover:text-green-500';
+  let activeClass = 'text-customBeige-700 dark:text-customBeige-500 hover:text-customBeige-600 dark:hover:text-customBeige-300';
 
   export let form : ActionData;
   let mobile: boolean;
@@ -16,7 +16,7 @@
   </script>
 
   {#if mobile}
-  <header class="fixed py-3 w-full bg-gray-100 z-10 flex items-center justify-between h-12">
+  <header class="fixed py-3 w-full bg-gray-700 z-10 flex items-center justify-between h-12 text-white">
     <a href="/" class="p-3 block">
       <img src="/logo.png" alt="Logo" class="h-8 rounded-lg" />
     </a>
@@ -30,7 +30,7 @@
       </DropdownHeader>
       <DropdownItem href="/protected">Home</DropdownItem>
       <DropdownItem href="/protected/settings/account">Account</DropdownItem>
-      <DropdownItem>Notifications</DropdownItem>
+      <DropdownItem href="/protected/settings/notifications">Reminders</DropdownItem>
       <DropdownDivider />
 
       <form action="/logout" method="POST" use:enhance bind:this={form}>

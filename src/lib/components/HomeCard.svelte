@@ -12,11 +12,11 @@
   // Helper to generate button styles based on index
   let lastColorIndex = -1;
 
-const getButtonStyle = () => {
+const getButtonStyle = (index) => {
   const colors = [
-    "rgb(208, 219, 234)", // First color
+    // "rgb(208, 219, 234)", // First color
     "rgb(217, 172, 147)", // Second color
-    "rgb(232, 213, 159)"  // Third color
+    // "rgb(232, 213, 159)"  // Third color
   ];
   
   let randomIndex;
@@ -46,7 +46,7 @@ const getButtonStyle = () => {
     {#each buttons as { label, route }, index}
       {#if label && route}
         <button class="text-xxs sm:text-xxs md:text-xs lg:text-sm py-1 px-2 rounded-md text-black font-medium w-full sm:w-auto"
-          style={getButtonStyle(index)}
+          style="background-color:rgb(217, 172, 147)"
           on:click={() => goto(route)}>
           {label}
         </button>

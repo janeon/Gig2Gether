@@ -196,7 +196,7 @@
 					  <ProfileCardSolid class="w-6 h-6" />
 				  </span>
 			</Input>
-			<p class="text-xs">Choose a username without any identifiable information.</p>
+			<p class="text-xs">This username will be visible to other Gig2Gether users when you share stories.</p>
 		</div>
 		<div class="flex flex-col">
             <Label>Age</Label>
@@ -243,7 +243,7 @@
 					<ProfileCardSolid class="w-6 h-6" />
 				</span>
 			</Input>
-			<p class="text-xs">Choose a username without any identifiable information.</p>
+			<p class="text-xs">This username will be visible to other Gig2Gether users when you share stories.</p>
 		</div>
 		<div>
 		<Input type="text" placeholder="Verification Code" name="code" class="px-4 py-2 border border-gray-300 rounded-md" required>
