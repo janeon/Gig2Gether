@@ -41,12 +41,14 @@ const getButtonStyle = (index) => {
   <!-- Add the buttons here with responsive sizes -->
   <div class="mt-2 flex flex-wrap justify-center gap-2">
     {#if title==="Settings"}
+    <div class={`${mobile ? 'text-[14px]' : 'text-xxs sm:text-xxs md:text-xs lg:text-sm'}`} >
     Manage:
+    </div>
     {/if}
     {#each buttons as { label, route }, index}
       {#if label && route}
       <button class={`py-1 px-2 rounded-md text-black font-medium w-full sm:w-auto 
-      ${mobile ? 'text-[8px]' : 'text-xxs sm:text-xxs md:text-xs lg:text-sm'}`} 
+      ${mobile ? 'text-[12px]' : 'text-xxs sm:text-xxs md:text-xs lg:text-sm'}`} 
               style="background-color:rgb(208, 219, 234)"
           on:click={() => goto(route)}>
           {label}
