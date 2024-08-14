@@ -81,7 +81,7 @@
         { label: 'Account', route: '/protected/settings/account' },
         { label: 'Demographics', route: '/protected/settings/demographics' },
         { label: 'Sharing', route: '/protected/settings/sharing-preferences' },
-        { label: 'Data', route: '/protected/settings/withdraw' },
+        { label: 'Manage Data', route: '/protected/settings/withdraw' },
         { label: 'Reminders', route: '/protected/settings/notifications' },
       ]
     },
