@@ -45,8 +45,9 @@ const getButtonStyle = (index) => {
     {/if}
     {#each buttons as { label, route }, index}
       {#if label && route}
-        <button class="text-xxs sm:text-xxs md:text-xs lg:text-sm py-1 px-2 rounded-md text-black font-medium w-full sm:w-auto"
-          style="background-color:rgb(208, 219, 234)"
+      <button class={`py-1 px-2 rounded-md text-black font-medium w-full sm:w-auto 
+      ${mobile ? 'text-[8px]' : 'text-xxs sm:text-xxs md:text-xs lg:text-sm'}`} 
+              style="background-color:rgb(208, 219, 234)"
           on:click={() => goto(route)}>
           {label}
         </button>
