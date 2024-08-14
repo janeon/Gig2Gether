@@ -61,6 +61,6 @@
       on:blur={handleBlur}
       min="0"
       pattern="[0-9]+"
-      class={`mt-1 pl-10 pr-4 py-2 bg-gray-50 border border-gray-300 rounded-md w-full ${className}`}    />
+      class={`pl-10 pr-4 py-2 bg-gray-50 border border-gray-300 rounded-md w-full ${className}`}    />
   </div>
   

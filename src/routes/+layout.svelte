@@ -21,7 +21,7 @@
 	// console.log("logged in", loggedIn);
 	
 	
-	onMount(() => {
+	onMount(async () => {
 		mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(window.navigator.userAgent);
 		protected_urls = activeUrl.startsWith('/protected');
 	});
@@ -46,12 +46,13 @@
 		: parsePageNameFromUrl(activeUrl));
 
 	const navItems = [
-		{ label: "Upload", icon: "fas fa-upload", href: $page.data.user?.platform === 'uber'? '/protected/upload/CSV' : '/protected/upload/manual' },
+		{ label: "Upload", icon: "fas fa-upload", href: $page.data.user?.platform === 'uber'? '/protected/upload/CSV' : '/protected/upload/manual'},
 		{ label: "Stories", icon: "fas fa-book", href: '/protected/stories/story-feed' },
 		{ label: "Trends", icon: "fas fa-chart-line", href: '/protected/trends/personal' },
 		{ label: "Settings", icon: "fas fa-cog", href: '/protected/settings/profile' },
 		{ label: "Planner", icon: "fas fa-calendar", href: '/protected/planner/work-day' }
   	];
+
 
 </script>
 
@@ -62,7 +63,7 @@
 	<!-- top nav bar for web -->
 	<div class={(mobile && protected_urls) ? 'hidden md:block' : 'block'}>
 		<header class="flex justify-between items-center p-4 bg-gray-100">
-			
+			<!-- Register and verification pages -->
 			{#if ["Register Worker", "Register Policymaker", "Verify Email"].includes(title)}
 			<div class="flex flex-row">
 			<a href="/" class="block">

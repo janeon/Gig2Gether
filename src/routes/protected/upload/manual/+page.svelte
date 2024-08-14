@@ -37,6 +37,7 @@
         workedMinutes: null,
         travelHours: null,
         travelMinutes: null,
+        workUnits: null,
         type: []
     };
     
@@ -52,11 +53,13 @@
         ...baseData,
         type: [],
         hourlyCharge: null,
+        fixedCharge: null,
         jobDuration: { hours: null, minutes: null }, // Updated to use Duration type
         clientLocation: '',
         hoursPerWeek: { hours: null, minutes: null }, // Updated to use Duration type
         clientHistory: '',
-        experience: []
+        experience: [],
+        workUnits: null,
     };
 
     const upworkExperience = [
@@ -114,7 +117,7 @@
                     { field: new Date(roverData.date) <= new Date(roverData.end_date), message: 'Start date cannot be after end date', type: 'date' }
                 ],
                 upwork: [
-                    { field: upworkData.hourlyCharge, message: 'Please Add Hourly Rate', type: 'income' },
+                    { field: upworkData.hourlyCharge || upworkData.fixedCharge, message: 'Please Add Rate of Charge or Fix Price', type: 'income' },
                     { field: upworkData.type.length, message: 'Please Add Job Category', type: 'type' },
                     { field: upworkData.hoursPerWeek.hours || upworkData.hoursPerWeek.minutes, message: 'Please Add Hours Spent per Week', type: 'time' }
                 ]
@@ -176,11 +179,21 @@
         </div>
         {#if $page.data.user?.platform == 'rover'}
             <div class="w-full max-w-md space-y-5">
-				<div class="flex flex-col">
-					<Label>Income</Label>
-					<p class="text-red-500">{incomeError}</p>
-                    <IconNumberInput bind:value={roverData.income} className="mt-1" />
-				</div>
+                <div class="flex flex-col mt-3">
+                <div class="flex items-center justify-between mt-1">
+                    <Label>Rate of Charge</Label>
+                    <Label>Unit of Work</Label>
+                </div>
+                <p class="text-red-500">{incomeError}</p>
+                <div class="flex items-center mt-1">
+                    <div class="w-1/2 mr-2">
+                    <IconNumberInput bind:value={roverData.income} class="mr-2" />
+                    </div>
+                    <div class="w-1/2 ml-2">
+                    <Input type="text" placeholder="Per Hour" bind:value={roverData.workUnits}/>
+                    </div>
+                </div>
+                </div>
 
                 <div class="flex flex-col">
 					<Label>Platform Cut</Label>
@@ -204,7 +217,7 @@
                 </div>
 
 				<div class="flex flex-col">
-					<Label>Services Offered</Label>
+					<Label>Service Offered</Label>
 					<p class="text-red-500">{typeError}</p>
 					<MultiSelect
 						options={roverServices}
@@ -215,7 +228,7 @@
 				</div>
 			</div> 
         {:else if $page.data.user?.platform == 'upwork'}
-            <div class="w-full max-w-md space-y-5">
+            <div class="w-full max-w-md space-y-5 mt-3">
 				<div class="flex flex-col">
 					<Label>Job Category</Label>
 					<p class="text-red-500">{typeError}</p>
@@ -228,9 +241,22 @@
 				</div>
 
 				<div class="flex flex-col">
-					<Label>Hourly Charge/ Fixed price</Label>
-					<p class="text-red-500">{incomeError}</p>
-                    <IconNumberInput bind:value={upworkData.hourlyCharge} className="mt-1" />
+                    <p class="text-red-500">{incomeError}</p>
+                    <div class="flex items-center justify-between mt-1">
+                    <Label>Rate of Charge</Label>
+                    <Label>Unit of Work</Label>
+                    </div>
+                    <div class="flex items-center mt-1">
+                        <div class="w-1/2 mr-2">
+                        <IconNumberInput bind:value={upworkData.hourlyCharge} class="mr-2" />
+                        </div>
+                        <div class="w-1/2 ml-2">
+                        <Input type="text" placeholder="Per Hour" bind:value={upworkData.workUnits}/>
+                        </div>
+                    </div>
+                    <span class="flex flex-col items-center mt-2">Or</span>
+					<Label>Fixed price</Label>
+                    <IconNumberInput bind:value={upworkData.fixedCharge} className="mt-1" />
 				</div>
 
 				<div class="flex flex-col">
@@ -252,11 +278,6 @@
 						style="--sms-bg: rgb(249, 250, 251); padding: 8px; border-radius: 8px;"
 						--sms-focus-border="2px solid blue"
 					/>
-				</div>
-
-				<div class="flex flex-col">
-					<Label>Job Duration</Label>
-					<Duration bind:hours={upworkData.jobDuration.hours} bind:minutes={upworkData.jobDuration.minutes} />
 				</div>
 
 				<!-- <div class="flex flex-col">
