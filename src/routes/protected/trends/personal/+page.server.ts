@@ -2,61 +2,62 @@ import { db } from '$lib/firebase/client';
 import { collection, getDocs, orderBy, query } from 'firebase/firestore';
 import { getHoursDifference } from '$lib/utils';
 
-function calculateHourlyRates(timeFrames, workSessions) {
+function calculateHourlyRates(
+    timeFrames: string[],
+    workSessions: { startTime: string; endTime: string; rate: number }[]
+) {
     // Initialize results for each time frame
-    const results = {
-        '12-4am': { totalEarnings: 0, totalHours: 0 },
-        '4-8am': { totalEarnings: 0, totalHours: 0 },
-        '8am-12pm': { totalEarnings: 0, totalHours: 0 },
-        '12-4pm': { totalEarnings: 0, totalHours: 0 },
-        '4-8pm': { totalEarnings: 0, totalHours: 0 },
-        '8pm-12am': { totalEarnings: 0, totalHours: 0 },
+    const results: Record<string, { totalEarnings: number; totalHours: number; averageRate?: number }> = timeFrames.reduce((acc, frame) => {
+        acc[frame] = { totalEarnings: 0, totalHours: 0 };
+        return acc;
+    }, {} as Record<string, { totalEarnings: number; totalHours: number; averageRate?: number }>);
+
+    // Convert time string to total minutes from midnight
+    const parseTime = (timeString: string) => {
+        const timeMatch = timeString.match(/(\d{1,2})(?::(\d{2}))?\s*(am|pm)?/i);
+        if (!timeMatch) throw new Error(`Invalid time format: ${timeString}`);
+
+        const [, h, m = '00', period] = timeMatch;
+        let hour = parseInt(h, 10);
+        const minute = parseInt(m, 10);
+        if (period) {
+            if (period.toLowerCase() === 'pm' && hour < 12) hour += 12;
+            if (period.toLowerCase() === 'am' && hour === 12) hour = 0;
+        } else if (hour === 12) hour = 0;
+        return { hour, minute };
     };
 
-    // Convert time string to Date object
-    function parseTime(timeString) {
-        const [hour, minute] = timeString.split(':').map(Number);
-        return { hour, minute };
-    }
-
-    // Convert Date object to total minutes from midnight
-    function timeToMinutes({ hour, minute }) {
-        return hour * 60 + minute;
-    }
+    // Convert to minutes from midnight
+    const timeToMinutes = ({ hour, minute }: { hour: number; minute: number }) => hour * 60 + minute;
 
     // Define time frames in minutes
-    const frameBoundaries = {
-        '12-4am': [0, 240],
-        '4-8am': [240, 480],
-        '8am-12pm': [480, 720],
-        '12-4pm': [720, 960],
-        '4-8pm': [960, 1200],
-        '8pm-12am': [1200, 1440],
+    const getFrameBoundaries = (frames: string[]): Record<string, [number, number]> => {
+        return frames.reduce((acc, frame) => {
+            const [startTime, endTime] = frame.split('-').map(t => t.trim());
+            acc[frame] = [timeToMinutes(parseTime(startTime)), timeToMinutes(parseTime(endTime))];
+            return acc;
+        }, {} as Record<string, [number, number]>);
     };
 
-    // Helper function to calculate time difference in minutes
-    function timeDifference(start, end) {
-        return (end - start) / 60;
-    }
+    const frameBoundaries = getFrameBoundaries(timeFrames);
 
-    // Iterate over each work session
+    // Calculate hours worked in each time frame
     workSessions.forEach(({ startTime, endTime, rate }) => {
         const start = timeToMinutes(parseTime(startTime));
         let end = timeToMinutes(parseTime(endTime));
         if (end < start) end += 1440; // Adjust for crossing midnight
 
-        // Iterate over each time frame
-        for (const [frame, [frameStart, frameEnd]] of Object.entries(frameBoundaries)) {
+        Object.entries(frameBoundaries).forEach(([frame, [frameStart, frameEnd]]) => {
             if (end > frameStart && start < frameEnd) {
                 const effectiveStart = Math.max(start, frameStart);
                 const effectiveEnd = Math.min(end, frameEnd);
-                const hoursWorked = timeDifference(effectiveStart, effectiveEnd);
+                const hoursWorked = (effectiveEnd - effectiveStart) / 60;
                 const earnings = hoursWorked * rate;
 
                 results[frame].totalEarnings += earnings;
                 results[frame].totalHours += hoursWorked;
             }
-        }
+        });
     });
 
     // Calculate average hourly rates for each time frame
@@ -67,6 +68,8 @@ function calculateHourlyRates(timeFrames, workSessions) {
 
     return results;
 }
+
+
 
 export async function load() {
     const snapshot = await getDocs(
