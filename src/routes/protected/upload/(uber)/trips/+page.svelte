@@ -144,6 +144,30 @@
 				<Label>Uber Fees/Withholdings</Label>
 				<IconNumberInput bind:value={tripData.withholdings} className="mt-1" />
 			</div>
+			<div class="flex flex-col">
+				<!-- https://stackoverflow.com/questions/1084925/input-type-file-show-only-button -->
+				<div class="flex items-center space-x-4 pt-5 justify-center">
+					<input 
+					type="button" 
+					value="Browse" 
+					on:click={handleBrowseClick} 
+					class="bg-gray-500 text-white font-bold py-2 px-4 rounded hover:bg-gray-700" 
+					/>
+					<p class="text-center">{fileName}</p>
+				</div>
+				
+				<input 
+					type="file" 
+					id="selectedFile" 
+					style="display: none;" 
+					accept="video/*,image/*" 
+					on:change={handleFileChange} 
+				/>
+
+				<div class = "flex items-center justify-center">
+					<img src={imageUrlPreview} class="rounded-sm mt-2 object-contain w-1/2 " alt="" />
+				</div>
+			</div>
             <div class="flex justify-center mt-2">
 				{#if successMessage}
 					<p class="text-green-600 mt-2">{successMessage}</p>
@@ -170,30 +194,7 @@
 						See in Trends
 					</button>
 				{/if}
-				<div class="flex flex-col">
-					<!-- https://stackoverflow.com/questions/1084925/input-type-file-show-only-button -->
-					<div class="flex items-center space-x-4 pt-5 justify-center">
-						<input 
-						type="button" 
-						value="Browse" 
-						on:click={handleBrowseClick} 
-						class="bg-gray-500 text-white font-bold py-2 px-4 rounded hover:bg-gray-700" 
-						/>
-						<p class="text-center">{fileName}</p>
-					</div>
-					
-					<input 
-						type="file" 
-						id="selectedFile" 
-						style="display: none;" 
-						accept="video/*,image/*" 
-						on:change={handleFileChange} 
-					/>
-	
-					<div class = "flex items-center justify-center">
-						<img src={imageUrlPreview} class="rounded-sm mt-2 object-contain w-1/2 " alt="" />
-					</div>
-				</div>
+
 			</div>
 		{#if docID}
         <form method="POST" class="flex flex-row items-center ">
