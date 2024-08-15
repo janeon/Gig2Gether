@@ -1,13 +1,15 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import { goto } from '$app/navigation';
+
 	import { db } from '$lib/firebase/client';
 	import { collection, doc, setDoc } from 'firebase/firestore';
-	import { Label, NumberInput, Input } from 'flowbite-svelte';
-	import { currentDate, extractAfterEquals } from '$lib/utils';
+
+	import { currentDate, currentTime, extractAfterEquals, capitalize } from '$lib/utils';
 	import { updateTitle } from '$lib/stores/title';
-	import { capitalize } from '$lib/utils';
+	
+	import { Label, Input } from 'flowbite-svelte';
 	import IconNumberInput from '$lib/components/IconNumberInput.svelte';
-	import { goto } from '$app/navigation';
 
 	updateTitle(capitalize($page.data.user?.platform) + ' Trip Upload');
 
@@ -19,7 +21,11 @@
 	// Uber Expenses
 	let tripData = {
 		date: currentDate,
+		time: currentTime,
+		endTime: currentTime,
 		type: 'trip',
+		hours: null,
+		minutes: null,
 		fare: null,
 		surge: null,
 		tips: null,
@@ -51,8 +57,8 @@
 			}
 		});
 
-		const collectionRef = collection(db, 'upload', 'manual', 'entries');
-		const docRef = doc(collectionRef); // Separate by gig work manual inputs?
+		const collectionRef = collection(db, 'upload', 'manual', 'uber');
+		const docRef = doc(collectionRef); 
 		await setDoc(docRef, tripData, { merge: true });
         successMessage = docID ? 'Update Successful!' : 'Submission Successful!';
 		docID = docRef.id;
@@ -71,9 +77,19 @@
 			</div>
 
 			<div class="flex flex-col">
+				<Label>Start Time</Label> 
+                <Input type="time" bind:value={tripData.time} class="mt-1" />
+			</div>
+
+			<div class="flex flex-col">
 				<Label>Fare</Label>
 				<p class="text-red-500">{fareError}</p>
 				<IconNumberInput bind:value={tripData.fare} className="mt-1" />
+			</div>
+
+			<div class="flex flex-col">
+				<Label>End Time</Label> 
+				<Input type="time" bind:value={tripData.endTime} class="mt-1" />
 			</div>
 
 			<div class="flex flex-col">

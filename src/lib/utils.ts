@@ -7,6 +7,12 @@ import { doc, getDoc } from 'firebase/firestore';
 import type { User } from '../app';
 import { sendEmailVerification } from "firebase/auth";
 
+export function getHoursDifference(time1, time2) {
+    const [h1, m1] = time1.split(':').map(Number);
+    const [h2, m2] = time2.split(':').map(Number);
+    return (h2 * 60 + m2 - h1 * 60 - m1) / 60;
+}
+
 export const extractAfterEquals = (value) => value?.includes('=') ? value.split('=')[1].trim() : value ?? null;
 const now = new Date();
 const pad = (num) => num.toString().padStart(2, '0');

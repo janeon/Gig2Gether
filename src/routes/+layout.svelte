@@ -100,7 +100,7 @@
 				<a href={loggedIn ? '/protected' : '/'} class="block">
 					<img src="/logo.png" alt="Logo" class="h-10 rounded-lg" />
 				</a>
-				{#if loggedIn}
+				{#if loggedIn} <!-- but for some reason on the splash page -->
 					<form action="/logout" method="POST" use:enhance bind:this={form}>
 						<BlueButton href="/" buttonText="Log Out" onclick={() => form.submit()} />
 					</form>
@@ -142,7 +142,6 @@
 						class="bg-gray-700 text-white text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl font-bold py-1 px-2"
 						>Gig2Gether</Button
 					>
-					<!-- <a href={activeUrl === "/protected" ? '/': "/protected"} class="bg-gray-700 text-white text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl font-bold py-1 px-2">{"Gig2Gether"}</a> -->
 				</div>
 
 				<div class="flex justify-center w-7/8">
@@ -186,7 +185,8 @@
 	</div>
 
 	<!-- Bottom navigation -->
-	<div class={mobile && protected_urls ? 'fixed bottom-0 w-full md:hidden z-30' : 'hidden'}>
+	 <!-- not checking for mobile in case things get really thin, some nav is useful -->
+	<div class={protected_urls ? 'fixed bottom-0 w-full md:hidden z-30' : 'hidden'}>
 		<BottomNav position="absolute" classInner="grid-cols-5">
 			{#each navItems as item}
 				<BottomNavItem href={item.href}>

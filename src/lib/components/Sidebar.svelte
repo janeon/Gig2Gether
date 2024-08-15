@@ -110,7 +110,7 @@
 </script>
 
 <!-- Hamburger button for smaller screensize -->
-<div class="relative flex items-center py-3 bg-gray-700 text-white">
+<div class="relative flex items-center py-3 bg-gray-700 text-white block md:hidden">
 	{#if mobile}
 		<Button
 			on:click={() => (hidden2 = false)}
@@ -146,7 +146,7 @@
 </div>
 
 <!-- Sidebar for medium and large screens -->
-<Sidebar {activeUrl} class="w-64 bg-transparent hidden md:block">
+<Sidebar {activeUrl} class="w-1/4 max-w-64 bg-transparent hidden sm:block">
 	<SidebarWrapper>
 		<SidebarGroup>
 			{#each options[option] as { label, href }}

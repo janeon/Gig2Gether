@@ -5,7 +5,7 @@
     import { goto } from '$app/navigation';
     import MultiSelect from 'svelte-multiselect';
     import { Label, Input, Select } from 'flowbite-svelte';
-    import { currentDate, extractAfterEquals } from '$lib/utils';
+    import { currentDate, currentTime, extractAfterEquals } from '$lib/utils';
     import { updateTitle } from '$lib/stores/title';
     import { capitalize } from '$lib/utils';
     import IconNumberInput from '$lib/components/IconNumberInput.svelte';
@@ -23,7 +23,7 @@
     // Platform specific data stuff
     const baseData = {
         date: currentDate, 
-        end_date: currentDate, 
+        endDate: currentDate, 
         uid: $page.data.user.uid,
         timestamp: new Date()
     };
@@ -31,11 +31,15 @@
     const roverData = {
         ...baseData,
         income: null,
+        rate: null,
         tips: null,
+        startTime: currentTime,
+        endTime: currentTime,
         platformCut: null,
-        workedHours: null,
-        workedMinutes: null,
-        travelHours: null,
+        platformCutType: null,
+        cutIncome: null,
+        unitsWorked: null,
+        travelMiles: null,
         travelMinutes: null,
         workUnits: null,
         type: []
@@ -97,7 +101,7 @@
                             incomeError = error.message;
                         } else if (error.type === 'time') {
                             // Special handling for timeError
-                            if ((roverData.workedHours === null && roverData.workedMinutes === null) || 
+                            if ((roverData.unitsWorked === null && (roverData.startTime === roverData.endTime)) || 
                                 (upworkData.hoursPerWeek.hours === null && upworkData.hoursPerWeek.minutes === null)) {
                                 timeError = error.message;
                             }
@@ -111,10 +115,11 @@
 
             const errorChecks = {
                 rover: [
-                    { field: roverData.income, message: 'Please Add Income', type: 'income' },
+                    { field: roverData.income || roverData.cutIncome, message: 'Please Add Income', type: 'income' },
                     { field: roverData.type.length, message: 'Please Add Service(s)', type: 'type' },
-                    { field: roverData.workedHours || roverData.workedMinutes, message: 'Please Add Time Spent Working', type: 'time' },
-                    { field: new Date(roverData.date) <= new Date(roverData.end_date), message: 'Start date cannot be after end date', type: 'date' }
+                    { field: roverData.unitsWorked || (roverData.startTime < roverData.endTime), 
+                        message: `Please Add Time${roverData.workUnits? " or "+roverData.workUnits:""} worked, or specify start/end times`, type: 'time' },
+                    { field: new Date(roverData.date) <= new Date(roverData.endDate), message: 'Start date cannot be after end date', type: 'date' }
                 ],
                 upwork: [
                     { field: upworkData.hourlyCharge || upworkData.fixedCharge, message: 'Please Add Rate of Charge or Fix Price', type: 'income' },
@@ -134,14 +139,19 @@
 
         const roverMoneyFields = ['income', 'platformCut', 'tips'];
         roverMoneyFields.forEach(property => {
-            console.log(property, roverData[property]);
             if (roverData[property] !== null) {
                 roverData[property] = extractAfterEquals(roverData[property]);
             }
         });
+
+        if (roverData.date === roverData.endDate) {
+            roverData.date === null
+            roverData.endDate === null
+        }
         upworkData.hourlyCharge = extractAfterEquals(upworkData.hourlyCharge);
 
-        const docRef = doc(collectionRef);
+        const docRef = docID ? doc(collectionRef, docID) : doc(collectionRef);        
+        
         const updateDataObject = (platform: string) => {
             const dataObjects = {
                 rover: {
@@ -174,11 +184,15 @@
             <p class="text-red-500">{dateError}</p>
             <div class="flex flex-col">
                 <Label>End Date</Label>
-                <Input type="date" bind:value={baseData.end_date} class="m-1 min-h-5" />
+                <Input type="date" bind:value={baseData.endDate} class="m-1 min-h-5" />
             </div>
         </div>
         {#if $page.data.user?.platform == 'rover'}
             <div class="w-full max-w-md space-y-5">
+                <div class="flex flex-col mt-3">
+                    <Label>Income after Platform Cut</Label>
+                    <IconNumberInput bind:value={roverData.cutIncome} className="mt-1" />
+                </div>
                 <div class="flex flex-col mt-3">
                 <div class="flex items-center justify-between mt-1">
                     <Label>Rate of Charge</Label>
@@ -187,7 +201,7 @@
                 <p class="text-red-500">{incomeError}</p>
                 <div class="flex items-center mt-1">
                     <div class="w-1/2 mr-2">
-                    <IconNumberInput bind:value={roverData.income} class="mr-2" />
+                    <IconNumberInput bind:value={roverData.rate} class="mr-2" />
                     </div>
                     <div class="w-1/2 ml-2">
                     <Input type="text" placeholder="Per Hour" bind:value={roverData.workUnits}/>
@@ -196,24 +210,65 @@
                 </div>
 
                 <div class="flex flex-col">
-					<Label>Platform Cut</Label>
-                    <IconNumberInput bind:value={roverData.platformCut} className="mt-1" />
+					<Label># of {roverData.workUnits ? roverData.workUnits+"s" : "Hours"} Worked</Label>
+					<p class="text-red-500">{timeError}</p>
+					<Input type="number" bind:value={roverData.unitsWorked} />
 				</div>
+
+                <div class="flex flex-col">
+                    <Label>Start Time</Label> 
+                    <Input type="time" bind:value={roverData.startTime} class="mt-1" />
+                </div>
+
+                <div class="flex flex-col">
+                    <Label>End Time</Label> 
+                    <Input type="time" bind:value={roverData.endTime} class="mt-1" />
+                </div>
+
+                <div class="flex flex-col mt-3">
+                    <Label>Income before Platform Cut</Label>
+                <IconNumberInput bind:value={roverData.income} class="mr-2" />
+                </div>
+
+                <div class="flex flex-col mt-3">
+                <div class="flex items-center justify-between mt-1">
+                    <Label>Platform Cut</Label>
+                    <Label>Cut Units  </Label>
+                </div>
+
+                <!-- <div class="flex flex-col"> -->
+                <div class="flex items-center">
+                    <div class="w-3/4 mr-2">
+                    <Input type="number" bind:value={roverData.platformCut} className="mt-1" />
+                    </div>
+                    <div class="w-1/4 mr-2">
+                    <Select
+                        items={[{value: "percent", name: "%"}, {value: "dollar", name: "$"}]}
+                        bind:value={roverData.platformCutType}
+                        style="--sms-bg: rgb(249, 250, 251); padding: 8px; border-radius: 8px;"
+                        --sms-focus-border="2px solid blue"
+                    />
+                    </div>
+				</div>
+            </div>
 
 				<div class="flex flex-col">
 					<Label>Tips</Label>
                     <IconNumberInput bind:value={roverData.tips} className="mt-1" />
 				</div>
 
+                
 				<div class="flex flex-col">
-					<Label>Time Spent Working</Label>
-					<p class="text-red-500">{timeError}</p>
-					<Duration bind:hours={roverData.workedHours} bind:minutes={roverData.workedMinutes} />
-				</div>
-
-				<div class="flex flex-col">
-                    <Label>Time Spent Traveling to Gig</Label>
-                    <Duration bind:hours={roverData.travelHours} bind:minutes={roverData.travelMinutes} />
+                    <Label>Travel to gig</Label>
+                    <div class="flex items-center mt-1">
+                        <div class="w-1/2 mr-2">
+                            <Input type="number" placeholder="Minutes" bind:value={roverData.travelMinutes} class="mr-2" />
+                        </div>
+                        or 
+                        <div class="w-1/2 ml-2">
+                            <Input type="number" placeholder="Miles" bind:value={roverData.travelMiles} class="mr-2" />
+                        </div>
+                    </div>
                 </div>
 
 				<div class="flex flex-col">
