@@ -7,6 +7,13 @@ import { doc, getDoc } from 'firebase/firestore';
 import type { User } from '../app';
 import { sendEmailVerification } from "firebase/auth";
 
+export function handleBrowseClick() {
+	const fileInput = document.getElementById('selectedFile');
+	if (fileInput) {
+	  (fileInput as HTMLInputElement).click();
+	}
+  }
+
 export function getHoursDifference(time1, time2) {
 	if (!time1 || !time2) return 0;
     const [h1, m1] = time1.split(':').map(Number);

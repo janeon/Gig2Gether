@@ -6,10 +6,10 @@
     import { getDownloadURL, ref, uploadBytes} from "firebase/storage";
 	import { collection, doc, setDoc } from 'firebase/firestore';
 
-	import { currentDate, currentTime, extractAfterEquals, capitalize } from '$lib/utils';
+	import { currentDate, currentTime, extractAfterEquals, capitalize, handleBrowseClick } from '$lib/utils';
 	import { updateTitle } from '$lib/stores/title';
 	
-	import { Label, Input } from 'flowbite-svelte';
+	import { Label, Input, Textarea } from 'flowbite-svelte';
 	import IconNumberInput from '$lib/components/IconNumberInput.svelte';
 
 	updateTitle(capitalize($page.data.user?.platform) + ' Trip Upload');
@@ -33,6 +33,7 @@
 		waitTimeBonus: null,
 		boost: null,
 		withholdings: null,
+		note: '',
 		uid: $page.data.user?.uid
 	};
 
@@ -47,13 +48,6 @@
     let imageUrlPreview : string
     $: fileName = file ? file.name : 'Upload a Photo';
     let url : string
-
-    function handleBrowseClick() {
-      const fileInput = document.getElementById('selectedFile');
-      if (fileInput) {
-        (fileInput as HTMLInputElement).click();
-      }
-    }
 
     async function handleFileChange (event: Event) {
       const fileInput = event.target as HTMLInputElement;
@@ -80,7 +74,8 @@
 		});
 
 		if (file) {
-            const storageRef = ref(storage, `uploads/income/${$page.data.user.uid}/${file.name}`);
+            const storageRef = ref(storage, 
+			`uploads/${$page.data.user.platform}/trips/${$page.data.user.uid}/${file.name}`);
             const result = await uploadBytes(storageRef, file);
             url = await getDownloadURL(result.ref);
         }
@@ -144,9 +139,16 @@
 				<Label>Uber Fees/Withholdings</Label>
 				<IconNumberInput bind:value={tripData.withholdings} className="mt-1" />
 			</div>
+
+			<div class="flex flex-col">
+                <Label>Note</Label>
+                <Textarea bind:value={tripData.note} rows="4" placeholder="To remember this trip by"
+                class="mt-1 border border-gray-300 rounded-lg px-3 py-2 bg-gray-50"/>
+            </div>
+
 			<div class="flex flex-col">
 				<!-- https://stackoverflow.com/questions/1084925/input-type-file-show-only-button -->
-				<div class="flex items-center space-x-4 pt-5 justify-center">
+				<div class="flex {(fileName === 'Upload a Photo') ? 'flex-row' : 'flex-col'} items-center space-x-4 pt-5 justify-center">
 					<input 
 					type="button" 
 					value="Browse" 
@@ -154,7 +156,7 @@
 					class="bg-gray-500 text-white font-bold py-2 px-4 rounded hover:bg-gray-700" 
 					/>
 					<p class="text-center">{fileName}</p>
-				</div>
+				
 				
 				<input 
 					type="file" 
@@ -163,7 +165,7 @@
 					accept="video/*,image/*" 
 					on:change={handleFileChange} 
 				/>
-
+			</div>
 				<div class = "flex items-center justify-center">
 					<img src={imageUrlPreview} class="rounded-sm mt-2 object-contain w-1/2 " alt="" />
 				</div>

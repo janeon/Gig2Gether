@@ -10,7 +10,7 @@
 
 	next
 		? updateTitle('What time would you like to work?')
-		: updateTitle('What days are you planning work for?');
+		: updateTitle('What days are you planning for?');
 
 	function calculateDaysBetween([start, end]: [string, string]): number {
 		const startDate = new Date(start).getTime();

@@ -54,7 +54,7 @@
 		{ label: 'My Account', href: '/protected/settings/account' },
 		{ label: 'Demographics', href: '/protected/settings/demographics' },
 		{ label: 'Sharing Preferences', href: '/protected/settings/sharing-preferences' },
-		{ label: 'Delete Data', href: '/protected/settings/withdraw' },
+		{ label: 'Manage Data', href: '/protected/settings/withdraw' },
 		{ label: 'Reminders', href: '/protected/settings/notifications' }
 	];
 

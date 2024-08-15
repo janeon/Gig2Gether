@@ -10,7 +10,7 @@
     import { Label, Input, Textarea } from "flowbite-svelte";
     import IconNumberInput from '$lib/components/IconNumberInput.svelte';
     
-    import { currentDate, currentTime } from "$lib/utils";
+    import { currentDate, currentTime, handleBrowseClick } from "$lib/utils";
     import { updateTitle } from "$lib/stores/title";
     import { capitalize, extractAfterEquals } from "$lib/utils";
     
@@ -48,16 +48,8 @@
 
     let file: File
     let imageUrlPreview : string
-    $: fileName = file ? file.name : 'Upload a Photo';
+    $: fileName = file ? file.name : 'Upload a Photo (e.g., Receipts)';
     let url : string
-
-
-    function handleBrowseClick() {
-      const fileInput = document.getElementById('selectedFile');
-      if (fileInput) {
-        (fileInput as HTMLInputElement).click();
-      }
-    }
 
     async function handleFileChange (event: Event) {
       const fileInput = event.target as HTMLInputElement;
@@ -75,7 +67,8 @@
         }
 
         if (file) {
-            const storageRef = ref(storage, `uploads/expense/${$page.data.user.uid}/${file.name}`);
+            const storageRef = ref(storage, 
+            `uploads/${$page.data.user.platform}/expenses/${$page.data.user.uid}/${file.name}`);
             const result = await uploadBytes(storageRef, file);
             url = await getDownloadURL(result.ref);
         }
@@ -142,7 +135,7 @@
 
             <div class="flex flex-col">
                 <!-- https://stackoverflow.com/questions/1084925/input-type-file-show-only-button -->
-                <div class="flex items-center space-x-4 pt-5 justify-center">
+                <div class="flex {(fileName === 'Upload a Photo (e.g., Receipts)') ? 'flex-row' : 'flex-col'} items-center space-x-4 pt-5 justify-center">
                     <input 
                     type="button" 
                     value="Browse" 

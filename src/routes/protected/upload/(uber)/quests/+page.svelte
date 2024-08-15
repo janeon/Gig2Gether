@@ -1,15 +1,19 @@
 <script lang="ts">
     import { page } from "$app/stores";
-    import { db } from "$lib/firebase/client";
-    import { collection, doc, setDoc } from "firebase/firestore";
-    import { Label, Input, NumberInput } from "flowbite-svelte";
-    import { currentDate, currentTime, extractAfterEquals } from '$lib/utils';
-    import IconNumberInput from "$lib/components/IconNumberInput.svelte";
-    import { updateTitle } from "$lib/stores/title";
-    import { capitalize } from "$lib/utils";
     import { goto } from "$app/navigation";
+    
+    import { db, storage } from "$lib/firebase/client";
+    import { getDownloadURL, ref, uploadBytes} from "firebase/storage";
+    import { collection, doc, setDoc } from "firebase/firestore";
+    
+    import { Label, Input, NumberInput } from "flowbite-svelte";
+    import IconNumberInput from "$lib/components/IconNumberInput.svelte";
     import Duration from "$lib/components/Duration.svelte";
+    
+    import { currentDate, currentTime, extractAfterEquals, capitalize, handleBrowseClick } from '$lib/utils';
+    import { updateTitle } from "$lib/stores/title";    
     updateTitle(capitalize($page.data.user?.platform) + ' Quests');
+
     let successMessage = '';
     let errorMessage = '';
     let docID: string | null = null;
@@ -38,6 +42,20 @@
 
     $: dataChanged = JSON.stringify(questData) !== JSON.stringify(initialData);
 
+    let file: File
+    let imageUrlPreview : string
+    $: fileName = file ? file.name : 'Upload a Photo';
+    let url : string
+
+    async function handleFileChange (event: Event) {
+      const fileInput = event.target as HTMLInputElement;
+      imageUrlPreview = URL.createObjectURL(fileInput.files[0])
+      if (fileInput.files && fileInput.files.length > 0) {
+        file = fileInput.files[0];
+        fileName = file.name;
+      }
+    }
+
     async function submitManualQuest() {
         baseError = questData.baseTrips ? "" : "Please Enter the Base Number of Trips";
         rewardError = questData.rewardForTrips ? "" : "Please Enter the Reward";
@@ -52,6 +70,13 @@
             }
         });
 
+        if (file) {
+            const storageRef = ref(storage, 
+			`uploads/${$page.data.user.platform}/quests/${$page.data.user.uid}/${file.name}`);
+            const result = await uploadBytes(storageRef, file);
+            url = await getDownloadURL(result.ref);
+        }
+
         const collectionRef = collection(db, "upload", "manual", "entries");
         const docRef = doc(collectionRef);
         await setDoc(docRef, questData, { merge: true });
@@ -59,7 +84,6 @@
         initialData = { ...questData };
         successMessage = "Quest Submission Successful!";
     }
-
 </script>
 
 <div class="flex flex-row">
@@ -126,6 +150,31 @@
                 <Label>Tips</Label>
                 <IconNumberInput bind:value={questData.tips} className="mt-1" />
             </div>
+
+            <div class="flex flex-col">
+				<!-- https://stackoverflow.com/questions/1084925/input-type-file-show-only-button -->
+				<div class="flex {(fileName === 'Upload a Photo') ? 'flex-row' : 'flex-col'} items-center space-x-4 pt-5 justify-center">
+					<input 
+					type="button" 
+					value="Browse" 
+					on:click={handleBrowseClick} 
+					class="bg-gray-500 text-white font-bold py-2 px-4 rounded hover:bg-gray-700" 
+					/>
+					<p class="text-center">{fileName}</p>
+				
+				
+				<input 
+					type="file" 
+					id="selectedFile" 
+					style="display: none;" 
+					accept="video/*,image/*" 
+					on:change={handleFileChange} 
+				/>
+			</div>
+				<div class = "flex items-center justify-center">
+					<img src={imageUrlPreview} class="rounded-sm mt-2 object-contain w-1/2 " alt="" />
+				</div>
+			</div>
 
             <div class="flex justify-center mt-2">
                 {#if successMessage}

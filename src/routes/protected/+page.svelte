@@ -55,7 +55,26 @@
 			[{ label: 'Earnings', route: '/protected/upload/manual' }]),
 			{ label: 'Expenses', route: '/protected/upload/expenses' }
 		] }, 
-		{ iconClass: 'fa-book', title: 'Stories', route: '/protected/stories/story-feed', buttons: [{ label: 'View', route: '/protected/stories/story-feed' }, { label: 'Share', route: '/protected/stories/share-story' }] }, { iconClass: 'fa-chart-line', title: 'Trends', route: '/protected/trends/personal', buttons: [{ label: 'Personal', route: '/protected/trends/personal' }, { label: 'Collective', route: '/protected/trends/aggregate' }] }, { iconClass: 'fa-cog', title: 'Settings', route: '/protected/settings/profile', buttons: [{ label: 'Profile', route: '/protected/settings/profile' }, { label: 'Account', route: '/protected/settings/account' }, { label: 'Demographics', route: '/protected/settings/demographics' }, { label: 'Sharing', route: '/protected/settings/sharing-preferences' }, { label: 'Manage Data', route: '/protected/settings/withdraw' }, { label: 'Reminders', route: '/protected/settings/notifications' }] }, { iconClass: 'fa-calendar', title: 'Planner', route: '/protected/planner/work-day', buttons: [{ label: 'Achieve Goals', route: '/protected/planner/work-day' }, { label: 'Prepare Taxes', route: '/protected/planner/tax' }] }] as { iconClass, title, route, buttons }}
+		{ iconClass: 'fa-book', title: 'Stories', route: '/protected/stories/story-feed', 
+		buttons: [
+			{ label: 'View', route: '/protected/stories/story-feed' }, 
+			{ label: 'Share', route: '/protected/stories/share-story' }] }, 
+			{ iconClass: 'fa-chart-line', title: 'Trends', route: '/protected/trends/personal', 
+			buttons: [
+				{ label: 'Personal', route: '/protected/trends/personal' }, 
+				{ label: 'Collective', route: '/protected/trends/aggregate' }] }, 
+			{ iconClass: 'fa-cog', title: 'Settings', route: '/protected/settings/profile', 
+			buttons: [
+				{ label: 'Profile', route: '/protected/settings/profile' }, 
+				{ label: 'Account', route: '/protected/settings/account' }, 
+				{ label: 'Demographics', route: '/protected/settings/demographics' }, 
+				{ label: 'Sharing', route: '/protected/settings/sharing-preferences' }, 
+				{ label: 'Manage Data', route: '/protected/settings/withdraw' }, 
+				{ label: 'Reminders', route: '/protected/settings/notifications' }] }, 
+			{ iconClass: 'fa-calendar', title: 'Planner', route: '/protected/planner/work-day', 
+			buttons: [{ label: 'Achieve Goals', route: '/protected/planner/work-day' }, 
+			{ label: 'Prepare Taxes', route: '/protected/planner/tax' }] }] 
+			as { iconClass, title, route, buttons }}
 			<HomeCard {iconClass} {title} {route} {buttons} {mobile} />
 		{/each}
 	</div>

@@ -11,7 +11,7 @@
     import IconNumberInput from '$lib/components/IconNumberInput.svelte';
     import Duration from '$lib/components/Duration.svelte';
     
-    import { currentDate, currentTime, extractAfterEquals, capitalize } from '$lib/utils';
+    import { currentDate, currentTime, extractAfterEquals, capitalize, handleBrowseClick} from '$lib/utils';
     import { updateTitle } from '$lib/stores/title';
     updateTitle(capitalize($page.data.user?.platform) + ' Manual Upload');
     import job_categories from "$lib/job_categories.json";
@@ -62,7 +62,8 @@
         hoursPerWeek: { hours: null, minutes: null }, // Updated to use Duration type
         clientHistory: '',
         experience: [],
-        workUnits: null,
+        notes: '',
+        workUnits: "Hour",
     };
 
     const upworkExperience = [
@@ -83,13 +84,6 @@
     let imageUrlPreview : string
     $: fileName = file ? file.name : 'Upload a Photo';
     let url : string
-
-    function handleBrowseClick() {
-      const fileInput = document.getElementById('selectedFile');
-      if (fileInput) {
-        (fileInput as HTMLInputElement).click();
-      }
-    }
 
     async function handleFileChange (event: Event) {
       const fileInput = event.target as HTMLInputElement;
@@ -157,7 +151,7 @@
         }
         //  end of error check
         if (file) {
-            const storageRef = ref(storage, `uploads/income/${$page.data.user.uid}/${file.name}`);
+            const storageRef = ref(storage, `uploads/${$page.data.user.platform}/income/${$page.data.user.uid}/${file.name}`);
             const result = await uploadBytes(storageRef, file);
             url = await getDownloadURL(result.ref);
         }
@@ -340,7 +334,7 @@
                         <IconNumberInput bind:value={upworkData.hourlyCharge} class="mr-2" />
                         </div>
                         <div class="w-1/2 ml-2">
-                        <Input type="text" placeholder="Per Hour" bind:value={upworkData.workUnits}/>
+                        <Input type="text" bind:value={upworkData.workUnits}/>
                         </div>
                     </div>
                     <span class="flex flex-col items-center mt-2">Or</span>
@@ -369,6 +363,10 @@
 					/>
 				</div>
 
+                <div class="flex flex-col">
+                    <Label>Notes</Label>
+                    <Textarea type="text" bind:value={upworkData.notes} class="mt-1" />
+                </div>
 				<!-- <div class="flex flex-col">
 					<Label>Client Location</Label>
 					<Input type="text" bind:value={upworkData.clientLocation} class="mt-1" />
@@ -377,7 +375,7 @@
 		{/if}
         <div class="flex flex-col">
             <!-- https://stackoverflow.com/questions/1084925/input-type-file-show-only-button -->
-            <div class="flex items-center space-x-4 pt-5 justify-center">
+            <div class="flex {(fileName === 'Upload a Photo') ? 'flex-row' : 'flex-col'} items-center space-x-4 pt-5 justify-center">
                 <input 
                 type="button" 
                 value="Browse" 
