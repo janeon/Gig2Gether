@@ -69,7 +69,20 @@ function calculateHourlyRates(
     return results;
 }
 
+function calculateMissingTime(startTime: string | null, endTime: string | null, hoursBetween: number): string {
+    const toMinutes = (time: string) => {
+        const [hours, minutes] = time.split(':').map(Number);
+        return hours * 60 + minutes;
+    };
 
+    const toTimeString = (mins: number) => `${Math.floor(mins / 60)}:${(mins % 60).toString().padStart(2, '0')}`;
+
+    const totalMinutes = hoursBetween * 60;
+
+    return startTime 
+        ? toTimeString(toMinutes(startTime) + totalMinutes) 
+        : toTimeString(toMinutes(endTime!) - totalMinutes);
+}
 
 export async function load() {
     const snapshot = await getDocs(
@@ -77,7 +90,20 @@ export async function load() {
     );
     const workSessions = [];
     snapshot.forEach(async (item) => {
-        const hoursWorked = getHoursDifference(item.data().startTime, item.data().endTime);
+        // assuming units are hours for now
+        const hoursWorked = getHoursDifference(item.data().startTime, item.data().endTime) || item.data().unitsWorked;
+        if (item.data().startTime === null || item.data().endTime === null) {
+            if (item.data().startTime === null && item.data().endTime === null) {
+                return;
+            }
+            const missingTime = calculateMissingTime(item.data().startTime, item.data().endTime, hoursWorked);
+            if (item.data().startTime === null) {
+                item.data().startTime = missingTime;
+            }
+            else {
+                item.data().endTime = missingTime;
+            }
+        }
         if (item.data().cutIncome) {
             workSessions.push({
                 startTime: item.data().startTime,

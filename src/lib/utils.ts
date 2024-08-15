@@ -8,6 +8,7 @@ import type { User } from '../app';
 import { sendEmailVerification } from "firebase/auth";
 
 export function getHoursDifference(time1, time2) {
+	if (!time1 || !time2) return 0;
     const [h1, m1] = time1.split(':').map(Number);
     const [h2, m2] = time2.split(':').map(Number);
     return (h2 * 60 + m2 - h1 * 60 - m1) / 60;
