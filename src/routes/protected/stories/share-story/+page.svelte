@@ -23,13 +23,8 @@
     let uploading = false
 
     let imageUrlPreview : string
-    $: fileName = file ? file.name : 'No file selected';
-    $: postSharing = []
-    $: sharePrivate = false
-    $: errorMessageType = " "
-    $: errorMessageTags = " "
-    $: errorMessageSharing = " "
-    $: errorMessageContent = " "
+    $: fileName = file ? file.name : 'Share a Photo/Video';
+    $: [postSharing, sharePrivate, errorMessageContent, errorMessageType, errorMessageTags, errorMessageSharing] = [[], false, "", "", "", ""]
 
 
     const commonTags = [
@@ -89,86 +84,49 @@
     }
 
     async function uploadContent() {
-      if (uploading) {
-        return
-      }
-        //error catching
-        if (!type) {
-            errorMessageType = "Please select a type"
-        }
-        else {
-            errorMessageType = ""
-        }
+    if (uploading) return;
 
-        if (tags.length == 0) {
-            errorMessageTags = "Please select at least one tag"
-        }
-        else {
-            errorMessageTags = ""
-        }
+    // Error checking
+    errorMessageType = type ? "" : "Please select a type";
+    errorMessageTags = tags.length ? "" : "Please select at least one tag";
+    errorMessageSharing = postSharing.length ? "" : "Please choose a sharing preference";
+    errorMessageContent = file || title.length || description.length ? "" : "Please add content to share";
 
-        if (postSharing.length == 0) {
-            errorMessageSharing = "Please choose a sharing preference"
-        }
-        else {
-            errorMessageSharing = ""
-        }
+    if (errorMessageType || errorMessageTags || errorMessageSharing || errorMessageContent) return;
 
-        if (!file && !title.length && !description.length) {
-            errorMessageContent = "Please add content to share"
-        }
-        else {
-            errorMessageContent = ""
-        }
+    // Ensure only 'private' is selected if included
+    if (postSharing.includes('private')) postSharing = ['private'];
 
-        if (errorMessageSharing != "" || errorMessageTags != "" || errorMessageType != "" || errorMessageContent != "") {
-            return
-        }
-        //end of error catching
+    uploading = true;
 
-
-        if (postSharing.includes('private')) {
-            postSharing = ['private']
-        }
-
-        uploading = true
+    try {
         if (file) {
-            try {
-                const storageRef = ref(storage, 'stories/strategy/'+$page.data.user.uid+'/'+file.name)
-                const result = await uploadBytes(storageRef, file)
-                url = await getDownloadURL(result.ref)
-            } catch (error) {
-                console.log("error with video upload")
-            }
+            const storageRef = ref(storage, `stories/strategy/${$page.data.user.uid}/${file.name}`);
+            const result = await uploadBytes(storageRef, file);
+            url = await getDownloadURL(result.ref);
         }
 
-        if (url) {
-            try {
-            await addDoc(collection(db, 'stories', $page.data.user.platform, "posts"), 
-            { type, title, description, uid: $page.data.user.uid,
-            url, date: new Date(), tags, platform: $page.data.user.platform, likes: [],
-            sharing: postSharing, username: $page.data.user.username
+        const postData = {
+            type, 
+            title, 
+            description, 
+            uid: $page.data.user.uid,
+            url: url || null,
+            date: new Date(), 
+            tags, 
+            platform: $page.data.user.platform,
+            likes: [],
+            sharing: postSharing, 
+            username: $page.data.user.username
+        };
 
-        })
-        goto('/protected/stories/story-feed')
-        } catch {
-            uploading = false
-        }
-        }
-        else {
-            try {
-                await addDoc(collection(db, 'stories', $page.data.user.platform, "posts"), {
-                type, title, description, uid: $page.data.user.uid, date: new Date(),
-                likes: [], tags, platform: $page.data.user.platform, sharing: postSharing, 
-                username: $page.data.user.username
-
-            })
-            goto('/protected/stories/story-feed')
-        } catch {
-            uploading = false
-          }
-        }
+        await addDoc(collection(db, 'stories', $page.data.user.platform, "posts"), postData);
+        goto('/protected/stories/story-feed');
+    } catch {
+        uploading = false;
     }
+}
+
 
     function changeSharingPreferencesSingle() {
         postSharing = []
@@ -270,12 +228,8 @@ style="
 
   <div class = "flex items-center justify-center">
     <img src={imageUrlPreview} class="rounded-sm mt-2 object-contain w-1/2 " alt="" />
-    <!-- {#if url}
-    <img src={url} class="rounded-sm mt-2 object-contain w-1/2 " alt="" />
-    {/if} -->
   </div>
 </div>
-
 
 <div class = "py-5">
     <h2 class="font-medium mb-5">Who Would You Like to Share Your Worker Data With?</h2>

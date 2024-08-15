@@ -2,7 +2,8 @@
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 
-	import { db } from '$lib/firebase/client';
+	import { db, storage } from "$lib/firebase/client";
+    import { getDownloadURL, ref, uploadBytes} from "firebase/storage";
 	import { collection, doc, setDoc } from 'firebase/firestore';
 
 	import { currentDate, currentTime, extractAfterEquals, capitalize } from '$lib/utils';
@@ -42,6 +43,27 @@
 	// Track if data has changed
 	$: dataChanged = JSON.stringify(tripData) !== JSON.stringify(initialData);
 
+	let file: File
+    let imageUrlPreview : string
+    $: fileName = file ? file.name : 'Upload a Photo';
+    let url : string
+
+    function handleBrowseClick() {
+      const fileInput = document.getElementById('selectedFile');
+      if (fileInput) {
+        (fileInput as HTMLInputElement).click();
+      }
+    }
+
+    async function handleFileChange (event: Event) {
+      const fileInput = event.target as HTMLInputElement;
+      imageUrlPreview = URL.createObjectURL(fileInput.files[0])
+      if (fileInput.files && fileInput.files.length > 0) {
+        file = fileInput.files[0];
+        fileName = file.name;
+      }
+    }
+
 	async function submitManualTrip() {
 		if (!tripData.fare) {
 			fareError = 'Please Enter a Fare';
@@ -56,6 +78,12 @@
 				tripData[property] = extractAfterEquals(tripData[property]);
 			}
 		});
+
+		if (file) {
+            const storageRef = ref(storage, `uploads/income/${$page.data.user.uid}/${file.name}`);
+            const result = await uploadBytes(storageRef, file);
+            url = await getDownloadURL(result.ref);
+        }
 
 		const collectionRef = collection(db, 'upload', 'manual', 'uber');
 		const docRef = doc(collectionRef); 
@@ -142,6 +170,30 @@
 						See in Trends
 					</button>
 				{/if}
+				<div class="flex flex-col">
+					<!-- https://stackoverflow.com/questions/1084925/input-type-file-show-only-button -->
+					<div class="flex items-center space-x-4 pt-5 justify-center">
+						<input 
+						type="button" 
+						value="Browse" 
+						on:click={handleBrowseClick} 
+						class="bg-gray-500 text-white font-bold py-2 px-4 rounded hover:bg-gray-700" 
+						/>
+						<p class="text-center">{fileName}</p>
+					</div>
+					
+					<input 
+						type="file" 
+						id="selectedFile" 
+						style="display: none;" 
+						accept="video/*,image/*" 
+						on:change={handleFileChange} 
+					/>
+	
+					<div class = "flex items-center justify-center">
+						<img src={imageUrlPreview} class="rounded-sm mt-2 object-contain w-1/2 " alt="" />
+					</div>
+				</div>
 			</div>
 		{#if docID}
         <form method="POST" class="flex flex-row items-center ">

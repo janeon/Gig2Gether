@@ -1,15 +1,19 @@
 <script lang="ts">
     import { page } from "$app/stores";
-    import { db } from "$lib/firebase/client";
-    import { collection, doc, setDoc, Timestamp, updateDoc } from "firebase/firestore";
-    import MultiSelect from 'svelte-multiselect';
     import { goto } from '$app/navigation';
+
+    import { db, storage } from "$lib/firebase/client";
+    import { getDownloadURL, ref, uploadBytes} from "firebase/storage";
+    import { collection, doc, setDoc } from "firebase/firestore";
+
+    import MultiSelect from 'svelte-multiselect';    
     import { Label, Input, Textarea } from "flowbite-svelte";
+    import IconNumberInput from '$lib/components/IconNumberInput.svelte';
+    
     import { currentDate, currentTime } from "$lib/utils";
     import { updateTitle } from "$lib/stores/title";
     import { capitalize, extractAfterEquals } from "$lib/utils";
-    import IconNumberInput from '$lib/components/IconNumberInput.svelte';
-
+    
     updateTitle(capitalize($page.data.user?.platform) + " Expenses");
 
     let successMessage = '';
@@ -33,10 +37,47 @@
     // Track if data has changed
     $: dataChanged = JSON.stringify(data) !== JSON.stringify(initialData);
 
+    const dollar = `<svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 17.345a4.76 4.76 0 0 0 2.558 1.618c2.274.589 4.512-.446 4.999-2.31.487-1.866-1.273-3.9-3.546-4.49-2.273-.59-4.034-2.623-3.547-4.488.486-1.865 2.724-2.899 4.998-2.31.982.236 1.87.793 2.538 1.592m-3.879 12.171V21m0-18v2.2"/>
+    </svg>`;
+
+    // Define expense types for different platforms
+    const uberExpenseType = ["Car Wash/ Cleaning", "Gas", "Car Rental", "Other"];
+    const roverExpenseType = ["Pet Supplies", "Transportation", "Other"];
+    const upworkExpenseType = ["Software", "Office Supplies", "Insurance", "Other"];
+
+    let file: File
+    let imageUrlPreview : string
+    $: fileName = file ? file.name : 'Upload a Photo';
+    let url : string
+
+
+    function handleBrowseClick() {
+      const fileInput = document.getElementById('selectedFile');
+      if (fileInput) {
+        (fileInput as HTMLInputElement).click();
+      }
+    }
+
+    async function handleFileChange (event: Event) {
+      const fileInput = event.target as HTMLInputElement;
+      imageUrlPreview = URL.createObjectURL(fileInput.files[0])
+      if (fileInput.files && fileInput.files.length > 0) {
+        file = fileInput.files[0];
+        fileName = file.name;
+      }
+    }
+
     async function submitExpenses() {
         if (!data.amount) {
             errorMessage = "Please Enter an Expense Amount";
             return;
+        }
+
+        if (file) {
+            const storageRef = ref(storage, `uploads/expense/${$page.data.user.uid}/${file.name}`);
+            const result = await uploadBytes(storageRef, file);
+            url = await getDownloadURL(result.ref);
         }
 
         errorMessage = "";
@@ -50,15 +91,6 @@
         // Update initial data after successful submission
         initialData = { ...data };
     }
-
-    const dollar = `<svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 17.345a4.76 4.76 0 0 0 2.558 1.618c2.274.589 4.512-.446 4.999-2.31.487-1.866-1.273-3.9-3.546-4.49-2.273-.59-4.034-2.623-3.547-4.488.486-1.865 2.724-2.899 4.998-2.31.982.236 1.87.793 2.538 1.592m-3.879 12.171V21m0-18v2.2"/>
-    </svg>`;
-
-    // Define expense types for different platforms
-    const uberExpenseType = ["Car Wash/ Cleaning", "Gas", "Car Rental", "Other"];
-    const roverExpenseType = ["Pet Supplies", "Transportation", "Other"];
-    const upworkExpenseType = ["Software", "Office Supplies", "Insurance", "Other"];
 </script>
 
 <div class="flex flex-row">
@@ -106,6 +138,31 @@
             <div class="flex flex-col">
                 <Label>Amount</Label>
                 <IconNumberInput bind:value={data.amount} icon={dollar} className="mt-1" />
+            </div>
+
+            <div class="flex flex-col">
+                <!-- https://stackoverflow.com/questions/1084925/input-type-file-show-only-button -->
+                <div class="flex items-center space-x-4 pt-5 justify-center">
+                    <input 
+                    type="button" 
+                    value="Browse" 
+                    on:click={handleBrowseClick} 
+                    class="bg-gray-500 text-white font-bold py-2 px-4 rounded hover:bg-gray-700" 
+                    />
+                    <p class="text-center">{fileName}</p>
+                </div>
+                
+                <input 
+                    type="file" 
+                    id="selectedFile" 
+                    style="display: none;" 
+                    accept="video/*,image/*" 
+                    on:change={handleFileChange} 
+                />
+
+                <div class = "flex items-center justify-center">
+                    <img src={imageUrlPreview} class="rounded-sm mt-2 object-contain w-1/2 " alt="" />
+                </div>
             </div>
         </div>
         
