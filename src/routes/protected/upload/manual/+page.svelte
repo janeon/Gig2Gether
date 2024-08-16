@@ -170,8 +170,6 @@
 
             const errors = errorChecks[platform];
             if (errors && checkErrors(errors)) {
-                // console.log(errors)
-                // errorMessage = 'Please fix errors';
                 return;
             }
         }
