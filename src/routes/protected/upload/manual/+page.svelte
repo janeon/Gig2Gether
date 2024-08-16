@@ -19,15 +19,11 @@
     let [successMessage, errorMessage, timeError, typeError, incomeError, dateError] = ['', '', '', '', '', ''];
 
     // Platform specific data stuff
-    const baseData = {
+    const roverData = {
         date: currentDate, 
         endDate: currentDate, 
         uid: $page.data.user.uid,
-        timestamp: new Date()
-    };
-
-    const roverData = {
-        ...baseData,
+        timestamp: new Date(),
         income: null,
         rate: null,
         tips: null,
@@ -53,7 +49,10 @@
     ];
 
     const upworkData = {
-        ...baseData,
+        date: currentDate, 
+        endDate: currentDate, 
+        uid: $page.data.user.uid,
+        timestamp: new Date(),
         type: [],
         hourlyCharge: null,
         fixedCharge: null,
@@ -104,48 +103,75 @@
             typeError = '';
             dateError = '';
 
-            const checkErrors = (errors: { field: any; message: string; type: string }[]) => {
+            const checkErrors = (errors: { field: any; message: string; type: string, errMessage:string }[]) => {
                 let hasError = false;
                 errors.forEach((error) => {
                     if (!error.field) {
+                        if (!hasError) {
+                            errorMessage = 'Please add: ';
+                        }
                         hasError = true;
+                        
                         if (error.type === 'type') {
                             typeError = error.message;
+                            errorMessage = errorMessage.concat(error.errMessage, ", ")
                         } else if (error.type === 'income') {
                             incomeError = error.message;
+                            errorMessage = errorMessage.concat(error.errMessage, ", ")
                         } else if (error.type === 'time') {
                             // Special handling for timeError
                             if ((roverData.unitsWorked === null && (roverData.startTime === roverData.endTime)) || 
                                 (upworkData.hoursPerWeek.hours === null && upworkData.hoursPerWeek.minutes === null)) {
                                 timeError = error.message;
                             }
+                            errorMessage = errorMessage.concat(error.errMessage, ", ")
                         } else if (error.type === 'date') {
                             dateError = error.message;
+                            errorMessage = errorMessage.concat(error.errMessage, ", ")
                         }
                     }
                 });
+                if (!hasError)
+                    errorMessage = '';
                 return hasError;
             };
-
+            
             const errorChecks = {
                 rover: [
                     { field: roverData.income || roverData.cutIncome || 
                         (roverData.rate && (roverData.unitsWorked || (roverData.startTime && roverData.endTime))), 
-                        message: 'Please Add Income', type: 'income' },
-                    { field: roverData.type.length, message: 'Please Add Service(s)', type: 'type' },
+                        message: 'Please Add Income', type: 'income', 
+                        errMessage: 'income'},
+                    { field: roverData.type.length, message: 'Please Add Service(s)', type: 'type'
+                        , errMessage: 'services'
+                    },
                     { field: roverData.unitsWorked || (roverData.startTime < roverData.endTime), 
-                        message: `Please Add Time${roverData.workUnits? " or "+roverData.workUnits:""} worked, or specify start/end times`, type: 'time' },
-                    { field: new Date(roverData.date) <= new Date(roverData.endDate), message: 'Start date cannot be after end date', type: 'date' }
+                        message: `Please Add Time${roverData.workUnits? " or "+roverData.workUnits:""} worked, or specify start/end times`, type: 'time',
+                        errMessage: 'worked time/units'},
+                    { field: new Date(roverData.date) < new Date(roverData.endDate), message: 'Start date cannot be after end date', type: 'date', 
+                        errMessage: 'dates'
+                    }
                 ],
                 upwork: [
-                    { field: upworkData.hourlyCharge || upworkData.fixedCharge, message: 'Please Add Rate of Charge or Fix Price', type: 'income' },
-                    { field: upworkData.type.length, message: 'Please Add Job Category', type: 'type' },
-                    { field: upworkData.hoursPerWeek.hours || upworkData.hoursPerWeek.minutes, message: 'Please Add Hours Spent per Week', type: 'time' }
+                    { field: upworkData.hourlyCharge || upworkData.fixedCharge, 
+                        message: 'Please Add Rate of Charge or Fix Price', type: 'income', 
+                        errMessage: 'income'},
+                    { field: upworkData.type.length, message: 'Please Add Job Category', type: 'type',
+                        errMessage: 'job category'
+                    },
+                    { field: upworkData.hoursPerWeek.hours || upworkData.hoursPerWeek.minutes, message: 'Please Add Hours Spent on Task', type: 'time',
+                        errMessage: 'hours spent'
+                     },
+                    { field: new Date(upworkData.date) < new Date(upworkData.endDate), message: 'Please enter valid start/end dates', type: 'date', 
+                        errMessage: 'start/end dates'
+                     }
                 ]
             };
 
             const errors = errorChecks[platform];
             if (errors && checkErrors(errors)) {
+                // console.log(errors)
+                // errorMessage = 'Please fix errors';
                 return;
             }
         }
@@ -175,7 +201,7 @@
             upworkData.date = null
             upworkData.endDate = null
         }
-        
+
         upworkData.hourlyCharge = extractAfterEquals(upworkData.hourlyCharge);
 
         const docRef = docID ? doc(collectionRef, docID) : doc(collectionRef);        
@@ -204,19 +230,17 @@
 
 <div class="flex flex-row">
 	<div class="py-2 flex flex-col items-center w-full">
-        <div class="w-full max-w-md space-y-5">
-            <div class="flex flex-col">
-                <Label>Start Date</Label>
-                <Input type="date" bind:value={baseData.date} class="mt-1 min-h-5" />
-            </div>
-            <p class="text-red-500">{dateError}</p>
-            <div class="flex flex-col">
-                <Label>End Date</Label>
-                <Input type="date" bind:value={baseData.endDate} class="m-1 min-h-5" />
-            </div>
-        </div>
         {#if $page.data.user?.platform == 'rover'}
             <div class="w-full max-w-md space-y-5">
+                <div class="flex flex-col">
+                    <Label>Start Date</Label>
+                    <Input type="date" bind:value={roverData.date} class="mt-1 min-h-5" />
+                </div>
+                <p class="text-red-500">{dateError}</p>
+                <div class="flex flex-col">
+                    <Label>End Date</Label>
+                    <Input type="date" bind:value={roverData.endDate} class="m-1 min-h-5" />
+                </div>
                 <div class="flex flex-col mt-3">
                     <Label>Income after Platform Cut</Label>
                     <IconNumberInput bind:value={roverData.cutIncome} className="mt-1" />
@@ -318,6 +342,15 @@
 			</div> 
         {:else if $page.data.user?.platform == 'upwork'}
             <div class="w-full max-w-md space-y-5 mt-3">
+                <div class="flex flex-col">
+                    <Label>Start Date</Label>
+                    <Input type="date" bind:value={upworkData.date} class="mt-1 min-h-5" />
+                </div>
+                <p class="text-red-500">{dateError}</p>
+                <div class="flex flex-col">
+                    <Label>End Date</Label>
+                    <Input type="date" bind:value={upworkData.endDate} class="m-1 min-h-5" />
+                </div>
 				<div class="flex flex-col">
 					<Label>Job Category</Label>
 					<p class="text-red-500">{typeError}</p>
@@ -349,7 +382,7 @@
 				</div>
 
 				<div class="flex flex-col">
-					<Label>Hours Worked</Label>
+					<Label>Estimated Hours Worked</Label>
 					<p class="text-red-500">{timeError}</p>
 					<Duration bind:hours={upworkData.hoursPerWeek.hours} bind:minutes={upworkData.hoursPerWeek.minutes} />
 				</div>

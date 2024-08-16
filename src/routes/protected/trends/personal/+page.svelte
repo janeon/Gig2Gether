@@ -7,8 +7,8 @@
   import { updateTitle } from '$lib/stores/title';
 
   export let data;
-  const parsedData = data.workSegments;
-
+  const hourlySegments = data.workSegments;
+  const monthlyEarnings = data.monthlyEarnings;
   updateTitle('My Trends');
 
   let cal: CalHeatmap;
@@ -27,21 +27,8 @@
               { x: '4pm', y: 2.0 },
               { x: '8pm', y: 1.5 }
           ],
-          rover: parsedData,
-          upwork: [
-              { x: 'January', y: 0.0 },
-              { x: 'February', y: 800.0 },
-              { x: 'March', y: 1000.0 },
-              { x: 'April', y: 1200.2 },
-              { x: 'May', y: 3000.34 },
-              { x: 'June', y: 1115.0 },
-              { x: 'July', y: 4440.0 },
-              { x: 'August', y: 500.0 },
-              { x: 'September', y: 200.0 },
-              { x: 'October', y: 2000.0 },
-              { x: 'November', y: 1200.0 },
-              { x: 'December', y: 200.0 }
-          ]
+          rover: hourlySegments,
+          upwork: monthlyEarnings
       };
       switch (platform) {
           case 'uber':
@@ -64,7 +51,7 @@
 
   const options = {
       colors: ['#1A56DB', '#FDBA8C'],
-      series: [{ name: 'Hourly Earnings ($)', color: '#1A56DB', data: seriesData }],
+      series: [{ name: ["rover", "uber"].includes($page.data.user) ? 'Hourly Earnings ($)' : 'Monthly Earnings ($)' , color: '#1A56DB', data: seriesData }],
       chart: {
           type: 'bar',
           height: '320px',
@@ -83,7 +70,7 @@
       states: { hover: { filter: { type: 'darken', value: 1 } } },
       stroke: { show: true, width: 0, colors: ['transparent'] },
       grid: { show: false, strokeDashArray: 4, padding: { left: 2, right: 2, top: -14 } },
-      dataLabels: { enabled: true },
+      dataLabels: { enabled: $page.data.user?.platform !== 'upwork' },
       legend: { show: false },
       xaxis: {
           floating: false,
@@ -103,7 +90,10 @@
               style: {
                   fontFamily: 'Inter, sans-serif',
                   cssClass: 'text-xs font-normal fill-gray-500 dark:fill-gray-400'
-              }
+              },
+              formatter: function(value) {
+                return "$" + Math.floor(value);
+            }
           }
       },
       fill: { opacity: 1 }
@@ -131,7 +121,9 @@
           range: 1,
           itemSelector: '#cal-heatmap',
           date: { start: new Date('2024-01-01') }, // Updated start date
-          scale: { color: { type: 'diverging', scheme: 'PRGn', domain: [-10, 15] } },
+          scale: { 
+            color: { type: 'diverging', scheme: 'PRGn', domain: [-10, 15] } 
+        },
           domain: {
               type: 'month',
               padding: [10, 10, 10, 10],
