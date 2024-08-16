@@ -218,16 +218,22 @@
         <!-- Buttons for Earnings and Expenses -->
         <div class="flex justify-center space-x-4 mb-4">
           <button
-            class="text-white font-semibold bg-green-500 px-4 py-2 rounded hover:bg-green-600"
+          class={`text-white font-semibold px-4 py-2 rounded hover:bg-green-600 bg-green-500 ${
+            viewMode === 'earnings' ? 'border-2 border-gray-700' : ''
+          }`}
             on:click={showEarnings}
+            disabled={viewMode === 'earnings'}
           >
-            See Earnings
+            Earnings
           </button>
           <button
-            class="text-white font-semibold bg-purple-500 px-4 py-2 rounded hover:bg-purple-600"
+            class={`text-white font-semibold bg-purple-500 px-4 py-2 rounded hover:bg-purple-600
+            ${ viewMode === 'expenses' ? 'border-2 border-gray-700' : ''
+            }`}
             on:click={showExpenses}
+            disabled={viewMode === 'expenses'}
           >
-            See Expenses
+            Expenses
           </button>
         </div>
 
