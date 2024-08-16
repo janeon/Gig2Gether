@@ -170,6 +170,12 @@
             roverData.startTime = null
             roverData.endTime = null
         }
+
+        if (upworkData.date === initialData.date && upworkData.endDate === initialData.endDate) {
+            upworkData.date = null
+            upworkData.endDate = null
+        }
+        
         upworkData.hourlyCharge = extractAfterEquals(upworkData.hourlyCharge);
 
         const docRef = docID ? doc(collectionRef, docID) : doc(collectionRef);        
