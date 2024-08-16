@@ -32,6 +32,16 @@
 	// console.log("logged in", loggedIn);
 
 	onMount(() => {
+		const script = document.createElement('script');
+		script.async = true;
+		script.src = `https://www.googletagmanager.com/gtag/js?id=G-LB85NCTDW9`;
+		document.head.appendChild(script);
+
+		window.dataLayer = window.dataLayer || [];
+		function gtag(){dataLayer.push(arguments);}
+		gtag('js', new Date());
+
+		gtag('config', 'G-LB85NCTDW9');
 		mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
 			window.navigator.userAgent
 		);
