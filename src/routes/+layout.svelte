@@ -43,8 +43,7 @@
 
 		gtag(
 			'config', 
-			'G-LDJKBQCTBN',
-			{  'user_id': $page.data.user?.uid }
+			'G-LDJKBQCTBN'
 		);
 		mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
 			window.navigator.userAgent

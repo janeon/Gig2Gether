@@ -146,7 +146,7 @@
 </div>
 
 <!-- Sidebar for medium and large screens -->
-<Sidebar {activeUrl} class="w-1/4 max-w-64 bg-transparent hidden sm:block">
+<Sidebar {activeUrl} class="w-1/4 max-w-64 bg-transparent hidden md:block">
 	<SidebarWrapper>
 		<SidebarGroup>
 			{#each options[option] as { label, href }}
