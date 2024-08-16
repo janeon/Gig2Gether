@@ -1,10 +1,12 @@
 <script lang="ts">
-  import { Chart, Card } from 'flowbite-svelte';
   import { page } from "$app/stores";
-  import CalHeatmap from 'cal-heatmap';
-  import 'cal-heatmap/cal-heatmap.css';
   import { onMount } from 'svelte';
   import { updateTitle } from "$lib/stores/title";
+  
+  import { Chart, Card } from 'flowbite-svelte';
+  import CalHeatmap from 'cal-heatmap';
+  import Tooltip from 'cal-heatmap/plugins/Tooltip';
+  import 'cal-heatmap/cal-heatmap.css';
 
   updateTitle("My Trends");
 
@@ -54,6 +56,7 @@
     }
   }
 
+  // Chart options
   const options = {
     colors: viewMode === 'earnings' ? ['#B6E1B0', '#4CAF50'] : ['#EFE8EE', '#6A1B9A'],
     series: [{ name: 'Fair Per Minute ($)', color: viewMode === 'earnings' ? '#4CAF50' : '#6A1B9A', data: seriesData }],
@@ -67,7 +70,7 @@
     legend: { show: false },
     xaxis: { floating: false, labels: { show: true, style: { fontFamily: 'Inter, sans-serif', cssClass: 'text-sm font-normal fill-gray-500 dark:fill-gray-400' } }, axisBorder: { show: false }, axisTicks: { show: false } },
     yaxis: { show: false },
-    fill: { opacity: 1 }
+    fill: { opacity: 1 },
   };
 
   function handlePrevious() {
@@ -86,14 +89,17 @@
         source: '/fixtures/seattle-weather.csv', // Ensure correct path
         type: 'csv',
         x: 'date',
-        y: d => +d['temp_min'],
+        y: d => +d[viewMode],
         groupY: 'min',
       },
       verticalOrientation: false,
       range: 1,
       itemSelector: '#cal-heatmap',
-      date: { start: new Date('2024-01-01') }, // Updated start date
-      scale: { color: { type: 'linear', scheme: 'Greens' } },
+      date: { 
+        start: new Date('2024-08-01'),
+        max: new Date('2024-12-31'),
+        min: new Date('2024-01-01')},
+      scale: { color: { type: 'log', scheme: 'Greens' } },
       domain: {
         type: 'month',
         padding: [10, 10, 10, 10],
@@ -107,13 +113,25 @@
       },
       subDomain: {
         type: 'xDay',
-        radius: 8,
+        radius: 9,
         width: 40,
         height: 40,
         label: 'D',
         style: { fontFamily: 'Inter, sans-serif', fontWeight: 'normal', textAlign: 'center', class: 'text-sm font-semibold text-gray-900 dark:text-white px-3 py-2' }
       }
-    });
+    }, 
+    [
+    [
+      Tooltip,
+      {
+        text: function (date, value, dayjsDate) {
+          return (
+            (value ? value*30 : 'No data') + ' on ' + dayjsDate.format('LL')
+          );
+        },
+      },
+    ],
+  ]);
   }
 
   function showExpenses() {
@@ -124,13 +142,17 @@
         source: '/fixtures/seattle-weather.csv', // Ensure correct path
         type: 'csv',
         x: 'date',
-        y: d => +d['temp_min'],
+        y: d => +d[viewMode],
         groupY: 'min',
       },
       verticalOrientation: false,
       range: 1,
       itemSelector: '#cal-heatmap',
-      date: { start: new Date('2024-01-01') }, // Updated start date
+      date: { 
+        start: new Date('2024-08-01'),
+          max: new Date('2024-12-31'),
+          min: new Date('2024-01-01')
+      }, // Updated start date
       scale: { color: { type: 'linear', scheme: 'Purples' } },
       domain: {
         type: 'month',
@@ -151,7 +173,8 @@
         label: 'D',
         style: { fontFamily: 'Inter, sans-serif', fontWeight: 'normal', textAlign: 'center', class: 'text-sm font-semibold text-gray-900 dark:text-white px-3 py-2' }
       }
-    });
+    },
+  );
   }
 
   onMount(() => {
