@@ -26,6 +26,6 @@ app = initializeApp(firebaseConfig);
 auth = getAuth(app);
 db = getFirestore(app, "gigshare");
 storage = getStorage(app);
-const analytics = getAnalytics(app);
+// const analytics = getAnalytics(app);
 
 export { RecaptchaVerifier, signInWithPhoneNumber, auth, db, app, storage};
