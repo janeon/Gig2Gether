@@ -12,6 +12,7 @@
   let seriesData = [];
   let title = '';
   let subtitle = '';
+  let viewMode = 'earnings'; // Default mode is now 'earnings'
 
   if ($page.data.user?.platform) {
     const data = {
@@ -54,8 +55,8 @@
   }
 
   const options = {
-    colors: ['#1A56DB', '#FDBA8C'],
-    series: [{ name: 'Fair Per Minute ($)', color: '#1A56DB', data: seriesData }],
+    colors: viewMode === 'earnings' ? ['#B6E1B0', '#4CAF50'] : ['#EFE8EE', '#6A1B9A'],
+    series: [{ name: 'Fair Per Minute ($)', color: viewMode === 'earnings' ? '#4CAF50' : '#6A1B9A', data: seriesData }],
     chart: { type: 'bar', height: '320px', fontFamily: 'Inter, sans-serif', toolbar: { show: false } },
     plotOptions: { bar: { horizontal: false, columnWidth: '70%', borderRadiusApplication: 'end', borderRadius: 8 } },
     tooltip: { shared: true, intersect: false, style: { fontFamily: 'Inter, sans-serif' } },
@@ -77,8 +78,9 @@
     cal.next();
   }
 
-  onMount(() => {
-    cal = new CalHeatmap();
+  function showEarnings() {
+    viewMode = 'earnings';
+    // Repaint the calendar heatmap with earnings colors
     cal.paint({
       data: {
         source: '/fixtures/seattle-weather.csv', // Ensure correct path
@@ -91,101 +93,160 @@
       range: 1,
       itemSelector: '#cal-heatmap',
       date: { start: new Date('2024-01-01') }, // Updated start date
-      scale: { color: { type: 'diverging', scheme: 'PRGn', domain: [-10, 15] } },
+      scale: { color: { type: 'linear', scheme: 'Greens' } },
       domain: {
         type: 'month',
         padding: [10, 10, 10, 10],
         label: { 
           position: 'top', 
-          // height: 100,
-          // width: 100,
           style: { 
             fontFamily: 'Inter, sans-serif', 
-            // fontSize: '100px', 
-            // fontWeight: 'normal', 
             textAlign: 'center', 
             class: 'text-2lg font-semibold text-gray-900 dark:text-white px-3 py-2' } 
         }
       },
       subDomain: {
         type: 'xDay',
-        radius: 8,  // Made blocks larger
-        width: 40,  // Made blocks larger
-        height: 40, // Made blocks larger
+        radius: 8,
+        width: 40,
+        height: 40,
         label: 'D',
         style: { fontFamily: 'Inter, sans-serif', fontWeight: 'normal', textAlign: 'center', class: 'text-sm font-semibold text-gray-900 dark:text-white px-3 py-2' }
       }
     });
-  });
-  let mobile: boolean;
-    onMount(() => {
-        mobile = window.navigator.userAgent.match(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i) !== null;
+  }
+
+  function showExpenses() {
+    viewMode = 'expenses';
+    // Repaint the calendar heatmap with expenses colors
+    cal.paint({
+      data: {
+        source: '/fixtures/seattle-weather.csv', // Ensure correct path
+        type: 'csv',
+        x: 'date',
+        y: d => +d['temp_min'],
+        groupY: 'min',
+      },
+      verticalOrientation: false,
+      range: 1,
+      itemSelector: '#cal-heatmap',
+      date: { start: new Date('2024-01-01') }, // Updated start date
+      scale: { color: { type: 'linear', scheme: 'Purples' } },
+      domain: {
+        type: 'month',
+        padding: [10, 10, 10, 10],
+        label: { 
+          position: 'top', 
+          style: { 
+            fontFamily: 'Inter, sans-serif', 
+            textAlign: 'center', 
+            class: 'text-2lg font-semibold text-gray-900 dark:text-white px-3 py-2' } 
+        }
+      },
+      subDomain: {
+        type: 'xDay',
+        radius: 8,
+        width: 40,
+        height: 40,
+        label: 'D',
+        style: { fontFamily: 'Inter, sans-serif', fontWeight: 'normal', textAlign: 'center', class: 'text-sm font-semibold text-gray-900 dark:text-white px-3 py-2' }
+      }
     });
+  }
+
+  onMount(() => {
+    cal = new CalHeatmap();
+    showEarnings();  // Initialize with the 'earnings' mode
+  });
+
+  let mobile: boolean;
+  onMount(() => {
+      mobile = window.navigator.userAgent.match(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i) !== null;
+  });
 </script>
 
-    <h1 class="text-lg font-bold text-red-600 mb-4 text-center">
-      The content displayed is an example of breakdowns layout. It does not contain real user data.
-    </h1>
-    <div class="flex flex-col md:flex-row justify-center">      
-      <div class="flex justify-center p-2">
-        <Card>
-          <div class="flex justify-center pb-4 mb-4 border-b border-gray-200 dark:border-gray-700">
-            <h3 class="text-2xl font-bold text-gray-900 dark:text-white">
-              {title}
-            </h3>
-          </div>
-          <Chart {options} />
-          <div class="grid grid-cols-1 items-center border-gray-200 border-t dark:border-gray-700 justify-between">
-            <div class="flex justify-center items-center pt-5">
-              <h1 class="text-sm font-semibold text-gray-900 dark:text-white px-3 py-2">
-                {subtitle}
-              </h1>
-            </div>
-          </div>
-        </Card>
-      </div>
-
-      <div class="flex justify-center p-2">
-        <Card>
-          <div class="flex flex-col">
-            <h1 class="text-2xl font-bold text-gray-900 mb-3 text-center">Calendar</h1>
-            <div id="cal-heatmap" class="w-full h-128 mb-4 flex justify-center"></div> <!-- Larger container size -->
-
-            <!-- Legend for the Heatmap -->
-            <div class="flex flex-col items-start space-y-1 mt-15">
-              <div class="flex items-center space-x-2">
-                <div class="w-4 h-4" style="background-color: #B6E1B0;"></div> <!-- Color matching heatmap -->
-                <span class="text-sm font-semibold text-gray-900">Earnings</span>
-              </div>
-              <div class="flex items-center space-x-2">
-                <div class="w-4 h-4" style="background-color: #EFE8EE;"></div> <!-- Color matching heatmap -->
-                <span class="text-sm font-semibold text-gray-900">Expenses</span>
-              </div>
-            </div>
-
-            <!-- Buttons for navigation -->
-            <div class="flex justify-center items-center space-x-4 mt-4">
-              <button
-                class="text-white font-semibold bg-blue-400 px-4 py-2 rounded hover:bg-blue-500"
-                on:click={handlePrevious}
-              >
-                ← Previous
-              </button>
-              <button
-                class="text-white font-semibold bg-blue-400 px-4 py-2 rounded hover:bg-blue-500"
-                on:click={handleNext}
-              >
-                Next →
-              </button>
-            </div>
-          </div>
-        </Card>
-      </div>
-
-      
-  </div>
+<h1 class="text-lg font-bold text-red-600 mb-4 text-center">
+  The content displayed is an example of breakdowns layout. It does not contain real user data.
+</h1>
+<div class="flex flex-col md:flex-row justify-center">      
   <div class="flex justify-center p-2">
     <Card>
+      <div class="flex justify-center pb-4 mb-4 border-b border-gray-200 dark:border-gray-700">
+        <h3 class="text-2xl font-bold text-gray-900 dark:text-white">
+          {title}
+        </h3>
+      </div>
+      <Chart {options} />
+      <div class="grid grid-cols-1 items-center border-gray-200 border-t dark:border-gray-700 justify-between">
+        <div class="flex justify-center items-center pt-5">
+          <h1 class="text-sm font-semibold text-gray-900 dark:text-white px-3 py-2">
+            {subtitle}
+          </h1>
+        </div>
+      </div>
+    </Card>
+  </div>
+
+  <div class="flex justify-center p-2">
+    <Card>
+      <div class="flex flex-col">
+        <h1 class="text-2xl font-bold text-gray-900 mb-3 text-center">Calendar</h1>
+
+        <!-- Buttons for Earnings and Expenses -->
+        <div class="flex justify-center space-x-4 mb-4">
+          <button
+            class="text-white font-semibold bg-green-500 px-4 py-2 rounded hover:bg-green-600"
+            on:click={showEarnings}
+          >
+            See Earnings
+          </button>
+          <button
+            class="text-white font-semibold bg-purple-500 px-4 py-2 rounded hover:bg-purple-600"
+            on:click={showExpenses}
+          >
+            See Expenses
+          </button>
+        </div>
+
+        <div id="cal-heatmap" class="w-full h-128 mb-4 flex justify-center"></div>
+
+        <!-- Centered Gradient Legend for the Heatmap -->
+        <div class="flex justify-center items-center space-x-4 mt-4">
+          <span class="text-sm font-semibold text-gray-900">
+            {viewMode === 'earnings' ? '$' : '-$'}
+          </span>
+          <div class="w-36 h-4" style="background: linear-gradient(to right, {viewMode === 'earnings' ? '#E0F4E9, #4CAF50' : '#E8DAEF, #6A1B9A'});"></div>
+          <span class="text-sm font-semibold text-gray-900">
+            {viewMode === 'earnings' ? '$$$' : '-$$$'}
+          </span>
+        </div>
+
+        <span class="text-sm font-semibold text-gray-900 mt-2 text-center">
+          {viewMode === 'earnings' ? 'Earnings' : 'Expenses'}
+        </span>
+
+        <!-- Buttons for navigation -->
+        <div class="flex justify-center items-center space-x-4 mt-4">
+          <button
+            class="text-white font-semibold bg-blue-400 px-4 py-2 rounded hover:bg-blue-500"
+            on:click={handlePrevious}
+          >
+            ← Previous
+          </button>
+          <button
+            class="text-white font-semibold bg-blue-400 px-4 py-2 rounded hover:bg-blue-500"
+            on:click={handleNext}
+          >
+            Next →
+          </button>
+        </div>
+      </div>
+    </Card>
+  </div>
+</div>
+
+<div class="flex justify-center p-2">
+  <Card>
     <div class="flex flex-col items-center">
       <h1 class="text-2xl font-bold text-gray-900 mb-3 text-center">Other Information</h1>
       <p class="text-sm font-normal text-gray-700 dark:text-gray-400 leading-tight mb-3">Average Job Length: XXXX</p>
