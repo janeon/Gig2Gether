@@ -78,15 +78,9 @@
 			<div class="text-left mb-4">
 				<h1 class="text-2xl font-bold mb-4 text-black">
 					The next <a
-						href="https://www.irs.gov/businesses/small-businesses-self-employed/estimated-taxes"
-						target="_blank"
-						class="text-blue-500 underline"
-						>estimated <a
 							href="https://www.irs.gov/businesses/small-businesses-self-employed/estimated-taxes"
 							target="_blank"
-							class="text-blue-500 underline">estimated tax payment</a
-						> payment</a
-					>
+							class="text-blue-500 underline">estimated tax payment</a>
 					day is {getNextTaxDate().toLocaleDateString()}
 				</h1>
 				<div class="flex justify-center space-x-4 text-center">
