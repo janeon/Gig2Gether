@@ -135,6 +135,7 @@
 
 		<button type="button" class="text-blue-500" on:click={() => passwordReset()}>Forgot Password?</button>
 		
+		<BlueButton onclick={login} type="submit" buttonText="Login"></BlueButton>
 		{:else if signInMethod == 'phone'}
 		<div>
 		<Input type="text" placeholder="Verification Code" name="code" class="px-4 py-2 border border-gray-300 rounded-md" required>
@@ -144,8 +145,9 @@
 		</Input>
 		<p class="text-xs">We sent a 6-digit verification code to {form.credentials.value}.</p>
 		</div>
-		{/if}
 		<BlueButton onclick={login} type="submit" buttonText="Login"></BlueButton>
+		{/if}
+		
 	
 		{#if form?.formErrors}
 		<Alert type="danger" class="text-red-500">
