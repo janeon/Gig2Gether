@@ -41,7 +41,11 @@
 		function gtag(){dataLayer.push(arguments);}
 		gtag('js', new Date());
 
-		gtag('config', 'G-LB85NCTDW9');
+		gtag(
+			'config', 
+			'G-LB85NCTDW9',
+			{  'user_id': $page.data.user?.uid }
+		);
 		mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
 			window.navigator.userAgent
 		);
