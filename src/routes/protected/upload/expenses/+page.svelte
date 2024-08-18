@@ -107,8 +107,7 @@
     <div class="py-2 flex flex-col items-center w-full">
         <div class="w-full max-w-md space-y-5">
             <div class="flex flex-col">
-                <Label>Expense Date<span class="text-red-500">*</span></Label>
-                <p class="text-red-500">{dateError}</p>
+                <Label>Expense Date<span class="text-red-500">*{dateError}</span></Label>
                 <Input type="date" bind:value={data.date} class="mt-1" />
             </div>
 
@@ -147,8 +146,7 @@
             </div>
 
             <div class="flex flex-col">
-                <Label>Amount<span class="text-red-500">*</span></Label>
-                <p class="text-red-500">{amountError}</p>
+                <Label>Amount<span class="text-red-500">*{amountError}</span></Label>
                 <IconNumberInput bind:value={data.amount} icon={dollar} className="mt-1" />
             </div>
 
