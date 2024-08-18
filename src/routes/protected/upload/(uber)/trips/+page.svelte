@@ -109,9 +109,8 @@
 	<div class="py-2 flex flex-col items-center w-full">
 		<div class="w-full max-w-md space-y-5">
 			<div class="flex flex-col">
-				<Label>Date<span class="text-red-500">*</span>
+				<Label>Date<span class="text-red-500">*{dateError}</span>
 				</Label>
-				<p class="text-red-500">{dateError}</p>
 				<Input type="date" bind:value={tripData.date} class="mt-1" required/>
 			</div>
 
@@ -126,8 +125,7 @@
 			</div>
 
 			<div class="flex flex-col">
-				<Label>Fare<span class="text-red-500">*</span></Label>
-				<p class="text-red-500">{fareError}</p>
+				<Label>Fare<span class="text-red-500">*{fareError}</span></Label>
 				<IconNumberInput bind:value={tripData.fare} className="mt-1"/>
 			</div>
 

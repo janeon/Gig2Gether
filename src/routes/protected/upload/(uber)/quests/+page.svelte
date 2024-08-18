@@ -109,8 +109,7 @@
     <div class="py-2 flex flex-col items-center w-full">
         <div class="w-full max-w-md space-y-5">
             <div class="flex flex-col">
-                <Label>Start Date<span class="text-red-500">*</span></Label>
-                <p class="text-red-500">{dateError}</p>
+                <Label>Start Date<span class="text-red-500">*{dateError}</span></Label>
                 <Input type="date" bind:value={questData.date} class="mt-1" />
             </div>
 
@@ -130,14 +129,12 @@
             </div>
 
             <div class="flex flex-col">
-                <Label>Base # Trips<span class="text-red-500">*</span></Label>
-                <p class="text-red-500">{baseError}</p>
+                <Label>Base # Trips<span class="text-red-500">*{baseError}</span></Label>
                 <NumberInput bind:value={questData.baseTrips} class="mt-1" />
             </div>
 
             <div class="flex flex-col">
-                <Label>Reward for Base # of Trips<span class="text-red-500">*</span></Label>
-                <p class="text-red-500">{rewardError}</p>
+                <Label>Reward for Base # of Trips<span class="text-red-500">*{rewardError}</span></Label>
                 <IconNumberInput bind:value={questData.rewardForTrips} className="mt-1" />
             </div>
 
