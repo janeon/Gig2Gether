@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
+	import { onMount } from 'svelte';
 	import { _getInitialData, _cleanData } from './+page';
 	import { updateTitle } from '$lib/stores/title';
 	import {
@@ -8,13 +9,12 @@
 		handleBrowseClick,
 		handleFileChange,
 		handleKeyDown,
-		roverServices,
-		upworkExperience
 	} from '$lib/utils';
+	import { upworkExperience, roverServices } from '$lib/constants';
 
 	import { db, storage } from '$lib/firebase/client';
 	import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
-	import { collection, doc, setDoc } from 'firebase/firestore';
+	import { collection, doc, getDoc, setDoc } from 'firebase/firestore';
 
 	import MultiSelect from 'svelte-multiselect';
 	import { Label, Input, Select, Textarea, Accordion, AccordionItem } from 'flowbite-svelte';
@@ -33,9 +33,17 @@
 		'',
 		''
 	];
+	let cut;
+	onMount(async () => {
+		const profile = await getDoc(doc(db, 'users', $page.data.user.uid, 'settings', 'profile'));
+		if (profile.exists()) {
+			const data = profile.data();
+			cut = data.platformCut;
+		}
+	});
 
 	// Initialize data
-	const loadedData = _getInitialData($page.data.user?.uid);
+	const loadedData = _getInitialData($page.data.user?.uid, cut);
 	let roverData: any = loadedData.roverData;
 	let upworkData: any = loadedData.upworkData;
 

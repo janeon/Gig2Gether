@@ -1,6 +1,7 @@
 import { db } from '$lib/firebase/client';
 import { collection, getDocs, query } from 'firebase/firestore';
-import { getHoursDifference, calculateHourlyRates, calculateMissingTime, transformHourlyData, monthMap }  from '$lib/utils';
+import { getHoursDifference, calculateHourlyRates, calculateMissingTime, transformHourlyData }  from '$lib/utils';
+import { monthMap } from '$lib/constants';
 
 export async function load ({ locals }) {
     const snapshot = await getDocs(
@@ -51,7 +52,7 @@ function getRoverData(snapshot) {
     snapshot.forEach(async (item) => {
         const hoursWorked = getHoursDifference(item.data().startTime, item.data().endTime) || item.data().unitsWorked;
         if (!item.data().startTime || !item.data().endTime) {
-            if (item.data().startTime === null && item.data().endTime === null) {
+            if (!item.data().startTime && !item.data().endTime) {
                 return;
             }
             const missingTime = calculateMissingTime(item.data().startTime, item.data().endTime, hoursWorked);

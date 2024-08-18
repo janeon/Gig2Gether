@@ -7,13 +7,6 @@ import { doc, getDoc } from 'firebase/firestore';
 import type { User } from '../app';
 import { sendEmailVerification } from "firebase/auth";
 
-export function handleBrowseClick() {
-	const fileInput = document.getElementById('selectedFile');
-	if (fileInput) {
-	  (fileInput as HTMLInputElement).click();
-	}
-  }
-
 export const extractAfterEquals = (value) => value?.includes('=') ? value.split('=')[1].trim() : value ?? null;
 const now = new Date();
 const pad = (num) => num.toString().padStart(2, '0');
@@ -29,6 +22,28 @@ export function convertToLocalDate(dateString: string): Date {
 
 export function capitalize(string: string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+export function validateData(data) {
+    for (const key in data) {
+        const value = data[key];
+        
+        if (value === null || value === undefined) {
+            console.error(`Field ${key} is null or undefined.`);
+            return false; // Field is null or undefined
+        }
+        
+        if (typeof value === 'string' && value.trim() === '') {
+            console.error(`Field ${key} is an empty string.`);
+            return false; // Field is an empty string
+        }
+        
+        if (Array.isArray(value) && value.length === 0) {
+            console.error(`Field ${key} is an empty list.`);
+            return false; // Field is an empty list
+        }
+    }
+    return true; // All fields are valid
 }
 
 export function cn(...inputs: ClassValue[]) {
@@ -89,6 +104,7 @@ export const flyAndScale = (
 	};
 };
 
+/** Auth fxns **/
 export const getUser = async(uid:string) => {
     const ref = doc(db, "users", uid)
     const docRef = await getDoc(ref)
@@ -215,36 +231,8 @@ export function transformHourlyData(data: { [key: string]: { totalEarnings: numb
 	}));
   }
 
-  export const monthMap = {
-    '01': 'January',
-    '02': 'February',
-    '03': 'March',
-    '04': 'April',
-    '05': 'May',
-    '06': 'June',
-    '07': 'July',
-    '08': 'August',
-    '09': 'September',
-    '10': 'October',
-    '11': 'November',
-    '12': 'December'
-};
 
-export const roverServices = [
-    'Boarding',
-    'House Sitting',
-    'Drop-In Visits',
-    'Doggy Day Care',
-    'Dog Walking'
-];
-
-
-export const upworkExperience = [
-    {value: "entry", name:'Entry-Level'},
-    {value: "intermediate", name:'Intermediate'},
-    {value: "expert", name:'Expert'}
-];
-
+/* Handlers */
 export async function handleFileChange(event: Event) {
 	const fileInput = event.target as HTMLInputElement;
 	if (fileInput.files && fileInput.files.length > 0) {
@@ -264,3 +252,13 @@ export function handleKeyDown(event: KeyboardEvent) {
         event.preventDefault();
     }
 }
+
+export function handleBrowseClick() {
+	const fileInput = document.getElementById('selectedFile');
+	if (fileInput) {
+	  (fileInput as HTMLInputElement).click();
+	}
+  }
+
+
+  

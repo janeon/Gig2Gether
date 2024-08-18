@@ -1,7 +1,8 @@
 <script lang="ts">
 	import type { Post } from '$lib/types';
 	import { page } from '$app/stores';
-    import type { ColorVariant } from '../types';
+    import type { ColorVariant } from 'flowbite-svelte';
+    import { tagColorMap } from '$lib/constants';
     
     import { doc, getDoc, updateDoc } from 'firebase/firestore';
 	import { db } from '$lib/firebase/client';
@@ -39,23 +40,6 @@
 			// Optionally, revert local state if the Firestore update fails
 		}
 	};
-
-    const tagColorMap = {
-        'fair pay': 'green',
-        'discrimination': 'red',
-        'ratings': 'purple',
-        'work time': 'yellow',
-        'stress': 'indigo',
-        'deactivation': 'dark',
-        'technology': 'pink',
-        'other': 'default',
-        'safety': 'red',
-        'care-giving': 'green',
-        'algorithms': 'purple',
-        'scams': 'dark',
-        'getting started': 'yellow',
-        'customers': 'indigo'
-    };
     
     function getTagColor(tagValue) {
         return tagColorMap[tagValue] as ColorVariant; // Default color if no match is found

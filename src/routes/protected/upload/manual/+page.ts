@@ -1,5 +1,7 @@
 import { currentDate, currentTime, extractAfterEquals } from '$lib/utils';
 import type { RoverData, UpworkData } from '$lib/types';
+import { db } from '$lib/firebase/client';
+import { collection, doc, setDoc } from 'firebase/firestore';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function _cleanData(upworkData: UpworkData, roverData: RoverData, platform: string, initialData: any): { roverData: RoverData } | { upworkData: UpworkData } {
@@ -36,7 +38,7 @@ export function _cleanData(upworkData: UpworkData, roverData: RoverData, platfor
 	}
 }
 
-export function _getInitialData(uid: string) {
+export function _getInitialData(uid: string, cut: number): { upworkData: UpworkData; roverData: RoverData } {
 	const upworkData: UpworkData = {
 		date: null,
 		endDate: currentDate,
@@ -51,7 +53,7 @@ export function _getInitialData(uid: string) {
 		clientLocation: '',
 		hoursPerWeek: { hours: null, minutes: null }, // Updated to use Duration type
 		clientHistory: '',
-		platformCut: 20,
+		platformCut: cut || 20,
 		platformCutType: 'percent',
 		experience: [],
 		unitsWorked: null,
