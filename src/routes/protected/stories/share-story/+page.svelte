@@ -37,7 +37,7 @@
 		{ value: 'fair pay', label: 'Fair Pay' },
 		{ value: 'discrimination', label: 'Discrimination' },
 		{ value: 'ratings', label: 'Ratings' },
-		{ value: 'working time', label: 'Working Time' },
+		{ value: 'work time', label: 'Working Time' },
 		{ value: 'stress', label: 'Stress (e.g. from precarity)' },
 		{ value: 'deactivation', label: 'Deactivation' },
 		{ value: 'technology', label: 'Technology' },
@@ -47,21 +47,21 @@
 	const uberTags = [
 		{ value: 'safety', label: 'Safety' },
 		{ value: 'care-giving', label: 'Care-giving' },
-		{ value: 'understanding algorithms', label: 'Understanding Algorithms' },
+		{ value: 'algorithms', label: 'Understanding Algorithms' },
 		...commonTags
 	];
 
 	const roverTags = [
 		{ value: 'safety', label: 'Safety' },
 		{ value: 'care-giving', label: 'Care-giving' },
-		{ value: 'understanding algorithms', label: 'Understanding Algorithms' },
+		{ value: 'algorithms', label: 'Understanding Algorithms' },
 		...commonTags
 	];
 
 	const upworkTags = [
 		{ value: 'scams', label: 'Scams' },
 		{ value: 'getting started', label: 'Getting Started' },
-		{ value: 'algorithm functionality', label: 'Algorithm Functionality' },
+		{ value: 'algorithms', label: 'Algorithm Functionality' },
 		{ value: 'customers', label: 'Customers' },
 		...commonTags
 	];
