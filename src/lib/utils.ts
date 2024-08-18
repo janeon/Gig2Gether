@@ -7,7 +7,15 @@ import { doc, getDoc } from 'firebase/firestore';
 import type { User } from '../app';
 import { sendEmailVerification } from "firebase/auth";
 
-export const extractAfterEquals = (value) => value?.includes('=') ? value.split('=')[1].trim() : value ?? null;
+export const extractAfterEquals = (value: string | null | undefined): string | null => {
+    if (typeof value === 'number' ) {
+        return value;
+    }
+    if (value == null) {
+        return null; // Return null if input is not a string, or if it is null or undefined
+    }
+    return value.includes('=') ? value.split('=')[1].trim() : null;
+};
 const now = new Date();
 const pad = (num) => num.toString().padStart(2, '0');
 export const currentDate = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
@@ -250,6 +258,20 @@ export function handleKeyDown(event: KeyboardEvent) {
         event.key !== "Tab" // Allow tab
     ) {
         event.preventDefault();
+    }
+}
+
+export function handleRatingsKeyDown(event: KeyboardEvent) {
+    const input = event.target as HTMLInputElement;
+    
+    if (event.key === "." && input.value.includes(".")) {
+        event.preventDefault(); // Prevent additional periods
+    } else if (!/^\d$/.test(event.key) && 
+               event.key !== "Backspace" && 
+               event.key !== "ArrowLeft" && 
+               event.key !== "ArrowRight" && 
+               event.key !== "Tab") {
+        event.preventDefault(); // Prevent non-digit characters
     }
 }
 

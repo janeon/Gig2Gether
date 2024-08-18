@@ -29,6 +29,14 @@ export const roverServices = [
 	'Dog Walking'
 ];
 
+export const roverService = [
+	{value: 'boarding', name: 'Boarding'},
+	{ value: 'house-sitting', name: 'House Sitting' },
+    { value: 'drop-in-visits', name: 'Drop-In Visits' },
+    { value: 'doggy-day-care', name: 'Doggy Day Care' },
+    { value: 'dog-walking', name: 'Dog Walking' }
+];
+
 export const monthMap = {
 	'01': 'January',
 	'02': 'February',

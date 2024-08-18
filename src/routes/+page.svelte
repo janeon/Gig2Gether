@@ -5,7 +5,6 @@
     import { page } from '$app/stores';
 
     let loggedIn = $page.data.user===undefined ? false : true;
-
     
     const sections = [
       {

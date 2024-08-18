@@ -23,6 +23,7 @@
     let docID: string | null = null;
 
     let questData = {
+        timestamp: new Date(),
         type: 'quest',
         date: null,
         end_date: null,
@@ -96,12 +97,13 @@
             url = await getDownloadURL(result.ref);
         }
 
-        const collectionRef = collection(db, "upload", "manual", "entries");
-        const docRef = doc(collectionRef);
+        const collectionRef = collection(db, 'upload', 'manual', 'quests');
+		const docRef = docID ? doc(collectionRef, docID) : doc(collectionRef);
+        successMessage = docID ? 'Update Successful!' : 'Submission Successful!';
         await setDoc(docRef, questData, { merge: true });
         docID = docRef.id;
+        // Update initial data after successful submission
         initialData = { ...questData };
-        successMessage = "Quest Submission Successful!";
     }
 </script>
 

@@ -1,8 +1,8 @@
 <script lang="ts">
-    import { onMount } from "svelte";
+    import { onDestroy, onMount } from "svelte";
     import { page } from "$app/stores";
     import { updateTitle } from "$lib/stores/title";
-    import { capitalize, currentDate, currentTime, handleKeyDown, validateData } from "$lib/utils";
+    import { capitalize, currentDate, currentTime, handleKeyDown, handleRatingsKeyDown, validateData } from "$lib/utils";
     import { profileStatus } from '$lib/stores/profileCompletion';
 
     import { db } from "$lib/firebase/client";
@@ -46,6 +46,7 @@
 
     // for prepopulating
     async function loadProfile() {
+        console.log("Loading profile")
         const collectionRef = collection(db, "users", $page.data.user?.uid, "settings");
         const docRef = doc(collectionRef, "profile");
         const docSnap = await getDoc(docRef);
@@ -56,7 +57,9 @@
         } else {
             data = docSnap.data();
         }
-        updateValue(validateData(data));
+        const valid = validateData(data)
+        console.log("Valid", valid)
+        updateValue(valid);
         initialData = { ...data };
         switch ($page.data.user?.platform) {
             case "uber":
@@ -110,10 +113,19 @@
         uploading = false;
     }
 
+    let status;
+
+    const unsubscribe = profileStatus.subscribe(value => {
+            const status = value.isCompleted;
+        });
+        
     onMount(() => {
         loadProfile();
     });
 
+    onDestroy(() => {
+        unsubscribe();
+  });
 </script>
 <div class="flex flex-row">
     <div class="py-2 flex flex-col items-center w-full">
@@ -122,7 +134,7 @@
 
     <div class="flex flex-col">
         <Label>Uber Rating</Label>
-        <NumberInput on:keydown={handleKeyDown} type="number" bind:value={uberData.rating} on:keydown={handleKeyDown} max=5/>
+        <NumberInput on:keydown={handleRatingsKeyDown} type="number" bind:value={uberData.rating} max=5/>
     
         <Label class="mt-4">Date of Joining Uber</Label>
         <Input type="date" size="md" bind:value={uberData.dateJoined} />
@@ -179,7 +191,7 @@
 {:else if $page.data.user?.platform === "rover"}
     <div class="flex flex-col">
         <Label class="mt-4">Rover Rating</Label>
-        <NumberInput on:keydown={handleKeyDown} type="number" bind:value={roverData.rating} on:keydown={handleKeyDown} max=5/>
+        <NumberInput on:keydown={handleRatingsKeyDown} type="number" bind:value={roverData.rating} max=5/>
 
         <Label class="mt-4">Pets Accepted</Label>
         <MultiSelect options={pets} bind:selected={roverData.pets}
@@ -233,7 +245,7 @@
 {:else if $page.data.user?.platform === "upwork"}
 <div class="flex flex-col">
     <Label>Upwork Rating</Label>
-    <NumberInput on:keydown={handleKeyDown} type="number" bind:value={upworkData.rating} on:keydown={handleKeyDown} />
+    <NumberInput type="number" bind:value={upworkData.rating} on:keydown={handleRatingsKeyDown} />
 
     <Label>Work Categories</Label>
     <MultiSelect options={upworkCategories} bind:selected={upworkData.services}

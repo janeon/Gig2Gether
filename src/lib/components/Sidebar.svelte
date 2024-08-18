@@ -37,7 +37,6 @@
 	let unsubscribe;
 	$: unsubscribe = profileStatus.subscribe(value => {
         profileCompletion = value.isCompleted ;
-		console.log(profileCompletion);
     });
 
 	onMount(() => {

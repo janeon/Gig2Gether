@@ -78,7 +78,7 @@
 	}
 
 	function calculateRoverIncome() {
-		// if we know units and rate but not income, calculate income
+		// if we know # units and rate but not income, calculate income
 		if (roverData.rate && roverData.unitsWorked && !roverData.income) {
 			roverData.income = roverData.rate * roverData.unitsWorked;
             // if we know income and platform cut but not cut income, calculate cut income
@@ -110,7 +110,37 @@
 	}
 
     function calculateUpworkIncome() {
-
+		if (upworkData.hourlyCharge && upworkData.unitsWorked && !upworkData.cutIncome) {
+            // if we know # units and rate and platform cut but not cut income, calculate cut income
+			if (upworkData.platformCutType === 'percent') {
+				upworkData.cutIncome = (upworkData.hourlyCharge * upworkData.unitsWorked * (100 - upworkData.platformCut)/ 100) ;
+				console.log(typeof upworkData.hourlyCharge, typeof upworkData.unitsWorked);
+			} else {
+				upworkData.cutIncome = upworkData.rate * upworkData.unitsWorked - upworkData.platformCut;
+			}
+		} 
+        // if we know fixed charge but not cut income, calculate income before platform cut
+		else if (upworkData.fixedCharge && !upworkData.cutIncome) {
+			if (upworkData.platformCutType === 'percent') {
+				upworkData.cutIncome = upworkData.fixedCharge*(100-upworkData.platformCut)/100;
+			}
+			else {
+				upworkData.cutIncome = upworkData.fixedCharge - upworkData.platformCut;
+			}
+            
+        } else if (upworkData.fixedCharge && upworkData.cutIncome) {
+            if (upworkData.platformCutType === 'percent') {
+                upworkData.platformCut = (upworkData.fixedCharge - upworkData.cutIncome) / upworkData.fixedCharge * 100;
+            } else {
+                upworkData.platformCut = upworkData.fixedCharge - upworkData.cutIncome;
+            }
+        }
+		else if (upworkData.cutIncome && !upworkData.fixedCharge)  {
+			if (upworkData.platformCutType === 'percent')
+				upworkData.fixedCharge = upworkData.cutIncome/(100-upworkData.platformCut)*100;
+			else 
+				upworkData.fixedCharge = upworkData.cutIncome + upworkData.platformCut;
+		}
     }
 
 	async function submitManual() {
@@ -183,15 +213,15 @@
 			upworkData = _cleanData(upworkData, roverData, platform, initialData);
 		}
 
-		const docRef = docID ? doc(collectionRef, docID) : doc(collectionRef);
+		const docRef = doc(collectionRef);
 
 		const updateDataObject = (platform: string) => {
 			const dataObjects = {
 				rover: {
-					...roverData
+					...roverData.roverData
 				},
 				upwork: {
-					...upworkData
+					...upworkData.upworkData
 				}
 			};
 			const dataToUpdate = dataObjects[platform];
@@ -325,6 +355,7 @@
 					<MultiSelect
 						options={roverServices}
 						bind:value={roverData.type}
+						maxSelect={1}
 						style="--sms-bg: rgb(249, 250, 251); padding: 8px; border-radius: 8px;"
 						--sms-focus-border="2px solid blue"
 					/>
@@ -356,6 +387,7 @@
                     <Label>Job Category<span class="text-red-500">*{typeError}</span></Label>
 					<MultiSelect
 						options={upworkJobCategories}
+						maxSelect={1}
 						bind:value={upworkData.type}
 						style="--sms-bg: rgb(249, 250, 251); padding: 8px; border-radius: 8px;"
 						--sms-focus-border="2px solid blue"
@@ -376,19 +408,22 @@
                                         <Input type="text" bind:value={upworkData.workUnits} />
                                     </div>
                                 </div>
+								<Label># of {upworkData.workUnits} Worked 
+									{#if timeError}
+										<span class="text-red-500">Or Enter (Estimated) {upworkData.workUnits} worked</span>
+									{/if}
+								</Label>
+								
+								<Input
+									type="number"
+									bind:value={upworkData.unitsWorked}
+									on:keydown={handleKeyDown}
+								/>
                                 <span class="flex flex-col items-center mt-2">Or</span>
                                 <Label>Fixed price</Label>
                                 <IconNumberInput bind:value={upworkData.fixedCharge} className="mt-1" />
             
-                                <div class="mt-3">
-                                    <Label># of {upworkData.workUnits} Worked <span class="text-red-500">Or Enter (Estimated) {upworkData.workUnits} worked</span></Label>
-                                    
-                                    <Input
-                                        type="number"
-                                        bind:value={upworkData.unitsWorked}
-                                        on:keydown={handleKeyDown}
-                                    />
-                                </div>
+
 
                                 <hr class="border-t border-gray-300 my-4" />
                                 <Label>Income after Platform Cut</Label>

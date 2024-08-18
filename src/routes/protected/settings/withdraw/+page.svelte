@@ -1,12 +1,14 @@
 <script lang="ts">
     import { invalidateAll } from "$app/navigation";
+    import type { Data } from "$lib/types";
+
+    import { Button, Modal } from "flowbite-svelte";
     import BlueButton from "$lib/components/BlueButton.svelte";
     import DataRow from "$lib/components/DataRow.svelte";
+    
     import { db } from "$lib/firebase/client.js";
-    import type { Data } from "$lib/types";
     import { deleteDoc, doc } from "firebase/firestore";
-    import { Button, Modal } from "flowbite-svelte";
-
+    
     export let data
 
     let toDelete : Data[] = []
@@ -19,10 +21,10 @@
                     docRef = doc(db, 'stories', data.user.platform, "posts", dataDoc.id)
                     break;
                 case "Manual":
-                    docRef = doc(db, 'upload', 'manual', 'entries', dataDoc.id)
+                    docRef = doc(db, 'upload', 'manual', data.user.platform, dataDoc.id)
                     break;
                 case "Expense":
-                    docRef = doc(db, 'upload', 'expenses', 'entries', dataDoc.id)
+                    docRef = doc(db, 'upload', 'expenses', data.user.platform, dataDoc.id)
                     break;
             }
             await deleteDoc(docRef)

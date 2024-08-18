@@ -21,6 +21,7 @@
 
 	// Uber Expenses
 	let tripData = {
+		timestamp: new Date(),
 		date: null,
 		time: currentTime,
 		endTime: currentTime,
@@ -94,14 +95,13 @@
             url = await getDownloadURL(result.ref);
         }
 
-		const collectionRef = collection(db, 'upload', 'manual', 'uber');
-		const docRef = doc(collectionRef); 
+		const collectionRef = collection(db, 'upload', 'manual', 'trips');
+		const docRef = docID ? doc(collectionRef, docID) : doc(collectionRef);
 		await setDoc(docRef, tripData, { merge: true });
         successMessage = docID ? 'Update Successful!' : 'Submission Successful!';
 		docID = docRef.id;
 		// Update initial data after successful submission
 		initialData = { ...tripData };
-		
 	}
 </script>
 

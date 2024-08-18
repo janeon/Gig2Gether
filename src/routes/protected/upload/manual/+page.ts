@@ -1,15 +1,14 @@
 import { currentDate, currentTime, extractAfterEquals } from '$lib/utils';
 import type { RoverData, UpworkData } from '$lib/types';
-import { db } from '$lib/firebase/client';
-import { collection, doc, setDoc } from 'firebase/firestore';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function _cleanData(upworkData: UpworkData, roverData: RoverData, platform: string, initialData: any): { roverData: RoverData } | { upworkData: UpworkData } {
 	if (platform === 'rover') {
 		const roverMoneyFields = ['income', 'cutIncome', 'tips', 'rate'];
 		roverMoneyFields.forEach((property) => {
-			if (roverData[property] !== null) {
-				roverData[property] = extractAfterEquals(roverData[property]);
+			if (roverData[property]) {
+				// console.log(property, roverData[property]);
+				roverData[property] = extractAfterEquals(roverData[property].toString());
 			}
 		});
 		if (
@@ -23,7 +22,7 @@ export function _cleanData(upworkData: UpworkData, roverData: RoverData, platfor
 	}
 
 	if (platform === 'upwork') {
-		upworkData.hourlyCharge = extractAfterEquals(upworkData.hourlyCharge);
+		upworkData.hourlyCharge = extractAfterEquals(upworkData.hourlyCharge.toString()); ;
 		if (upworkData.endDate === initialData.endDate && !upworkData.date) {
 			upworkData.endDate = null;
 		}
