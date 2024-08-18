@@ -7,14 +7,18 @@ import { doc, getDoc } from 'firebase/firestore';
 import type { User } from '../app';
 import { sendEmailVerification } from "firebase/auth";
 
-export const extractAfterEquals = (value: string | null | undefined): string | null => {
-    if (typeof value === 'number' ) {
-        return value;
-    }
+export const extractAfterEquals = (value: string | null | undefined): number | null => {
     if (value == null) {
-        return null; // Return null if input is not a string, or if it is null or undefined
+        return null; // Return null if input is null or undefined
     }
-    return value.includes('=') ? value.split('=')[1].trim() : null;
+    else if (typeof value === 'number') {
+        return value; // Return null if input is not a string
+    }
+    else if (typeof value !== 'string') {
+        return null; // Return null if input is not a string
+    }
+    const result = value.includes('=') ? value.split('=')[1].trim() : null;
+    return result !== null && !isNaN(Number(result)) ? Number(result) : null;
 };
 const now = new Date();
 const pad = (num) => num.toString().padStart(2, '0');

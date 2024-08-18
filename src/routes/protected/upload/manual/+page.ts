@@ -22,7 +22,10 @@ export function _cleanData(upworkData: UpworkData, roverData: RoverData, platfor
 	}
 
 	if (platform === 'upwork') {
-		upworkData.hourlyCharge = extractAfterEquals(upworkData.hourlyCharge.toString()); ;
+		if (upworkData.hourlyCharge) {
+			upworkData.hourlyCharge = extractAfterEquals(upworkData.hourlyCharge);
+		}
+		
 		if (upworkData.endDate === initialData.endDate && !upworkData.date) {
 			upworkData.endDate = null;
 		}
@@ -33,6 +36,7 @@ export function _cleanData(upworkData: UpworkData, roverData: RoverData, platfor
 			upworkData.startTime = null;
 			upworkData.endTime = null;
 		}
+		// console.log("got thru cleaning")
 		return { upworkData };
 	}
 }
@@ -50,7 +54,7 @@ export function _getInitialData(uid: string, cut: number): { upworkData: UpworkD
 		fixedCharge: null,
 		jobDuration: { hours: null, minutes: null }, // Updated to use Duration type
 		clientLocation: '',
-		hoursPerWeek: { hours: null, minutes: null }, // Updated to use Duration type
+		hoursPerWeek: 0,
 		clientHistory: '',
 		platformCut: cut || 20,
 		platformCutType: 'percent',

@@ -52,7 +52,7 @@ export interface UpworkData {
     fixedCharge: number | null;
     jobDuration: { hours: number | null, minutes: number | null } | null;
     clientLocation: string | null;
-    hoursPerWeek: { hours: number | null, minutes: number | null } | null;
+    hoursPerWeek: number | null;
     clientHistory: string | null;
     platformCut: number | null;
 	platformCutType: string | null;

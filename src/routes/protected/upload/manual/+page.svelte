@@ -9,6 +9,7 @@
 		handleBrowseClick,
 		handleFileChange,
 		handleKeyDown,
+		handleRatingsKeyDown,
 	} from '$lib/utils';
 	import { upworkExperience, roverServices } from '$lib/constants';
 
@@ -178,7 +179,8 @@
                 dateError = 'Please Enter Date';
                 errorMessage += ' Date,';
             }
-            if (!upworkData.type.length) {
+			console.log(upworkData)
+            if (!upworkData.type || !upworkData.type.length) {
                 typeError = 'Please Enter Job Category';
                 errorMessage += ' Job Category,';
             }
@@ -186,7 +188,11 @@
                 incomeError = 'Please Enter Income';
                 errorMessage += ' Income,';
             }
-            if (!upworkData.hoursPerWeek.hours && !upworkData.hoursPerWeek.minutes && !(upworkData.startTime && upworkData.endTime) && !upworkData.unitsWorked) {
+			// console.log(!upworkData.hoursPerWeek.hours && !upworkData.hoursPerWeek.minutes )
+			// console.log(upworkData.startTime, upworkData.endTime)
+			// console.log(!upworkData.startTime && !upworkData.endTime)
+			// console.log(!upworkData.unitsWorked)
+            if (!upworkData.hoursPerWeek.hours && !upworkData.hoursPerWeek.minutes && (upworkData.startTime === upworkData.endTime) && !(upworkData.unitsWorked && (upworkData.workUnits === "Hours"||"Minutes"))) {
                 timeError = 'Or Add (Estimated) Hours Worked';
                 errorMessage += ' Time Worked,';
             }
@@ -194,6 +200,8 @@
                 return;
             }
         }
+
+		console.log("GOT HERE")
 		// uploading file to storage and retrieving url
 		if (file) {
 			const storageRef = ref(
@@ -210,6 +218,7 @@
 		if (platform === 'rover') {
 			roverData = _cleanData(upworkData, roverData, platform, initialData);
 		} else {
+			// console.log("cleaning data")
 			upworkData = _cleanData(upworkData, roverData, platform, initialData);
 		}
 
@@ -224,16 +233,22 @@
 					...upworkData.upworkData
 				}
 			};
+			console.log("read data object")
 			const dataToUpdate = dataObjects[platform];
+			console.log("got data object", dataToUpdate)
 			if (dataToUpdate) {
 				setDoc(docRef, dataToUpdate, { merge: true });
+				console.log("set data")
 				successMessage = docID ? 'Update Successful!' : 'Submission Successful!';
 				docID = docRef.id;
 				// Update initial data after successful submission
+				console.log("about to reset initials data")
 				initialData = { ...dataToUpdate };
+				console.log("reset done")
 			}
 		};
 		updateDataObject($page.data.user?.platform);
+		console.log("got through it all")
 	}
 </script>
 
@@ -464,10 +479,12 @@
                     </Accordion>
 
                     {#if upworkData.workUnits !== 'Hours'}
-                    <Label>(Estimated) Time Worked <span class="text-red-500 py-2">Or Time Worked</span></Label>
-                    <Duration
-                        bind:hours={upworkData.hoursPerWeek.hours}
-                        bind:minutes={upworkData.hoursPerWeek.minutes}
+                    <Label>(Estimated) Time Worked 
+						{#if timeError}
+						<span class="text-red-500 py-2">Or Time Worked</span>
+						{/if}
+					</Label>
+                    <Input type="number" bind:value={upworkData.hoursPerWeek} on:keydown={handleRatingsKeyDown}
                     />
                     {/if}
 
