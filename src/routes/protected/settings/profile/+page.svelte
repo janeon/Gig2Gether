@@ -1,12 +1,15 @@
 <script lang="ts">
+    import { onMount } from "svelte";
     import { page } from "$app/stores";
-    import { db } from "$lib/firebase/client";
-    import { collection, doc, getDoc, setDoc } from "firebase/firestore";
-    import { Label, NumberInput, Input, Button } from "flowbite-svelte";
     import { updateTitle } from "$lib/stores/title";
     import { capitalize, currentDate, currentTime, handleKeyDown } from "$lib/utils";
-	import { onMount } from "svelte";
+    
+    import { db } from "$lib/firebase/client";
+    import { collection, doc, getDoc, setDoc } from "firebase/firestore";
+    
+    import { Label, NumberInput, Input, Button, Textarea} from "flowbite-svelte";
     import MultiSelect from 'svelte-multiselect';
+    
     import us_cities from "$lib/us_cities.json";
     
     updateTitle(`My ${capitalize($page.data.user?.platform)} Profile`);
@@ -46,13 +49,19 @@
             data = docSnap.data();
         }
         initialData = { ...data };
-            if ($page.data.user?.platform === "uber") {
+        switch ($page.data.user?.platform) {
+            case "uber":
                 uberData = data;
-            } else if ($page.data.user?.platform === "rover") {
+                break;
+            case "rover":
                 roverData = data;
-            } else if ($page.data.user?.platform === "upwork") {
+                break;
+            case "upwork":
                 upworkData = data;
-            }
+                break;
+            default:
+                break;
+        }
     }
 
     $: dataChanged = JSON.stringify($page.data.user?.platform === "upwork"? upworkData: $page.data.user?.platform === "uber" ? uberData : roverData) !== JSON.stringify(initialData);
@@ -72,7 +81,6 @@
             uploading = false;
             console.error("Error updating profile", error);
         }
-        
         uploading = false;
     }
 
@@ -88,90 +96,63 @@
     <div class="flex flex-col">
         <Label>Uber Rating</Label>
         <NumberInput type="number" bind:value={uberData.rating} on:keydown={handleKeyDown} />
-    </div>
-
-    <div class="flex flex-col">
-        <Label>Car Driven</Label>
+    
+        <Label class="mt-4">Car Driven</Label>
         <Input bind:value={uberData.car} />
-    </div>
-
-    <div class="flex flex-col">
-        <Label>Services Provided</Label>
+    
+        <Label class="mt-4">Services Provided</Label>
         <MultiSelect options={uberServices} bind:selected={uberData.services}
             style="--sms-bg: rgb(249, 250, 251); padding: 8px; border-radius: 8px;"
             --sms-focus-border="2px solid blue"
         />
-    </div>
 
-    <div class="flex flex-col">
-        <Label>Cities Served</Label>
+        <Label class="mt-4">Cities Served</Label>
         <MultiSelect options={us_cities.cities} bind:selected={uberData.cities}
             style="--sms-bg: rgb(249, 250, 251); padding: 8px; border-radius: 8px;"
             --sms-focus-border="2px solid blue"
         />
-    </div>
-
-    <div class="flex flex-col">
-        <Label>What is you car situation?</Label>
+    
+        <Label class="mt-4">What is you car situation?</Label>
         <MultiSelect options={uberCar} bind:value={uberData.carSit} 
         style="--sms-bg: rgb(249, 250, 251); padding: 8px; border-radius: 8px;"
             --sms-focus-border="2px solid blue"/>
-    </div>
-
-    <div class="flex flex-col">
-        <Label>Vehicle Type</Label>
+    
+        <Label class="mt-4">Vehicle Type</Label>
         <Input type = "text" bind:value={uberData.vehicleType} class="mt-1" />
-    </div>
-
-
-    <div class="flex flex-col">
-        <Label>Estimated % of time with passengers</Label>
+    
+        <Label class="mt-4">Estimated % of time with passengers</Label>
         <NumberInput bind:value={uberData.percentPassenger} class="mt-1" />
-    </div>
-
-    <div class="flex flex-col">
-        <Label>Estimated Price of gas</Label>
+    
+        <Label class="mt-4">Estimated Price of gas</Label>
         <NumberInput bind:value={uberData.gas} class="mt-1" />
-    </div>
 
-    <div class="flex flex-col">
-        <Label>Your car's mileage</Label>
+        <Label class="mt-4">Your car's mileage</Label>
         <NumberInput bind:value={uberData.mileage} class="mt-1" />
-    </div>
-
-    <div class="flex flex-col">
-        <Label>Monthly car/ rental payments</Label>
+    
+        <Label class="mt-4">Monthly car/ rental payments</Label>
         <NumberInput bind:value={uberData.payments} class="mt-1" />
-    </div>
-
-    <div class="flex flex-col">
-        <Label>Healthcare</Label>
+    
+        <Label class="mt-4">Healthcare</Label>
         <NumberInput bind:value={uberData.healthcare} class="mt-1" />
-    </div>
+    
 
-
-    <div class="flex flex-col">
-        <Label>Other Equipment/Expenses</Label>
+        <Label class="mt-4">Other expenses/equipments</Label>
+        <Textarea type="text" bind:value={uberData.equipment} class="mt-1" />
+        
+        <Label class="mt-4">Cost of other equipment/expenses</Label>
         <NumberInput bind:value={uberData.equipmentAmount} class="mt-1" />
-    </div>
-
-    <div class="flex flex-col">
-    <Label>Describe expense</Label>
-        <Input type="text" bind:value={uberData.equipment} class="mt-1" />
-    </div>
-
-    <div class="flex flex-col">
-        <Label>Date of Joining Uber</Label>
+    
+        <Label class="mt-4">Date of Joining Uber</Label>
         <Input type="date" size="md" bind:value={uberData.dateJoined} />
     </div>
 
 {:else if $page.data.user?.platform === "rover"}
-    <div class="py-3">
+    <div class="py-4">
         <Label>Rover Rating</Label>
         <NumberInput type="number" bind:value={roverData.rating} on:keydown={handleKeyDown} />
     </div>
 
-    <div class="py-3">
+    <div class="py-4">
         <Label>Pets Accepted</Label>
         <MultiSelect options={pets} bind:selected={roverData.pets}
             style="--sms-bg: rgb(249, 250, 251); padding: 8px; border-radius: 8px;"
@@ -179,7 +160,7 @@
         />
     </div>
 
-    <div class="py-3">
+    <div class="py-4">
         <Label>Services Offered</Label>
         <MultiSelect options={roverServices} bind:selected={roverData.services}
             style="--sms-bg: rgb(249, 250, 251); padding: 8px; border-radius: 8px;"
@@ -187,14 +168,14 @@
         />
     </div>
 
-    <div class="py-3">
+    <div class="py-4">
         <Label>How do you transit to work?</Label>
         <MultiSelect options={roverTransportationTypes} bind:value={roverData.transportation} 
         style="--sms-bg: rgb(249, 250, 251); padding: 8px; border-radius: 8px;"
             --sms-focus-border="2px solid blue"/>
     </div>
 
-    <div class="py-3">
+    <div class="py-4">
         <Label>Cities Served</Label>
         <MultiSelect options={us_cities.cities} bind:selected={roverData.cities}
             style="--sms-bg: rgb(249, 250, 251); padding: 8px; border-radius: 8px;"
@@ -202,58 +183,53 @@
         />
     </div>
 
-    <div class="py-3">
+    <div class="py-4">
         <Label>Date of Joining Rover</Label>
         <Input type="date" bind:value={roverData.dateJoined} />
     </div>
 
-    <div class="py-3">
+    <div class="py-4">
         <Label>What times do you prefer to work?</Label>
         <MultiSelect options={roverTimesTypes} bind:value={roverData.times} 
         style="--sms-bg: rgb(249, 250, 251); padding: 8px; border-radius: 8px;"
         --sms-focus-border="2px solid blue"/>
     </div>
 
-    <div class="py-3">
+    <div class="py-4">
         <Label>Healthcare Costs</Label>
         <NumberInput type="number" bind:value={roverData.healthcare} on:keydown={handleKeyDown} />
     </div>
 
-    <div class="py-3">
+    <div class="py-4">
         <Label>Frequency of Healthcare Charge</Label>
         <Input type="text" bind:value={roverData.healthcare_freq} placeholder="Annually, quarterly ..."/>
     </div>
 
-    <div class="py-3">
+    <div class="py-4">
         <Label>Equipment Costs</Label>
         <NumberInput bind:value={roverData.equipment} class="mt-1" placeholder="For leashes, bikes, etc"/>
     </div>
 
-    <div class="py-3">
+    <div class="py-4">
         <Label>Platform's Cut (%)</Label>
         <NumberInput bind:value={roverData.platformCut} class="mt-1"/>
     </div>
 
-    <div class="py-3">
+    <div class="py-4">
         <Label>Any other costs we missed?</Label>
         <Input type="text" bind:value={roverData.other} class="mt-1"/>
     </div>
 {:else if $page.data.user?.platform === "upwork"}
-
 <div class="flex flex-col">
     <Label>Upwork Rating</Label>
     <NumberInput type="number" bind:value={upworkData.rating} on:keydown={handleKeyDown} />
-</div>
 
-<div class="flex flex-col">
     <Label>Work Categories</Label>
     <MultiSelect options={upworkCategories} bind:selected={roverData.services}
         style="--sms-bg: rgb(249, 250, 251); padding: 8px; border-radius: 8px;"
         --sms-focus-border="2px solid blue"
     />
-</div>
 
-<div class="flex flex-col">
     <Label>Job Success Score</Label>
     <NumberInput type="number" bind:value={upworkData.jss} on:keydown={handleKeyDown} />
 </div>
@@ -320,7 +296,7 @@
         class={`flex-1 py-2 px-5 rounded ${dataChanged ? 'bg-black text-white' : 'bg-gray-400 text-gray-600 cursor-not-allowed opacity-50'} text-sm md:text-base lg:text-lg truncate`}
         on:click={submitProfile}
         disabled={!dataChanged}>
-        Submit
+        Update
     </button>
     </div>
     {/if}

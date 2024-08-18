@@ -3,22 +3,38 @@
     import {page} from '$app/stores'
     export let postData : Post
     import '@fortawesome/fontawesome-free/css/all.min.css'
-    import { doc, updateDoc } from "firebase/firestore";
+    import { doc, getDoc, updateDoc } from "firebase/firestore";
     import { db } from "$lib/firebase/client";
     
     let likes = postData.likes
-    const changeLikes = async()=> {
-        let newLikes
-        const post = doc(db, 'stories', postData.platform, "posts", postData.id)
-        if (likes.includes($page.data.user.uid)) {
-            newLikes = postData.likes.filter((item)=> {item !== $page.data.user.uid})
-        }
-        else {
-            newLikes = [...postData.likes, $page.data.user.uid]
-        }
-        likes = newLikes
-        await updateDoc(post, {likes: newLikes})
+    const changeLikes = async () => {
+    const postRef = await doc(db, 'stories', postData.platform, "posts", postData.id);
+    const docSnap = await getDoc(postRef);
+    likes = docSnap.data().likes
+    
+    // Optimistically update the local state
+    let newLikes;
+    if (likes.includes($page.data.user.uid)) {
+        // Unlike the post
+        newLikes = postData.likes.filter((item) => item !== $page.data.user.uid);
+    } else {
+        // Like the post
+        newLikes = [...postData.likes, $page.data.user.uid];
     }
+
+    // Update Firestore
+    try {
+        await updateDoc(postRef, { likes: newLikes });
+
+        // If Firestore update is successful, update the local state
+        likes = newLikes;
+    } catch (error) {
+        console.error("Error updating likes:", error);
+        // Optionally, revert local state if the Firestore update fails
+    }
+};
+
+
 </script>
 
 <div class="border-t p-3 justify-items-center">
@@ -40,7 +56,13 @@
         {/if}
         <div class="flex justify-between text-sm mt-2">
 			<button class="flex transition-all group items-center gap-2 text-gray-600">
-				<div class="p-1 rounded-full group-hover:bg-blue-500/20" on:click={changeLikes}>
+				<div class="p-1 rounded-full group-hover:bg-blue-500/20" on:click={changeLikes}
+                role="button" tabindex="0"
+                on:keydown={(event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      changeLikes();
+                    }
+                  }}>
 					{#if likes.includes($page.data.user.uid)}
                         <i class="fa-solid fa-heart text-blue-500"></i>
 					{:else}
