@@ -51,7 +51,7 @@ function getRoverData(snapshot) {
     snapshot.forEach(async (item) => {
         const hoursWorked = getHoursDifference(item.data().startTime, item.data().endTime) || item.data().unitsWorked;
         if (!item.data().startTime || !item.data().endTime) {
-            if (item.data().startTime === null && item.data().endTime === null) {
+            if (!item.data().startTime && !item.data().endTime) {
                 return;
             }
             const missingTime = calculateMissingTime(item.data().startTime, item.data().endTime, hoursWorked);
