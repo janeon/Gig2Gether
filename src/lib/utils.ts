@@ -14,7 +14,6 @@ export function handleBrowseClick() {
 	}
   }
 
-
 export const extractAfterEquals = (value) => value?.includes('=') ? value.split('=')[1].trim() : value ?? null;
 const now = new Date();
 const pad = (num) => num.toString().padStart(2, '0');
@@ -230,3 +229,38 @@ export function transformHourlyData(data: { [key: string]: { totalEarnings: numb
     '11': 'November',
     '12': 'December'
 };
+
+export const roverServices = [
+    'Boarding',
+    'House Sitting',
+    'Drop-In Visits',
+    'Doggy Day Care',
+    'Dog Walking'
+];
+
+
+export const upworkExperience = [
+    {value: "entry", name:'Entry-Level'},
+    {value: "intermediate", name:'Intermediate'},
+    {value: "expert", name:'Expert'}
+];
+
+export async function handleFileChange(event: Event) {
+	const fileInput = event.target as HTMLInputElement;
+	if (fileInput.files && fileInput.files.length > 0) {
+		return fileInput.files[0];
+	}
+	return null;
+}
+
+export function handleKeyDown(event: KeyboardEvent) {
+    if (
+        !/^\d$/.test(event.key) && // Allow digits 0-9
+        event.key !== "Backspace" && // Allow backspace
+        event.key !== "ArrowLeft" && // Allow arrow keys
+        event.key !== "ArrowRight" && // Allow arrow keys
+        event.key !== "Tab" // Allow tab
+    ) {
+        event.preventDefault();
+    }
+}

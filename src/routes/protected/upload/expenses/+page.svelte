@@ -10,17 +10,19 @@
     import { Label, Input, Textarea } from "flowbite-svelte";
     import IconNumberInput from '$lib/components/IconNumberInput.svelte';
     
-    import { currentDate, currentTime, handleBrowseClick } from "$lib/utils";
+    import { currentTime, handleBrowseClick, handleFileChange } from "$lib/utils";
     import { updateTitle } from "$lib/stores/title";
     import { capitalize, extractAfterEquals } from "$lib/utils";
     
     updateTitle(capitalize($page.data.user?.platform) + " Expenses");
 
     let successMessage = '';
-    let errorMessage = '';
+    let errorMessage = 'Please enter:';
+    let amountError = '';
+	let dateError = '';
 
     let data = {
-        date: currentDate,
+        date: null,
         time: currentTime,
         expenseType: [],
         description: '',
@@ -51,18 +53,33 @@
     $: fileName = file ? file.name : 'Upload a Photo (e.g., Receipts)';
     let url : string
 
-    async function handleFileChange (event: Event) {
-      const fileInput = event.target as HTMLInputElement;
-      imageUrlPreview = URL.createObjectURL(fileInput.files[0])
-      if (fileInput.files && fileInput.files.length > 0) {
-        file = fileInput.files[0];
-        fileName = file.name;
-      }
+    async function onFileChange(event: Event) {
+        file = await handleFileChange(event);
+        if (file) {
+            imageUrlPreview = URL.createObjectURL(file);
+        }
+    }
+
+    function clearFile() {
+        fileName = 'Upload a Photo (e.g., Receipts)';
+        imageUrlPreview = '';
+        
+        const fileInput = document.getElementById('selectedFile') as HTMLInputElement;
+        fileInput.value = ''; // Clear the file input
     }
 
     async function submitExpenses() {
-        if (!data.amount) {
-            errorMessage = "Please Enter an Expense Amount";
+        errorMessage = "Please enter:";
+        dateError = amountError = "";
+        if (!data.amount || !data.date) {
+            if (!data.amount) {
+                amountError = "Please Enter Amount";
+                errorMessage += " Amount,";
+            }
+            if (!data.date) {
+                dateError = "Please Enter Date";
+                errorMessage += " Date";
+            }
             return;
         }
 
@@ -73,7 +90,7 @@
             url = await getDownloadURL(result.ref);
         }
 
-        errorMessage = "";
+        errorMessage = "Please enter:";
         const collectionRef = collection(db, "upload", "expenses", $page.data.user.platform);
         const docRef = docID ? doc(collectionRef, docID) : doc(collectionRef);
         data.amount = extractAfterEquals(data.amount);
@@ -90,7 +107,8 @@
     <div class="py-2 flex flex-col items-center w-full">
         <div class="w-full max-w-md space-y-5">
             <div class="flex flex-col">
-                <Label>Expense Date</Label>
+                <Label>Expense Date<span class="text-red-500">*</span></Label>
+                <p class="text-red-500">{dateError}</p>
                 <Input type="date" bind:value={data.date} class="mt-1" />
             </div>
 
@@ -129,7 +147,8 @@
             </div>
 
             <div class="flex flex-col">
-                <Label>Amount</Label>
+                <Label>Amount<span class="text-red-500">*</span></Label>
+                <p class="text-red-500">{amountError}</p>
                 <IconNumberInput bind:value={data.amount} icon={dollar} className="mt-1" />
             </div>
 
@@ -144,13 +163,24 @@
                     />
                     <p class="text-center">{fileName}</p>
                 </div>
+
+                {#if imageUrlPreview}
+                <div class="flex justify-center mt-4">
+                    <button 
+                        on:click={clearFile} 
+                        class="bg-red-500 text-white font-bold py-2 px-4 rounded hover:bg-red-700"
+                    >
+                        Clear
+                    </button>
+                </div>
+                {/if}
                 
                 <input 
                     type="file" 
                     id="selectedFile" 
                     style="display: none;" 
                     accept="video/*,image/*" 
-                    on:change={handleFileChange} 
+                    on:change={onFileChange} 
                 />
 
                 <div class = "flex items-center justify-center">
@@ -163,7 +193,7 @@
             {#if successMessage}
                 <p class="text-green-600 mt-2">{successMessage}</p>
             {/if}
-            {#if errorMessage}
+            {#if errorMessage !== "Please enter:"}
                 <p class="text-red-600 mt-2">{errorMessage}</p>
             {/if}
         </div>  

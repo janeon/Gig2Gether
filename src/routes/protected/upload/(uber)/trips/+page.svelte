@@ -6,7 +6,7 @@
     import { getDownloadURL, ref, uploadBytes} from "firebase/storage";
 	import { collection, doc, setDoc } from 'firebase/firestore';
 
-	import { currentDate, currentTime, extractAfterEquals, capitalize, handleBrowseClick } from '$lib/utils';
+	import { currentTime, extractAfterEquals, capitalize, handleBrowseClick, handleFileChange } from '$lib/utils';
 	import { updateTitle } from '$lib/stores/title';
 	
 	import { Label, Input, Textarea } from 'flowbite-svelte';
@@ -15,13 +15,13 @@
 	updateTitle(capitalize($page.data.user?.platform) + ' Trip Upload');
 
 	let successMessage = '';
-	let errorMessage = '';
-
+	let errorMessage = 'Please enter:';
 	let fareError = '';
+	let dateError = '';
 
 	// Uber Expenses
 	let tripData = {
-		date: currentDate,
+		date: null,
 		time: currentTime,
 		endTime: currentTime,
 		type: 'trip',
@@ -49,21 +49,35 @@
     $: fileName = file ? file.name : 'Upload a Photo';
     let url : string
 
-    async function handleFileChange (event: Event) {
-      const fileInput = event.target as HTMLInputElement;
-      imageUrlPreview = URL.createObjectURL(fileInput.files[0])
-      if (fileInput.files && fileInput.files.length > 0) {
-        file = fileInput.files[0];
-        fileName = file.name;
-      }
+    async function onFileChange(event: Event) {
+        file = await handleFileChange(event);
+        if (file) {
+            imageUrlPreview = URL.createObjectURL(file);
+        }
+    }
+
+	function clearFile() {
+        fileName = 'Upload a Photo';
+        imageUrlPreview = '';
+        
+        const fileInput = document.getElementById('selectedFile') as HTMLInputElement;
+        fileInput.value = ''; // Clear the file input
     }
 
 	async function submitManualTrip() {
-		if (!tripData.fare) {
-			fareError = 'Please Enter a Fare';
-			return;
-		}
-		fareError = '';
+		errorMessage = 'Please enter:';
+		fareError = dateError = '';
+		if (!tripData.fare || !tripData.date) {
+            if (!tripData.fare) {
+				fareError = 'Please Enter Fare';
+                errorMessage += " Fare,";
+            }
+            if (!tripData.date) {
+				dateError = 'Please Enter Trip Date';
+                errorMessage += " Date";
+            }
+            return;
+        }
 
 		// Process properties if no errors
 		const properties = ['fare', 'surge', 'waitTimeBonus', 'tips', 'boost', 'withholdings'];
@@ -95,8 +109,10 @@
 	<div class="py-2 flex flex-col items-center w-full">
 		<div class="w-full max-w-md space-y-5">
 			<div class="flex flex-col">
-				<Label>Date</Label>
-				<Input type="date" bind:value={tripData.date} class="mt-1" />
+				<Label>Date<span class="text-red-500">*</span>
+				</Label>
+				<p class="text-red-500">{dateError}</p>
+				<Input type="date" bind:value={tripData.date} class="mt-1" required/>
 			</div>
 
 			<div class="flex flex-col">
@@ -105,14 +121,14 @@
 			</div>
 
 			<div class="flex flex-col">
-				<Label>Fare</Label>
-				<p class="text-red-500">{fareError}</p>
-				<IconNumberInput bind:value={tripData.fare} className="mt-1" />
+				<Label>End Time</Label> 
+				<Input type="time" bind:value={tripData.endTime} class="mt-1" />
 			</div>
 
 			<div class="flex flex-col">
-				<Label>End Time</Label> 
-				<Input type="time" bind:value={tripData.endTime} class="mt-1" />
+				<Label>Fare<span class="text-red-500">*</span></Label>
+				<p class="text-red-500">{fareError}</p>
+				<IconNumberInput bind:value={tripData.fare} className="mt-1"/>
 			</div>
 
 			<div class="flex flex-col">
@@ -156,31 +172,43 @@
 					class="bg-gray-500 text-white font-bold py-2 px-4 rounded hover:bg-gray-700" 
 					/>
 					<p class="text-center">{fileName}</p>
-				
+				</div>
+
+				{#if imageUrlPreview}
+                <div class="flex justify-center mt-4">
+                    <button 
+                        on:click={clearFile} 
+                        class="bg-red-500 text-white font-bold py-2 px-4 rounded hover:bg-red-700"
+                    >
+                        Clear
+                    </button>
+                </div>
+                {/if}
 				
 				<input 
 					type="file" 
 					id="selectedFile" 
 					style="display: none;" 
 					accept="video/*,image/*" 
-					on:change={handleFileChange} 
+					on:change={onFileChange} 
 				/>
-			</div>
+			
 				<div class = "flex items-center justify-center">
 					<img src={imageUrlPreview} class="rounded-sm mt-2 object-contain w-1/2 " alt="" />
 				</div>
 			</div>
+		</div>
             <div class="flex justify-center mt-2">
 				{#if successMessage}
 					<p class="text-green-600 mt-2">{successMessage}</p>
 				{/if}
-				{#if errorMessage}
+				{#if errorMessage !== "Please enter:"}
 					<p class="text-red-600 mt-2">{errorMessage}</p>
 				{/if}
 			</div>
 			<div class="flex flex-row items-center gap-4 mt-6">
 				<button
-					class={`flex-1 py-2 rounded ${dataChanged ? 'bg-black text-white' : 'bg-gray-400 text-gray-600 cursor-not-allowed opacity-50'} text-sm md:text-base lg:text-lg truncate`}
+                class={`flex-1 py-2 rounded ${dataChanged ? 'bg-black text-white' : 'bg-gray-400 text-gray-600 cursor-not-allowed opacity-50'} text-sm md:text-base lg:text-lg truncate`}
 					on:click={submitManualTrip}
 					disabled={!dataChanged}
 					style="min-width: 120px;"
@@ -209,6 +237,5 @@
             </button>
         </form>
         {/if}
-		</div>
 	</div>
 </div>

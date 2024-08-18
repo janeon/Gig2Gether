@@ -1,9 +1,9 @@
-<script>
+<script lang="ts">
     import { goto } from '$app/navigation';
     import { Button } from 'flowbite-svelte';
     export let href = "stay";
-    export let buttonText = "";
-    export let type = "button";
+    export let buttonText: string = "";
+    export let type: "submit"|"button"|"reset" = "button";
     export let onclick = handleClick;
   
     function handleClick() {      

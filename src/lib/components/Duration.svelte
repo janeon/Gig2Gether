@@ -1,6 +1,7 @@
 <script lang="ts">
     import { createEventDispatcher } from 'svelte';
     import { Input } from 'flowbite-svelte';
+	import { handleKeyDown } from '$lib/utils';
 
     export let hours: number | null = null;
     export let minutes: number | null = null;
@@ -20,17 +21,6 @@
         dispatch('change', { hours, minutes });
     }
 
-    function handleKeyDown(event: KeyboardEvent) {
-        if (
-            !/^\d$/.test(event.key) && // Allow digits 0-9
-            event.key !== "Backspace" && // Allow backspace
-            event.key !== "ArrowLeft" && // Allow arrow keys
-            event.key !== "ArrowRight" && // Allow arrow keys
-            event.key !== "Tab" // Allow tab
-        ) {
-            event.preventDefault();
-        }
-    }
 </script>
 
 <div class="flex items-center space-x-4">

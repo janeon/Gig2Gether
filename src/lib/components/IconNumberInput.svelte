@@ -9,15 +9,19 @@
     const allowedPattern = /^[\d+\-*/().]*$/;
 
     function handleInput(event: Event) {
-        const input = event.target as HTMLInputElement;
-        if (!allowedPattern.test(input.value)) {
-        // Remove invalid characters
-        input.value = input.value.replace(/[^0-9+\-*/().]/g, '');
-        value = input.value;
-        } else {
-        value = input.value;
-        }
+    const input = event.target as HTMLInputElement;
+    
+    // Remove invalid characters
+    input.value = input.value.replace(/[^0-9+\-*/().]/g, '');
+
+    // Prevent "-" as the first character
+    if (input.value.startsWith('-')) {
+        input.value = input.value.slice(1);
     }
+
+    value = input.value;
+}
+
 
     function handleBlur() {
         // Perform arithmetic calculation

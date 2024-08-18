@@ -4,7 +4,7 @@
     import { collection, doc, getDoc, setDoc } from "firebase/firestore";
     import { Label, NumberInput, Input, Button } from "flowbite-svelte";
     import { updateTitle } from "$lib/stores/title";
-    import { capitalize, currentDate, currentTime } from "$lib/utils";
+    import { capitalize, currentDate, currentTime, handleKeyDown } from "$lib/utils";
 	import { onMount } from "svelte";
     import MultiSelect from 'svelte-multiselect';
     import us_cities from "$lib/us_cities.json";
@@ -87,7 +87,7 @@
 
     <div class="flex flex-col">
         <Label>Uber Rating</Label>
-        <NumberInput type="number" bind:value={uberData.rating} />
+        <NumberInput type="number" bind:value={uberData.rating} on:keydown={handleKeyDown} />
     </div>
 
     <div class="flex flex-col">
@@ -168,7 +168,7 @@
 {:else if $page.data.user?.platform === "rover"}
     <div class="py-3">
         <Label>Rover Rating</Label>
-        <NumberInput type="number" bind:value={roverData.rating} />
+        <NumberInput type="number" bind:value={roverData.rating} on:keydown={handleKeyDown} />
     </div>
 
     <div class="py-3">
@@ -216,7 +216,7 @@
 
     <div class="py-3">
         <Label>Healthcare Costs</Label>
-        <NumberInput type="number" bind:value={roverData.healthcare} />
+        <NumberInput type="number" bind:value={roverData.healthcare} on:keydown={handleKeyDown} />
     </div>
 
     <div class="py-3">
@@ -242,7 +242,7 @@
 
 <div class="flex flex-col">
     <Label>Upwork Rating</Label>
-    <NumberInput type="number" bind:value={upworkData.rating} />
+    <NumberInput type="number" bind:value={upworkData.rating} on:keydown={handleKeyDown} />
 </div>
 
 <div class="flex flex-col">
@@ -255,12 +255,12 @@
 
 <div class="flex flex-col">
     <Label>Job Success Score</Label>
-    <NumberInput type="number" bind:value={upworkData.jss} />
+    <NumberInput type="number" bind:value={upworkData.jss} on:keydown={handleKeyDown} />
 </div>
 
 <div class="flex flex-col">
     <Label>Hourly Charge</Label>
-    <NumberInput type="number" bind:value={upworkData.hourlyCharge} />
+    <NumberInput type="number" bind:value={upworkData.hourlyCharge} on:keydown={handleKeyDown} />
 </div>
 
 <div class="flex flex-col">
