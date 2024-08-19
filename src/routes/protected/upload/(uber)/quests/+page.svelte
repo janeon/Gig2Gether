@@ -98,6 +98,7 @@
 
 		const fileInput = document.getElementById('selectedFile') as HTMLInputElement;
 		fileInput.value = ''; // Clear the file input
+		questData.url = '';
 	}
 
 	async function submitManualQuest() {
@@ -272,7 +273,7 @@
 			<div class="flex flex-row items-center gap-4">
 				<Button
 					class="flex-1 py-2 text-sm md:text-base lg:text-lg truncate"
-					color={dataChanged ? 'dark' : 'light'}
+					color={dataChanged ? 'blue' : 'light'}
 					disabled={!dataChanged}
 					on:click={submitManualQuest}
 					style="border-radius: 4px; min-width: 120px; flex-grow: 1;"
@@ -308,7 +309,7 @@
 						
 					<Button
 						class="flex-1 py-3 text-sm md:text-base lg:text-base"
-						color="dark"
+						color="blue"
 						style="border-radius: 4px; min-width: 120px; flex-grow: 1;"
 						type="submit"
 						>
