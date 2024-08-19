@@ -34,7 +34,7 @@
 	onMount(() => {
 		const script = document.createElement('script');
 		script.async = true;
-		script.src = `https://www.googletagmanager.com/gtag/js?id=G-9EQ9LZS25N`;
+		script.src = `https://www.googletagmanager.com/gtag/js?id=G-LDJKBQCTBN`;
 		document.head.appendChild(script);
 
 		window.dataLayer = window.dataLayer || [];
@@ -43,7 +43,7 @@
 
 		gtag(
 			'config', 
-			'G-9EQ9LZS25N',
+			'G-LDJKBQCTBN',
 			{  'user_id': $page.data.user?.uid }
 		);
 		mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
