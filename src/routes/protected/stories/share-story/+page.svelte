@@ -1,332 +1,313 @@
 <script lang="ts">
-    import { addDoc, collection, doc, getDoc } from "firebase/firestore";
-    import { db, storage } from "$lib/firebase/client";
-    import { getDownloadURL, ref, uploadBytes} from "firebase/storage";
+	import { addDoc, collection, doc, getDoc } from 'firebase/firestore';
+	import { db, storage } from '$lib/firebase/client';
+	import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 
-    import { Button, Input, ButtonGroup, Textarea } from "flowbite-svelte";
-    import { ToggleGroupItem, ToggleGroup } from "$lib/components/ui/toggle-group";
-    import BlueButton from "$lib/components/BlueButton.svelte";
-    import Tags from "$lib/components/tags.svelte";
-    
-    import { onMount } from "svelte";
-    import { page } from "$app/stores";
-    import { updateTitle } from "$lib/stores/title";
-    import { goto } from "$app/navigation";
-    updateTitle("Share Story");
-    
-    let tags : string[] = []
-    let file: File
-    let title : string = ""
-    let description : string = ""
-    let url : string
-    let type : string
-    let uploading = false
+	import { Button, Input, ButtonGroup, Textarea } from 'flowbite-svelte';
+	import { ToggleGroupItem, ToggleGroup } from '$lib/components/ui/toggle-group';
+	import BlueButton from '$lib/components/BlueButton.svelte';
+	import Tags from '$lib/components/tags.svelte';
 
-    let imageUrlPreview : string
-    $: fileName = file ? file.name : 'No file selected';
-    $: postSharing = []
-    $: sharePrivate = false
-    $: errorMessageType = " "
-    $: errorMessageTags = " "
-    $: errorMessageSharing = " "
-    $: errorMessageContent = " "
+	import { onMount } from 'svelte';
+	import { page } from '$app/stores';
+	import { updateTitle } from '$lib/stores/title';
+	import { goto } from '$app/navigation';
+	updateTitle('Share Story');
 
+	let tags: string[] = [];
+	let file: File;
+	let title: string = '';
+	let description: string = '';
+	let url: string;
+	let type: string;
+	let uploading = false;
 
-    const commonTags = [
-        {value: "fair pay", label: "Fair Pay"},
-        {value: "discrimination", label: "Discrimination"},
-        {value: "ratings", label: "Ratings"},
-        {value: "working time", label: "Working Time"},
-        {value: "stress", label: "Stress (e.g. from precarity)"},
-        {value: "deactivation", label: "Deactivation"},
-        {value: "technology", label: "Technology"},
-        {value: "other", label: "Other"}
-    ];
+	let imageUrlPreview: string;
+	$: fileName = file ? file.name : 'Share a Photo/Video';
+	$: [
+		postSharing,
+		sharePrivate,
+		errorMessageContent,
+		errorMessageType,
+		errorMessageTags,
+		errorMessageSharing
+	] = [[], false, '', '', '', ''];
 
-    const uberTags = [
-        {value: "safety", label: "Safety"},
-        {value: "care-giving", label: "Care-giving"},
-        {value: "understanding algorithms", label: "Understanding Algorithms"},
-        ...commonTags
-    ];
+	const commonTags = [
+		{ value: 'fair pay', label: 'Fair Pay' },
+		{ value: 'discrimination', label: 'Discrimination' },
+		{ value: 'ratings', label: 'Ratings' },
+		{ value: 'working time', label: 'Working Time' },
+		{ value: 'stress', label: 'Stress (e.g. from precarity)' },
+		{ value: 'deactivation', label: 'Deactivation' },
+		{ value: 'technology', label: 'Technology' },
+		{ value: 'other', label: 'Other' }
+	];
 
-    const roverTags = [
-        {value: "safety", label: "Safety"},
-        {value: "care-giving", label: "Care-giving"},
-        {value: "understanding algorithms", label: "Understanding Algorithms"},
-        ...commonTags
-    ];
+	const uberTags = [
+		{ value: 'safety', label: 'Safety' },
+		{ value: 'care-giving', label: 'Care-giving' },
+		{ value: 'understanding algorithms', label: 'Understanding Algorithms' },
+		...commonTags
+	];
 
-    const upworkTags = [
-        {value: "scams", label: "Scams"},
-        {value: "getting started", label: "Getting Started"},
-        {value: "algorithm functionality", label: "Algorithm Functionality"},
-        {value: "customers", label: "Customers"},
-        ...commonTags
-    ];
+	const roverTags = [
+		{ value: 'safety', label: 'Safety' },
+		{ value: 'care-giving', label: 'Care-giving' },
+		{ value: 'understanding algorithms', label: 'Understanding Algorithms' },
+		...commonTags
+	];
 
-    const sharingOptions = [
-        { value: 'private', label: 'Private' },
-        { value: 'workers', label: 'Workers' },
-        { value: 'policymakers', label: 'Policymakers' },
-        { value: 'advocates', label: 'Advocates' }
-    ];
+	const upworkTags = [
+		{ value: 'scams', label: 'Scams' },
+		{ value: 'getting started', label: 'Getting Started' },
+		{ value: 'algorithm functionality', label: 'Algorithm Functionality' },
+		{ value: 'customers', label: 'Customers' },
+		...commonTags
+	];
 
-    function handleClick() {
-      const fileInput = document.getElementById('selectedFile');
-      if (fileInput) {
-        (fileInput as HTMLInputElement).click();
-      }
-    }
+	const sharingOptions = [
+		{ value: 'private', label: 'Private' },
+		{ value: 'workers', label: 'Workers' },
+		{ value: 'policymakers', label: 'Policymakers' },
+		{ value: 'advocates', label: 'Advocates' }
+	];
 
-    async function handleFileChange (event: Event) {
-      const fileInput = event.target as HTMLInputElement;
-      imageUrlPreview = URL.createObjectURL(fileInput.files[0])
-      if (fileInput.files && fileInput.files.length > 0) {
-        file = fileInput.files[0];
-        fileName = file.name;
-      }
-    }
+	function handleClick() {
+		const fileInput = document.getElementById('selectedFile');
+		if (fileInput) {
+			(fileInput as HTMLInputElement).click();
+		}
+	}
 
-    async function uploadContent() {
-      if (uploading) {
-        return
-      }
-        //error catching
-        if (!type) {
-            errorMessageType = "Please select a type"
-        }
-        else {
-            errorMessageType = ""
-        }
+	async function handleFileChange(event: Event) {
+		const fileInput = event.target as HTMLInputElement;
+		imageUrlPreview = URL.createObjectURL(fileInput.files[0]);
+		if (fileInput.files && fileInput.files.length > 0) {
+			file = fileInput.files[0];
+			fileName = file.name;
+		}
+	}
 
-        if (tags.length == 0) {
-            errorMessageTags = "Please select at least one tag"
-        }
-        else {
-            errorMessageTags = ""
-        }
+	async function uploadContent() {
+		if (uploading) return;
 
-        if (postSharing.length == 0) {
-            errorMessageSharing = "Please choose a sharing preference"
-        }
-        else {
-            errorMessageSharing = ""
-        }
+		// Error checking
+		errorMessageType = type ? '' : 'Please select a type';
+		errorMessageTags = tags.length ? '' : 'Please select at least one tag';
+		errorMessageSharing = postSharing.length ? '' : 'Please choose a sharing preference';
+		errorMessageContent =
+			file || title.length || description.length ? '' : 'Please add content to share';
 
-        if (!file && !title.length && !description.length) {
-            errorMessageContent = "Please add content to share"
-        }
-        else {
-            errorMessageContent = ""
-        }
+		if (errorMessageType || errorMessageTags || errorMessageSharing || errorMessageContent) return;
 
-        if (errorMessageSharing != "" || errorMessageTags != "" || errorMessageType != "" || errorMessageContent != "") {
-            return
-        }
-        //end of error catching
+		// Ensure only 'private' is selected if included
+		if (postSharing.includes('private')) postSharing = ['private'];
 
+		uploading = true;
 
-        if (postSharing.includes('private')) {
-            postSharing = ['private']
-        }
+		try {
+			if (file) {
+				const storageRef = ref(storage, `stories/strategy/${$page.data.user.uid}/${file.name}`);
+				const result = await uploadBytes(storageRef, file);
+				url = await getDownloadURL(result.ref);
+			}
 
-        uploading = true
-        if (file) {
-            try {
-                const storageRef = ref(storage, 'stories/strategy/'+$page.data.user.uid+'/'+file.name)
-                const result = await uploadBytes(storageRef, file)
-                url = await getDownloadURL(result.ref)
-            } catch (error) {
-                console.log("error with video upload")
-            }
-        }
+			const postData = {
+				type,
+				title,
+				description,
+				uid: $page.data.user.uid,
+				url: url || null,
+				date: new Date(),
+				tags,
+				platform: $page.data.user.platform,
+				likes: [],
+				sharing: postSharing,
+				username: $page.data.user.username
+			};
 
-        if (url) {
-            try {
-            await addDoc(collection(db, 'stories', $page.data.user.platform, "posts"), 
-            { type, title, description, uid: $page.data.user.uid,
-            url, date: new Date(), tags, platform: $page.data.user.platform, likes: [],
-            sharing: postSharing, username: $page.data.user.username
+			await addDoc(collection(db, 'stories', $page.data.user.platform, 'posts'), postData);
+			goto('/protected/stories/story-feed');
+		} catch {
+			uploading = false;
+		}
+	}
 
-        })
-        goto('/protected/stories/story-feed')
-        } catch {
-            uploading = false
-        }
-        }
-        else {
-            try {
-                await addDoc(collection(db, 'stories', $page.data.user.platform, "posts"), {
-                type, title, description, uid: $page.data.user.uid, date: new Date(),
-                likes: [], tags, platform: $page.data.user.platform, sharing: postSharing, 
-                username: $page.data.user.username
+	function changeSharingPreferencesSingle() {
+		postSharing = [];
+		sharePrivate = false;
+	}
 
-            })
-            goto('/protected/stories/story-feed')
-        } catch {
-            uploading = false
-          }
-        }
-    }
+	function changeSharingPreferencesMultiple(value: String[]) {
+		if (value.includes('private')) {
+			sharePrivate = true;
+		}
+		if (postSharing.includes(value)) {
+			postSharing = postSharing.filter((item) => item !== value);
+		} else {
+			postSharing = [...postSharing, value];
+		}
+	}
 
-    function changeSharingPreferencesSingle() {
-        postSharing = []
-        sharePrivate = false
-    }
-
-    function changeSharingPreferencesMultiple(value:String[]) {
-        if (value.includes("private")) {
-            sharePrivate = true
-        }
-        if (postSharing.includes(value)) {
-            postSharing = postSharing.filter(item => item !== value);
-        } else {
-            postSharing = [...postSharing, value];
-        }
-    }
-
-    onMount(async()=>{
-        let collectionRef = collection(db, "users", $page.data.user.uid, "settings")
-        let docRef = doc(collectionRef, "sharing")
-        let docSnap = await getDoc(docRef)
-        if (docSnap.exists()) {
-            postSharing = docSnap.data().sharing
-        }
-        if (postSharing.includes('private')) {
-            sharePrivate = true
-        }
-    })
-
+	onMount(async () => {
+		let collectionRef = collection(db, 'users', $page.data.user.uid, 'settings');
+		let docRef = doc(collectionRef, 'sharing');
+		let docSnap = await getDoc(docRef);
+		if (docSnap.exists()) {
+			postSharing = docSnap.data().sharing;
+		}
+		if (postSharing.includes('private')) {
+			sharePrivate = true;
+		}
+	});
 </script>
-<p class="text-red-500">{errorMessageType}</p>
+
 <!-- Issue/Strategy Selection -->
 
 <div class="flex justify-center py-2">
-    <div class="flex items-center space-x-2">
-    <h2 class="font-medium whitespace-nowrap">Story Type:</h2>
-    <ButtonGroup>
-      {#each ['issue', 'strategy'] as option}
-        <Button
-        on:click={() => type = option}
-        class={`flex-1 ${type === option ? 'bg-blue-500 text-white font-bold' : 'bg-gray-200 text-gray-600 font-normal'} ${type === option ? 'focus:outline-none ring-2 ring-blue-500' : ''} hover:bg-transparent hover:text-current`}
-        >
-          {option.charAt(0).toUpperCase() + option.slice(1)}
-        </Button>
-      {/each}
-    </ButtonGroup>
-  </div>
+	<div class="flex items-center space-x-2">
+		<h2 class="font-medium whitespace-nowrap">Story Type <span class="text-red-500">*</span>:</h2>
+		<ButtonGroup>
+			{#each ['issue', 'strategy'] as option}
+				<Button
+					on:click={() => (type = option)}
+					class={`flex-1 ${type === option ? 'bg-blue-500 text-white font-bold' : 'bg-gray-200 text-gray-600 font-normal'} ${type === option ? 'focus:outline-none ring-2 ring-blue-500' : ''} hover:bg-transparent hover:text-current`}
+				>
+					{option.charAt(0).toUpperCase() + option.slice(1)}
+				</Button>
+			{/each}
+		</ButtonGroup>
+		<p class="text-red-500">{errorMessageType}</p>
+	</div>
 </div>
 
 <!-- Tag selection -->
 <h1 class="font-medium whitespace-nowrap py-5">
-    Tag your story with related topics!</h1>
-<p class="text-red-500">{errorMessageTags}</p>
-{#if $page.data.user.platform == "rover"}
-  <Tags tags={roverTags} bind:bindGroup={tags} />
-{:else if $page.data.user.platform == "uber"}
-  <Tags tags={uberTags} bind:bindGroup={tags} />
-{:else if $page.data.user.platform == "upwork"}
-  <Tags tags={upworkTags} bind:bindGroup={tags} />
+	Tag related topics!
+	<span class="text-red-500">*{errorMessageTags}</span>
+</h1>
+{#if $page.data.user.platform == 'rover'}
+	<Tags tags={roverTags} bind:bindGroup={tags} />
+{:else if $page.data.user.platform == 'uber'}
+	<Tags tags={uberTags} bind:bindGroup={tags} />
+{:else if $page.data.user.platform == 'upwork'}
+	<Tags tags={upworkTags} bind:bindGroup={tags} />
 {/if}
 
-<p class="text-red-500 pt-5">{errorMessageContent}</p>
 <div class="py-5">
-Title:
-<Input placeholder="Short summary" bind:value={title}/>
+	Title: <span class="text-red-500">*{errorMessageContent}</span>
+	<Input placeholder="Short summary" bind:value={title} />
 
-<div class="mt-4">
-Description:
-<Textarea id="description" placeholder="Elaborate on your story here"
-bind:value={description}
-class="resize-none"
-style="
+	<div class="mt-4">
+		Description:
+		<Textarea
+			id="description"
+			placeholder="Elaborate on your story here"
+			bind:value={description}
+			class="resize-none"
+			style="
   background-color: rgb(249, 250, 251); /* Light background */
   border: 1px solid rgb(209, 213, 219); /* Gray border */
   border-radius: 0.375rem; /* Rounded corners */
   padding: 0.5rem; /* Padding inside textarea */
   color: rgb(31, 41, 55); /* Text color */
-"/>
+"
+		/>
+	</div>
+
+	<!-- https://stackoverflow.com/questions/1084925/input-type-file-show-only-button -->
+	<div class="flex items-center space-x-4 pt-5 justify-center">
+		<input
+			type="button"
+			value="Browse"
+			on:click={handleClick}
+			class="bg-gray-500 text-white font-bold py-2 px-4 rounded hover:bg-gray-700"
+		/>
+		<p class="text-center">{fileName}</p>
+	</div>
+
+	<input
+		type="file"
+		id="selectedFile"
+		style="display: none;"
+		accept="video/*,image/*"
+		on:change={handleFileChange}
+	/>
+
+	<div class="flex items-center justify-center">
+		<img src={imageUrlPreview} class="rounded-sm mt-2 object-contain w-1/2" alt="" />
+	</div>
 </div>
 
-<!-- https://stackoverflow.com/questions/1084925/input-type-file-show-only-button -->
-<div class="flex items-center space-x-4 pt-5 justify-center">
-    <input 
-      type="button" 
-      value="Browse" 
-      on:click={handleClick} 
-      class="bg-gray-500 text-white font-bold py-2 px-4 rounded hover:bg-gray-700" 
-    />
-    <p class="text-center">{fileName}</p>
-  </div>
-  
-  <input 
-    type="file" 
-    id="selectedFile" 
-    style="display: none;" 
-    accept="video/*,image/*" 
-    on:change={handleFileChange} 
-  />
+<div class="py-5">
+	<h2 class="font-medium mb-5 flex justify-center">
+		Who to Share With? <span class="text-red-500">*{errorMessageSharing}</span>
+	</h2>
 
-  <div class = "flex items-center justify-center">
-    <img src={imageUrlPreview} class="rounded-sm mt-2 object-contain w-1/2 " alt="" />
-    <!-- {#if url}
-    <img src={url} class="rounded-sm mt-2 object-contain w-1/2 " alt="" />
-    {/if} -->
-  </div>
-</div>
+	{#if sharePrivate}
+		<div class="space-y-2">
+			<div class="flex justify-center">
+				<ToggleGroup type="single" onValueChange={changeSharingPreferencesSingle}>
+					<ToggleGroupItem value="private" data-state="on" class="font-bold"
+						>Private</ToggleGroupItem
+					>
+				</ToggleGroup>
+			</div>
 
+			<div class="flex justify-center space-x-2">
+				<ToggleGroup type="single" onValueChange={changeSharingPreferencesSingle}>
+					<ToggleGroupItem value="workers" disabled>Workers</ToggleGroupItem>
+					<ToggleGroupItem value="policymakers" disabled>Policymakers</ToggleGroupItem>
+					<ToggleGroupItem value="advocates" disabled>Advocates</ToggleGroupItem>
+				</ToggleGroup>
+			</div>
+		</div>
+	{:else}
+		<div class="space-y-2">
+			<div class="flex justify-center">
+				<ToggleGroup
+					type="multiple"
+					variant="outline"
+					bind:value={postSharing}
+					onValueChange={changeSharingPreferencesMultiple}
+				>
+					<ToggleGroupItem
+						value={sharingOptions[0].value}
+						class={postSharing.includes(sharingOptions[0].value) ? 'font-bold' : ''}
+					>
+						{sharingOptions[0].label}
+					</ToggleGroupItem>
+				</ToggleGroup>
+			</div>
 
-<div class = "py-5">
-    <h2 class="font-medium mb-5">Who Would You Like to Share Your Worker Data With?</h2>
-    <p class="text-red-500">{errorMessageSharing}</p>
-    {#if sharePrivate}
-    <div class="space-y-2">
-        <div class="flex justify-center">
-          <ToggleGroup type="single" onValueChange={changeSharingPreferencesSingle}>
-            <ToggleGroupItem value="private" data-state='on' class="font-bold">Private</ToggleGroupItem>
-          </ToggleGroup>
-        </div>
-        
-        <div class="flex justify-center space-x-2">
-          <ToggleGroup type="single" onValueChange={changeSharingPreferencesSingle}>
-            <ToggleGroupItem value="workers" disabled>Workers</ToggleGroupItem>
-            <ToggleGroupItem value="policymakers" disabled>Policymakers</ToggleGroupItem>
-            <ToggleGroupItem value="advocates" disabled>Advocates</ToggleGroupItem>
-          </ToggleGroup>
-        </div>
-      </div>
-    {:else}
-    <div class="space-y-2">
-        <div class="flex justify-center">
-          <ToggleGroup type="multiple" variant="outline" bind:value={postSharing} onValueChange={changeSharingPreferencesMultiple}>
-            <ToggleGroupItem value={sharingOptions[0].value} class={postSharing.includes(sharingOptions[0].value) ? 'font-bold' : ''}>
-              {sharingOptions[0].label}
-            </ToggleGroupItem>
-          </ToggleGroup>
-        </div>
-        
-        <div class="flex justify-center space-x-2">
-          <ToggleGroup type="multiple" variant="outline" bind:value={postSharing} onValueChange={changeSharingPreferencesMultiple}>
-            {#each sharingOptions.slice(1) as { value, label }}
-              <ToggleGroupItem value={value} class={postSharing.includes(value) ? 'font-bold' : ''}>
-                {label}
-              </ToggleGroupItem>
-            {/each}
-          </ToggleGroup>
-        </div>
-      </div>
-    {/if}
+			<div class="flex justify-center space-x-2">
+				<ToggleGroup
+					type="multiple"
+					variant="outline"
+					bind:value={postSharing}
+					onValueChange={changeSharingPreferencesMultiple}
+				>
+					{#each sharingOptions.slice(1) as { value, label }}
+						<ToggleGroupItem {value} class={postSharing.includes(value) ? 'font-bold' : ''}>
+							{label}
+						</ToggleGroupItem>
+					{/each}
+				</ToggleGroup>
+			</div>
+		</div>
+	{/if}
 </div>
 
 <div class="flex justify-center py-5">
-  {#if uploading}
-  <Button 
-    class="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700"
-    on:click={uploadContent}>
-    <i class="fa-solid fa-spinner loadingSpinner animate-spin" />
-  </Button>
-  {:else}
-  <BlueButton onclick={uploadContent} buttonText="Upload Content"></BlueButton>
-  {/if}
+	{#if uploading}
+		<Button
+			class="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700"
+			on:click={uploadContent}
+		>
+			<i class="fa-solid fa-spinner loadingSpinner animate-spin" />
+		</Button>
+	{:else}
+		<BlueButton onclick={uploadContent} buttonText="Upload Content"></BlueButton>
+	{/if}
 </div>

@@ -8,7 +8,10 @@
   import Tooltip from 'cal-heatmap/plugins/Tooltip';
   import 'cal-heatmap/cal-heatmap.css';
 
-  updateTitle("My Trends");
+  export let data;
+  const hourlySegments = data.workSegments;
+  const monthlyEarnings = data.monthlyEarnings;
+  updateTitle('My Trends');
 
   let cal: CalHeatmap;
   let seriesData = [];
@@ -17,43 +20,36 @@
   let viewMode = 'earnings'; // Default mode is now 'earnings'
 
   if ($page.data.user?.platform) {
-    const data = {
-      uber: [
-        { x: '12am', y: 0.50 }, { x: '4am', y: 0.75 },
-        { x: '8am', y: 1.20 }, { x: '12pm', y: 1.50 },
-        { x: '4pm', y: 2.00 }, { x: '8pm', y: 1.50 }
-      ],
-      rover: [
-        { x: '12am', y: 0.50 }, { x: '4am', y: 0.75 },
-        { x: '8am', y: 1.20 }, { x: '12pm', y: 1.50 },
-        { x: '4pm', y: 2.00 }, { x: '8pm', y: 1.50 }
-      ],
-      upwork: [
-        { x: 'January', y: 0.0 }, { x: 'February', y: 800.0 },
-        { x: 'March', y: 1000.0 }, { x: 'April', y: 1200.2 },
-        { x: 'May', y: 3000.34 }, { x: 'June', y: 1115.0 },
-        { x: 'July', y: 4440.0 }, { x: 'August', y: 500.0 },
-        { x: 'September', y: 200.0 }, { x: 'October', y: 2000.0 },
-        { x: 'November', y: 1200.0 }, { x: 'December', y: 200.0 }
-      ]
-    };
-    switch ($page.data.user.platform) {
-      case "uber":
-        seriesData = data.uber;
-        title = 'Driver Earnings Per Hour';
-        subtitle = 'Pickup Time (Hours of the Day)';
-        break;
-      case "rover":
-        seriesData = data.rover;
-        title = 'Worker Earnings Per Hour';
-        subtitle = 'Hours of the Day';
-        break;
-      case "upwork":
-        seriesData = data.upwork;
-        title = 'Earnings Per Month';
-        subtitle = 'Days of the Month';
-        break;
-    }
+      const platform = $page.data.user.platform;
+      const platformData = {
+          uber: [
+              { x: '12am', y: 0.5 },
+              { x: '4am', y: 0.75 },
+              { x: '8am', y: 1.2 },
+              { x: '12pm', y: 1.5 },
+              { x: '4pm', y: 2.0 },
+              { x: '8pm', y: 1.5 }
+          ],
+          rover: hourlySegments,
+          upwork: monthlyEarnings
+      };
+      switch (platform) {
+          case 'uber':
+              seriesData = platformData.uber;
+              title = 'Driver Earnings Per Hour';
+              subtitle = 'Pickup Time (Hours of the Day)';
+              break;
+          case 'rover':
+              seriesData = platformData.rover;
+              title = 'Sitter Earnings Per Hour';
+              subtitle = 'Hours of the Day';
+              break;
+          case 'upwork':
+              seriesData = platformData.upwork;
+              title = 'Earnings Per Month';
+              subtitle = 'Days of the Month';
+              break;
+      }
   }
 
   // Chart options
@@ -74,11 +70,11 @@
   };
 
   function handlePrevious() {
-    cal.previous();
+      cal.previous();
   }
 
   function handleNext() {
-    cal.next();
+      cal.next();
   }
 
   function showEarnings() {

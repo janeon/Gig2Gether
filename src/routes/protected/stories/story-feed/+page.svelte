@@ -4,7 +4,7 @@
 	export let data;
 	import { updateTitle } from '$lib/stores/title';
 	updateTitle('Story Feed');
-	import { createFilterStore, filterHandler } from '$lib/filter';
+	import { createFilterStore, filterHandler } from '$lib/stores/filter.js';
 	import { onDestroy, onMount } from 'svelte';
 	let dataToDisplay = data.posts;
 
@@ -22,12 +22,6 @@
 	$: issueCheck = true;
 	$: strategyCheck = true;
 
-	let allPlatformChecked = true;
-	let allTypeChecked = true;
-	//checkboxes:
-	// const uberCheck = document.getElementById("uber")
-	// const upworkCheck = document.getElementById("upwork")
-
 	let mobile: boolean;
 	onMount(() => {
 		mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
@@ -40,113 +34,35 @@
 	});
 
 	function onClick(group: string, box: string) {
-		if (group == 'platform') {
-			if (box == 'all') {
-				if (platform_all) {
-					$filterStore.platform_filter = [];
-					roverCheck = false;
-					uberCheck = false;
-					upworkCheck = false;
-					allPlatformChecked = true;
-					return;
-				} else {
-					roverCheck = true;
-					uberCheck = true;
-					upworkCheck = true;
-					$filterStore.platform_filter = ['rover', 'uber', 'upwork'];
-					allPlatformChecked = false;
-				}
-			} else if (box == 'rover') {
-				if (roverCheck) {
-					platform_all = false;
-					$filterStore.platform_filter = $filterStore.platform_filter.filter((item) => {
-						return item !== 'rover';
-					});
-					allPlatformChecked = false;
-				} else {
-					$filterStore.platform_filter = [...$filterStore.platform_filter, 'rover'];
-					if (uberCheck && upworkCheck) {
-						allPlatformChecked = true;
-					}
-				}
-			} else if (box == 'uber') {
-				if (uberCheck) {
-					platform_all = false;
-					$filterStore.platform_filter = $filterStore.platform_filter.filter((item) => {
-						return item != 'uber';
-					});
-					allPlatformChecked = false;
-				} else {
-					$filterStore.platform_filter = [...$filterStore.platform_filter, 'uber'];
-					if (roverCheck && upworkCheck) {
-						allPlatformChecked = true;
-					}
-				}
-			} else if (box == 'upwork') {
-				if (upworkCheck) {
-					platform_all = false;
-					$filterStore.platform_filter = $filterStore.platform_filter.filter((item) => {
-						return item != 'upwork';
-					});
-					allPlatformChecked = false;
-				} else {
-					$filterStore.platform_filter = [...$filterStore.platform_filter, 'upwork'];
-					if (uberCheck && roverCheck) {
-						allPlatformChecked = true;
-					}
-				}
-			}
-			if (allPlatformChecked) {
-				platform_all = true;
-			}
-		}
+    const allCheck = group === 'platform' ? 'platform_all' : 'type_all';
+    const filterName = group === 'platform' ? 'platform_filter' : 'type_filter';
+    const checkMap = {
+        'platform': { all: ['rover', 'uber', 'upwork'], states: [roverCheck, uberCheck, upworkCheck] },
+        'type': { all: ['issue', 'strategy'], states: [issueCheck, strategyCheck] },
+    };
 
-		if (group == 'type') {
-			if (box == 'all') {
-				if (type_all) {
-					$filterStore.type_filter = [];
-					issueCheck = false;
-					strategyCheck = false;
-					allTypeChecked = true;
-					return;
-				} else {
-					$filterStore.type_filter = ['issue', 'strategy'];
-					issueCheck = true;
-					strategyCheck = true;
-					allTypeChecked = false;
-				}
-			} else if (box == 'issue') {
-				if (issueCheck) {
-					type_all = false;
-					$filterStore.type_filter = $filterStore.type_filter.filter((item) => {
-						return item != 'issue';
-					});
-					allTypeChecked = false;
-				} else {
-					$filterStore.type_filter = [...$filterStore.type_filter, 'issue'];
-					if (strategyCheck) {
-						allTypeChecked = true;
-					}
-				}
-			} else if (box == 'strategy') {
-				if (strategyCheck) {
-					type_all = false;
-					$filterStore.type_filter = $filterStore.type_filter.filter((item) => {
-						return item != 'strategy';
-					});
-					allTypeChecked = false;
-				} else {
-					$filterStore.type_filter = [...$filterStore.type_filter, 'strategy'];
-					if (issueCheck) {
-						allTypeChecked = true;
-					}
-				}
-			}
-			if (allTypeChecked) {
-				type_all = true;
-			}
-		}
-	}
+    const updateFilterState = (name: string, isChecked: boolean) => {
+        $filterStore[filterName] = isChecked
+            ? [...$filterStore[filterName], name]
+            : $filterStore[filterName].filter(item => item !== name);
+    };
+
+    const updateAllStates = (isChecked: boolean) => {
+        checkMap[group].states.forEach((_, i) => checkMap[group].states[i] = isChecked);
+        $filterStore[filterName] = isChecked ? checkMap[group].all : [];
+    };
+
+    if (box === 'all') {
+        this[allCheck] = !this[allCheck];
+        updateAllStates(this[allCheck]);
+    } else {
+        const idx = checkMap[group].all.indexOf(box);
+        checkMap[group].states[idx] = !checkMap[group].states[idx];
+        updateFilterState(box, checkMap[group].states[idx]);
+        this[allCheck] = checkMap[group].states.every(Boolean);
+    }
+}
+
 </script>
 
 <div class="flex flex-col items-center">
@@ -257,7 +173,7 @@
 					<p class="text-center">There are no posts yet!</p>
 				{/if}
 			</div>
-			<!-- Sticky filters for desktop -->
+			<!-- filters for desktop -->
 			<div class="justify-end space-y-2 sticky top-0 z-10 bg-white">
 				<Accordion>
 					<AccordionItem>

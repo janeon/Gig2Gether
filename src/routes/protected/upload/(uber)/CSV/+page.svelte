@@ -1,19 +1,22 @@
 <script lang="ts">
-    import { Button } from 'flowbite-svelte';
     import { collection, doc, setDoc, writeBatch } from "firebase/firestore";
     import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
     import { db, storage } from '$lib/firebase/client';
-    import Papa from 'papaparse';
-    import { page } from '$app/stores';
+
+    import { Button, Label, Textarea} from 'flowbite-svelte';
     import BlueButton from '$lib/components/BlueButton.svelte';
-    import { updateTitle } from "$lib/stores/title";
+    
+    import { page } from '$app/stores';
+    import Papa from 'papaparse';
     import { capitalize } from "$lib/utils";
+    import { updateTitle } from "$lib/stores/title";
 
     updateTitle(capitalize($page.data.user?.platform) + " CSV Upload");
 
     let csv: File;
     let url: string;
     let date = new Date();
+    let note = '';
     let successMessage = '';
     let errorMessage = '';
     let uploading = false;
@@ -37,7 +40,7 @@
         uploading = true;
 
         try {
-            const storageRef = ref(storage, `uploads/${csv.name}`);
+            const storageRef = ref(storage, `uploads/${$page.data.user.platform}/CSVs/${$page.data.user.uid}/${csv.name}`);
             await uploadBytes(storageRef, csv);
             url = await getDownloadURL(storageRef);
 
@@ -79,7 +82,8 @@
             date: date,
             type: "CSV",
             title: csv.name,
-            uid: user.uid
+            uid: user.uid,
+            note: note
         });
 
         const batch = writeBatch(db);
@@ -101,7 +105,6 @@
     }
 </script>
 
-
 <div class="text-center">
     <p class="mt-4">
         First, <a class="underline font-medium" href="https://www.youtube.com/redirect?event=video_description&redir_token=QUFFLUhqbjBvWUJZQXhfSjhFZmlBclBXUzFOTHBhcmR6Z3xBQ3Jtc0ttaktGVzdlY0FVeEI1VWVxUXhnbFpWM1ZPYW94NHlISHNMZldvaWZpbmFuTzdQQnA3SDlNZ3V1dnp4QVFQRk1JckFDejhrLVFsMGxoTEZOUzBTYWVCbGlZMmFOWXlhbUVLSklIRUlnQ1A3b3Uya05wZw&q=https%3A%2F%2Fauth.uber.com%2Flogin%2F%3Fbreeze_local_zone%3Dphx5%26next_url%3Dhttps%253A%252F%252Fmyprivacy.uber.com%252Fprivacy%252Fexploreyourdata%252Fdownload%26state%3DqNUM7waq8Xg-ejonvGlPugg-6pw8IxvNFlx6TmDHzOo%253D&v=mKB5JECLguM">download
@@ -111,6 +114,7 @@
     <p class="mt-4">
         Next, browse and upload the CSV files one at a time.
     </p>
+
     <div class="flex flex-col items-center">
         <div class="flex items-center space-x-4 pt-5 justify-center">
             <input
@@ -123,6 +127,14 @@
             <p>{fileName}</p>
         </div>
 
+        <div class="flex flex-col w-full">
+            <Label class="w-full mb-1 text-left">Note</Label>
+            <Textarea bind:value={note} rows="4" placeholder="Add a note about this CSV"
+            class="w-full border border-gray-300 rounded-lg px-3 py-2 bg-gray-50"/>
+        </div>
+        
+        
+        
         <input
             type="file"
             id="selectedFile"
