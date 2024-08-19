@@ -374,6 +374,90 @@
 		</div>
 
 		<div class="flex flex-col items-start bg-gray-100 p-4 rounded-lg">
+			<h1 class="text-2xl font-bold mb-4 text-black">Recommended Resources</h1>
+			<div class="flex space-x-2 items-start mb-4">
+				<i class="fas fa-file-alt w-6 h-6 text-black"></i>
+				<div>
+					<h2 class="text-lg font-semibold mb-2">IRS Free File</h2>
+					<p class="text-sm font-light mb-2">
+						Use free tax prep software or fillable forms based on your income and the forms you must
+						file.
+					</p>
+					<a
+						href="https://www.irs.gov/filing/free-file-do-your-federal-taxes-for-free"
+						class="text-sm text-blue-500 underline font-semibold"
+						target="_blank"
+						rel="noopener noreferrer">Learn More</a
+					>
+				</div>
+			</div>
+			<div class="flex space-x-2 items-start mb-4">
+				<i class="fas fa-hands-helping w-6 h-6 text-black"></i>
+				<div>
+					<h2 class="text-lg font-semibold mb-2">Volunteer Income Tax Assistance</h2>
+					<p class="text-sm font-light mb-2">Get free, in-person filing help near you.</p>
+					<a
+						href="https://www.irs.gov/individuals/free-tax-return-preparation-for-qualifying-taxpayers"
+						class="text-sm text-blue-500 underline font-semibold"
+						target="_blank"
+						rel="noopener noreferrer">Learn More</a
+					>
+				</div>
+			</div>
+			<div class="flex space-x-2 items-start mb-4">
+				<i class="fas fa-check-circle w-6 h-6 text-black"></i>
+				<div>
+					<h2 class="text-lg font-semibold mb-2">Authorized E-file Providers</h2>
+					<p class="text-sm font-light mb-2">
+						Search the list of tax professionals approved by the IRS for e-filing.
+					</p>
+					<a
+						href="https://www.irs.gov/e-file-providers/authorized-irs-e-file-providers-for-individuals"
+						class="text-sm text-blue-500 underline font-semibold"
+						target="_blank"
+						rel="noopener noreferrer">Learn More</a
+					>
+				</div>
+			</div>
+			<div class="flex space-x-2 items-start mb-4">
+				<i class="fas fa-lightbulb w-6 h-6 text-black"></i>
+				<div>
+					<h2 class="text-lg font-semibold mb-2">If You're an Uber Driver</h2>
+					<a
+						href="https://www.uber.com/us/en/drive/tax-information/tax-documents/"
+						class="text-sm text-blue-500 underline font-semibold"
+						target="_blank"
+						rel="noopener noreferrer">Understanding your tax documents</a
+					>
+				</div>
+			</div>
+			<div class="flex space-x-2 items-start mb-4">
+				<i class="fas fa-lightbulb w-6 h-6 text-black"></i>
+				<div>
+					<h2 class="text-lg font-semibold mb-2">If You're an Upwork Freelancer</h2>
+					<a
+						href="https://support.upwork.com/hc/en-us/articles/211063958-Report-Income-from-Upwork"
+						class="text-sm text-blue-500 underline font-semibold"
+						target="_blank"
+						rel="noopener noreferrer">Report Income from Upwork</a
+					>
+				</div>
+			</div>
+			<div class="flex space-x-2 items-start mb-4">
+				<i class="fas fa-lightbulb w-6 h-6 text-black"></i>
+				<div>
+					<h2 class="text-lg font-semibold mb-2">If You're a Rover Sitter</h2>
+					<a
+						href="https://www.rover.com/blog/wp-content/uploads/Rover-Sitter-Tax-Guide.pdf"
+						class="text-sm text-blue-500 underline font-semibold"
+						target="_blank"
+						rel="noopener noreferrer">Rover sitter tax guide</a
+					>
+				</div>
+			</div>
+		</div>		
+
+		<div class="flex flex-col items-start bg-gray-100 p-4 rounded-lg">
 			<h1 class="text-2xl font-bold mb-4 text-black">Tips for effective tax management</h1>
 			<h2 class="text-lg font-semibold mb-2">Track your earnings and expenses</h2>
 			<p class="text-sm font-light mb-4">
@@ -420,53 +504,6 @@
 			>
 		</div>
 
-		<div class="flex flex-col items-start bg-gray-100 p-4 rounded-lg">
-			<h1 class="text-2xl font-bold mb-4 text-black">Recommended Resources</h1>
-			<div class="flex space-x-2 items-start mb-4">
-				<i class="fas fa-file-alt w-6 h-6 text-black"></i>
-				<div>
-					<h2 class="text-lg font-semibold mb-2">IRS Free File</h2>
-					<p class="text-sm font-light mb-2">
-						Use free tax prep software or fillable forms based on your income and the forms you must
-						file.
-					</p>
-					<a
-						href="https://www.irs.gov/filing/free-file-do-your-federal-taxes-for-free"
-						class="text-sm text-blue-500 underline font-semibold"
-						target="_blank"
-						rel="noopener noreferrer">Learn More</a
-					>
-				</div>
-			</div>
-			<div class="flex space-x-2 items-start mb-4">
-				<i class="fas fa-hands-helping w-6 h-6 text-black"></i>
-				<div>
-					<h2 class="text-lg font-semibold mb-2">Volunteer Income Tax Assistance</h2>
-					<p class="text-sm font-light mb-2">Get free, in-person filing help near you.</p>
-					<a
-						href="https://www.irs.gov/individuals/free-tax-return-preparation-for-qualifying-taxpayers"
-						class="text-sm text-blue-500 underline font-semibold"
-						target="_blank"
-						rel="noopener noreferrer">Learn More</a
-					>
-				</div>
-			</div>
-			<div class="flex space-x-2 items-start mb-4">
-				<i class="fas fa-check-circle w-6 h-6 text-black"></i>
-				<div>
-					<h2 class="text-lg font-semibold mb-2">Authorized E-file Providers</h2>
-					<p class="text-sm font-light mb-2">
-						Search the list of tax professionals approved by the IRS for e-filing.
-					</p>
-					<a
-						href="https://www.irs.gov/e-file-providers/authorized-irs-e-file-providers-for-individuals"
-						class="text-sm text-blue-500 underline font-semibold"
-						target="_blank"
-						rel="noopener noreferrer">Learn More</a
-					>
-				</div>
-			</div>
-		</div>
 		<div class="flex flex-col items-start bg-gray-100 p-4 rounded-lg">
 			<p class="text-sm font-light mb-2">
 				<span class="font-semibold">Please note</span>: As this system is still in the early stages
