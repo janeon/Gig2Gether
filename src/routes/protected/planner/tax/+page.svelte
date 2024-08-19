@@ -78,9 +78,10 @@
 			<div class="text-left mb-4">
 				<h1 class="text-2xl font-bold mb-4 text-black">
 					The next <a
-							href="https://www.irs.gov/businesses/small-businesses-self-employed/estimated-taxes"
-							target="_blank"
-							class="text-blue-500 underline">estimated tax payment</a>
+						href="https://www.irs.gov/businesses/small-businesses-self-employed/estimated-taxes"
+						target="_blank"
+						class="text-blue-500 underline">estimated tax payment</a
+					>
 					day is {getNextTaxDate().toLocaleDateString()}
 				</h1>
 				<div class="flex justify-center space-x-4 text-center">
@@ -189,8 +190,8 @@
 								You have to file an income tax return if your <span class="font-semibold"
 									>net earnings from self-employment were $400 or more.</span
 								>
-								If your net earnings from self-employment were less than $400, you still have to
-								file an income tax return if you meet any other filing requirement listed in the
+								If your net earnings from self-employment were less than $400, you still have to file
+								an income tax return if you meet any other filing requirement listed in the
 								<a
 									href="https://www.irs.gov/pub/irs-pdf/i1040gi.pdf"
 									target="_blank"
@@ -242,8 +243,8 @@
 									target="_blank"
 									class="text-blue-500 underline">Form 1040-ES</a
 								>
-								also contains blank vouchers you can use to mail your estimated tax payments. Other
-								payment options, including pay by phone and online methods, can be found at
+								also contains blank vouchers you can use to mail your estimated tax payments. Other payment
+								options, including pay by phone and online methods, can be found at
 								<a
 									href="https://www.irs.gov/payments"
 									target="_blank"
@@ -374,53 +375,6 @@
 		</div>
 
 		<div class="flex flex-col items-start bg-gray-100 p-4 rounded-lg">
-			<h1 class="text-2xl font-bold mb-4 text-black">Tips for effective tax management</h1>
-			<h2 class="text-lg font-semibold mb-2">Track your earnings and expenses</h2>
-			<p class="text-sm font-light mb-4">
-				Collect and keep your records and receipts during the year. <a
-					href="https://www.irs.gov/businesses/small-businesses-self-employed/recordkeeping"
-					class="text-sm text-blue-500 underline mb-4"
-					target="_blank"
-					rel="noopener noreferrer">Recordkeeping</a
-				>
-				can help you track your income, deduct expenses and complete your tax return. Save expense
-				receipts to lower your taxable income, and keep records of all gig work income,
-				<span class="font-semibold">even without Forms 1099.</span>
-			</p>
-			<h2 class="text-lg font-semibold mb-2">Pay estimated tax</h2>
-			<p class="text-sm font-light mb-4">
-				As an independent contractor, pay quarterly estimated taxes to avoid penalties. Employees
-				with gig work on the side may avoid making estimated tax payments on their gig income by
-				withholding more tax from their employee paycheck. Use the <a
-					href="https://www.irs.gov/individuals/tax-withholding-estimator"
-					target="_blank"
-					class="text-blue-500 underline">Tax Withholding Estimator</a
-				>. Then fill out a new Form W-4, Employee’s Withholding Certificate and give it to
-				employers.
-			</p>
-			<h2 class="text-lg font-semibold mb-2">Get ready to file</h2>
-			<p class="text-sm font-light mb-4">
-				Collect income forms like Form 1099-K, Form 1099-MISC, Form W-2, and Form 1099-NEC by
-				January 31. Report all income and subtract <a
-					href="https://www.irs.gov/forms-pubs/guide-to-business-expense-resources"
-					target="_blank"
-					class="text-blue-500 underline">deductible expenses</a
-				>.
-			</p>
-			<h2 class="text-lg font-semibold mb-2">File your tax return</h2>
-			<p class="text-sm font-light mb-4">
-				Use your records to fill out: Form 1040 or Form 1040-SR, Schedule SE (Self-Employment Tax),
-				and Schedule C (Profit or Loss from Business)
-			</p>
-			<a
-				href="https://www.irs.gov/businesses/small-businesses-self-employed/manage-taxes-for-your-gig-work"
-				class="text-sm text-blue-500 underline mb-4 font-semibold"
-				target="_blank"
-				rel="noopener noreferrer">Learn More</a
-			>
-		</div>
-
-		<div class="flex flex-col items-start bg-gray-100 p-4 rounded-lg">
 			<h1 class="text-2xl font-bold mb-4 text-black">Recommended Resources</h1>
 			<div class="flex space-x-2 items-start mb-4">
 				<i class="fas fa-file-alt w-6 h-6 text-black"></i>
@@ -466,7 +420,91 @@
 					>
 				</div>
 			</div>
+			<div class="flex space-x-2 items-start mb-4">
+				<i class="fas fa-lightbulb w-6 h-6 text-black"></i>
+				<div>
+					<h2 class="text-lg font-semibold mb-2">If You're an Uber Driver</h2>
+					<a
+						href="https://www.uber.com/us/en/drive/tax-information/tax-documents/"
+						class="text-sm text-blue-500 underline font-semibold"
+						target="_blank"
+						rel="noopener noreferrer">Understanding your tax documents</a
+					>
+				</div>
+			</div>
+			<div class="flex space-x-2 items-start mb-4">
+				<i class="fas fa-lightbulb w-6 h-6 text-black"></i>
+				<div>
+					<h2 class="text-lg font-semibold mb-2">If You're an Upwork Freelancer</h2>
+					<a
+						href="https://support.upwork.com/hc/en-us/articles/211063958-Report-Income-from-Upwork"
+						class="text-sm text-blue-500 underline font-semibold"
+						target="_blank"
+						rel="noopener noreferrer">Report Income from Upwork</a
+					>
+				</div>
+			</div>
+			<div class="flex space-x-2 items-start mb-4">
+				<i class="fas fa-lightbulb w-6 h-6 text-black"></i>
+				<div>
+					<h2 class="text-lg font-semibold mb-2">If You're a Rover Sitter</h2>
+					<a
+						href="https://www.rover.com/blog/wp-content/uploads/Rover-Sitter-Tax-Guide.pdf"
+						class="text-sm text-blue-500 underline font-semibold"
+						target="_blank"
+						rel="noopener noreferrer">Rover sitter tax guide</a
+					>
+				</div>
+			</div>
 		</div>
+
+		<div class="flex flex-col items-start bg-gray-100 p-4 rounded-lg">
+			<h1 class="text-2xl font-bold mb-4 text-black">Tips for effective tax management</h1>
+			<h2 class="text-lg font-semibold mb-2">Track your earnings and expenses</h2>
+			<p class="text-sm font-light mb-4">
+				Collect and keep your records and receipts during the year. <a
+					href="https://www.irs.gov/businesses/small-businesses-self-employed/recordkeeping"
+					class="text-sm text-blue-500 underline mb-4"
+					target="_blank"
+					rel="noopener noreferrer">Recordkeeping</a
+				>
+				can help you track your income, deduct expenses and complete your tax return. Save expense receipts
+				to lower your taxable income, and keep records of all gig work income,
+				<span class="font-semibold">even without Forms 1099.</span>
+			</p>
+			<h2 class="text-lg font-semibold mb-2">Pay estimated tax</h2>
+			<p class="text-sm font-light mb-4">
+				As an independent contractor, pay quarterly estimated taxes to avoid penalties. Employees
+				with gig work on the side may avoid making estimated tax payments on their gig income by
+				withholding more tax from their employee paycheck. Use the <a
+					href="https://www.irs.gov/individuals/tax-withholding-estimator"
+					target="_blank"
+					class="text-blue-500 underline">Tax Withholding Estimator</a
+				>. Then fill out a new Form W-4, Employee’s Withholding Certificate and give it to
+				employers.
+			</p>
+			<h2 class="text-lg font-semibold mb-2">Get ready to file</h2>
+			<p class="text-sm font-light mb-4">
+				Collect income forms like Form 1099-K, Form 1099-MISC, Form W-2, and Form 1099-NEC by
+				January 31. Report all income and subtract <a
+					href="https://www.irs.gov/forms-pubs/guide-to-business-expense-resources"
+					target="_blank"
+					class="text-blue-500 underline">deductible expenses</a
+				>.
+			</p>
+			<h2 class="text-lg font-semibold mb-2">File your tax return</h2>
+			<p class="text-sm font-light mb-4">
+				Use your records to fill out: Form 1040 or Form 1040-SR, Schedule SE (Self-Employment Tax),
+				and Schedule C (Profit or Loss from Business)
+			</p>
+			<a
+				href="https://www.irs.gov/businesses/small-businesses-self-employed/manage-taxes-for-your-gig-work"
+				class="text-sm text-blue-500 underline mb-4 font-semibold"
+				target="_blank"
+				rel="noopener noreferrer">Learn More</a
+			>
+		</div>
+
 		<div class="flex flex-col items-start bg-gray-100 p-4 rounded-lg">
 			<p class="text-sm font-light mb-2">
 				<span class="font-semibold">Please note</span>: As this system is still in the early stages

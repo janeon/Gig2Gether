@@ -34,18 +34,16 @@
 	onMount(() => {
 		const script = document.createElement('script');
 		script.async = true;
-		script.src = `https://www.googletagmanager.com/gtag/js?id=G-9EQ9LZS25N`;
+		script.src = `https://www.googletagmanager.com/gtag/js?id=G-LDJKBQCTBN`;
 		document.head.appendChild(script);
 
 		window.dataLayer = window.dataLayer || [];
-		function gtag(){dataLayer.push(arguments);}
+		function gtag() {
+			dataLayer.push(arguments);
+		}
 		gtag('js', new Date());
 
-		gtag(
-			'config', 
-			'G-9EQ9LZS25N',
-			{  'user_id': $page.data.user?.uid }
-		);
+		gtag('config', 'G-LDJKBQCTBN', { user_id: $page.data.user?.uid });
 		mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
 			window.navigator.userAgent
 		);
@@ -92,7 +90,7 @@
 	<!-- top nav bar for web -->
 	<div class={mobile && protected_urls ? 'hidden md:block' : 'block'}>
 		<header class="flex justify-between items-center p-4 bg-gray-700 text-white">
-				<!-- Register and verification pages -->
+			<!-- Register and verification pages -->
 			{#if ['Register Worker', 'Register Policymaker', 'Verify Email'].includes(title)}
 				<div class="flex flex-row">
 					<a href="/" class="block">
@@ -114,7 +112,8 @@
 				<a href={loggedIn ? '/protected' : '/'} class="block">
 					<img src="/logo.png" alt="Logo" class="h-10 rounded-lg" />
 				</a>
-				{#if loggedIn} <!-- but for some reason on the splash page -->
+				{#if loggedIn}
+					<!-- but for some reason on the splash page -->
 					<form action="/logout" method="POST" use:enhance bind:this={form}>
 						<BlueButton href="/" buttonText="Log Out" onclick={() => form.submit()} />
 					</form>
@@ -199,7 +198,7 @@
 	</div>
 
 	<!-- Bottom navigation -->
-	 <!-- not checking for mobile in case things get really thin, some nav is useful -->
+	<!-- not checking for mobile in case things get really thin, some nav is useful -->
 	<div class={protected_urls ? 'fixed bottom-0 w-full md:hidden z-30' : 'hidden'}>
 		<BottomNav position="absolute" classInner="grid-cols-5">
 			{#each navItems as item}
