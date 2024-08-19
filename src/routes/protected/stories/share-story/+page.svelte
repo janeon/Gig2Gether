@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { addDoc, collection, doc, getDoc } from 'firebase/firestore';
+	import { addDoc, collection, doc, getDoc, setDoc } from 'firebase/firestore';
 	import { db, storage } from '$lib/firebase/client';
 	import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 
@@ -21,6 +21,7 @@
 	let url: string;
 	let type: string;
 	let uploading = false;
+	let id: string;
 
 	let imageUrlPreview: string;
 	$: fileName = file ? file.name : 'Share a Photo/Video';
@@ -37,7 +38,7 @@
 		{ value: 'fair pay', label: 'Fair Pay' },
 		{ value: 'discrimination', label: 'Discrimination' },
 		{ value: 'ratings', label: 'Ratings' },
-		{ value: 'working time', label: 'Working Time' },
+		{ value: 'work time', label: 'Working Time' },
 		{ value: 'stress', label: 'Stress (e.g. from precarity)' },
 		{ value: 'deactivation', label: 'Deactivation' },
 		{ value: 'technology', label: 'Technology' },
@@ -47,21 +48,21 @@
 	const uberTags = [
 		{ value: 'safety', label: 'Safety' },
 		{ value: 'care-giving', label: 'Care-giving' },
-		{ value: 'understanding algorithms', label: 'Understanding Algorithms' },
+		{ value: 'algorithms', label: 'Understanding Algorithms' },
 		...commonTags
 	];
 
 	const roverTags = [
 		{ value: 'safety', label: 'Safety' },
 		{ value: 'care-giving', label: 'Care-giving' },
-		{ value: 'understanding algorithms', label: 'Understanding Algorithms' },
+		{ value: 'algorithms', label: 'Understanding Algorithms' },
 		...commonTags
 	];
 
 	const upworkTags = [
 		{ value: 'scams', label: 'Scams' },
 		{ value: 'getting started', label: 'Getting Started' },
-		{ value: 'algorithm functionality', label: 'Algorithm Functionality' },
+		{ value: 'algorithms', label: 'Algorithm Functionality' },
 		{ value: 'customers', label: 'Customers' },
 		...commonTags
 	];
@@ -126,8 +127,12 @@
 				sharing: postSharing,
 				username: $page.data.user.username
 			};
-
-			await addDoc(collection(db, 'stories', $page.data.user.platform, 'posts'), postData);
+			if (!id) {
+				await addDoc(collection(db, 'stories', $page.data.user.platform, 'posts'), postData);
+			} else {
+				await setDoc(doc(db, 'stories', $page.data.user.platform, 'posts', id), postData);
+			}
+				// await addDoc(collection(db, 'stories', $page.data.user.platform, 'posts'), postData);
 			goto('/protected/stories/story-feed');
 		} catch {
 			uploading = false;
@@ -159,6 +164,26 @@
 		}
 		if (postSharing.includes('private')) {
 			sharePrivate = true;
+		}
+
+		// Extract search parameter 'id'
+		const queryParams = new URLSearchParams(window.location.search);
+		id = queryParams.get('id');
+
+		if (id) {
+			// Fetch document data based on 'id'
+			const docRef = doc(db, 'stories', $page.data.user.platform, 'posts', id);
+			const docSnap = await getDoc(docRef);
+
+			if (docSnap.exists()) {
+				const data = docSnap.data();
+				type = data.type;
+				title = data.title;
+				description = data.description;
+				tags = data.tags || [];
+				postSharing = data.sharing || [];
+				imageUrlPreview = data.url || '';
+			}
 		}
 	});
 </script>
@@ -308,6 +333,6 @@
 			<i class="fa-solid fa-spinner loadingSpinner animate-spin" />
 		</Button>
 	{:else}
-		<BlueButton onclick={uploadContent} buttonText="Upload Content"></BlueButton>
+		<BlueButton onclick={uploadContent} buttonText={id ? "Update":"Upload Content"}></BlueButton>
 	{/if}
 </div>

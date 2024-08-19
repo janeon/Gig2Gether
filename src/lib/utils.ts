@@ -7,14 +7,27 @@ import { doc, getDoc } from 'firebase/firestore';
 import type { User } from '../app';
 import { sendEmailVerification } from "firebase/auth";
 
-export function handleBrowseClick() {
-	const fileInput = document.getElementById('selectedFile');
-	if (fileInput) {
-	  (fileInput as HTMLInputElement).click();
-	}
-  }
-
-export const extractAfterEquals = (value) => value?.includes('=') ? value.split('=')[1].trim() : value ?? null;
+export const extractAfterEquals = (value: string | null | undefined | number): number | null => {
+    if (value === null) {
+        return null; // Return null if input is null or undefined
+    } else if (typeof value === 'number') {
+        return value;
+    } else if (typeof value !== 'string') {
+        return null
+    }
+    
+    // console.log("Made it through");
+    
+    let result;
+    if (!isNaN(Number(value))) {
+        result = Number(value);
+    } else {
+        result = value.includes('=') ? value.split('=')[1].trim() : null;
+        result = result !== null && !isNaN(Number(result)) ? Number(result) : null;
+    }
+    
+    return result;
+};
 const now = new Date();
 const pad = (num) => num.toString().padStart(2, '0');
 export const currentDate = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
@@ -29,6 +42,28 @@ export function convertToLocalDate(dateString: string): Date {
 
 export function capitalize(string: string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+export function validateData(data) {
+    for (const key in data) {
+        const value = data[key];
+        
+        if (value === null || value === undefined) {
+            console.error(`Field ${key} is null or undefined.`);
+            return false; // Field is null or undefined
+        }
+        
+        if (typeof value === 'string' && value.trim() === '') {
+            console.error(`Field ${key} is an empty string.`);
+            return false; // Field is an empty string
+        }
+        
+        if (Array.isArray(value) && value.length === 0) {
+            console.error(`Field ${key} is an empty list.`);
+            return false; // Field is an empty list
+        }
+    }
+    return true; // All fields are valid
 }
 
 export function cn(...inputs: ClassValue[]) {
@@ -89,6 +124,7 @@ export const flyAndScale = (
 	};
 };
 
+/** Auth fxns **/
 export const getUser = async(uid:string) => {
     const ref = doc(db, "users", uid)
     const docRef = await getDoc(ref)
@@ -215,43 +251,8 @@ export function transformHourlyData(data: { [key: string]: { totalEarnings: numb
 	}));
   }
 
-  export const monthMap = {
-    '01': 'January',
-    '02': 'February',
-    '03': 'March',
-    '04': 'April',
-    '05': 'May',
-    '06': 'June',
-    '07': 'July',
-    '08': 'August',
-    '09': 'September',
-    '10': 'October',
-    '11': 'November',
-    '12': 'December'
-};
 
-export const roverServices = [
-    'Boarding',
-    'House Sitting',
-    'Drop-In Visits',
-    'Doggy Day Care',
-    'Dog Walking'
-];
-
-
-export const upworkExperience = [
-    {value: "entry", name:'Entry-Level'},
-    {value: "intermediate", name:'Intermediate'},
-    {value: "expert", name:'Expert'}
-];
-
-export async function handleFileChange(event: Event) {
-	const fileInput = event.target as HTMLInputElement;
-	if (fileInput.files && fileInput.files.length > 0) {
-		return fileInput.files[0];
-	}
-	return null;
-}
+/* Handlers */
 
 export function handleKeyDown(event: KeyboardEvent) {
     if (
@@ -264,3 +265,27 @@ export function handleKeyDown(event: KeyboardEvent) {
         event.preventDefault();
     }
 }
+
+export function handleRatingsKeyDown(event: KeyboardEvent) {
+    const input = event.target as HTMLInputElement;
+    
+    if (event.key === "." && input.value.includes(".")) {
+        event.preventDefault(); // Prevent additional periods
+    } else if (!/^\d$/.test(event.key) && 
+               event.key !== "Backspace" && 
+               event.key !== "ArrowLeft" && 
+               event.key !== "ArrowRight" && 
+               event.key !== "Tab") {
+        event.preventDefault(); // Prevent non-digit characters
+    }
+}
+
+export function handleBrowseClick() {
+	const fileInput = document.getElementById('selectedFile');
+	if (fileInput) {
+	  (fileInput as HTMLInputElement).click();
+	}
+  }
+
+
+  

@@ -1,6 +1,7 @@
 import { db } from '$lib/firebase/client';
 import { collection, getDocs, query } from 'firebase/firestore';
-import { getHoursDifference, calculateHourlyRates, calculateMissingTime, transformHourlyData, monthMap }  from '$lib/utils';
+import { getHoursDifference, calculateHourlyRates, calculateMissingTime, transformHourlyData }  from '$lib/utils';
+import { monthMap } from '$lib/constants';
 
 export async function load ({ locals }) {
     const snapshot = await getDocs(

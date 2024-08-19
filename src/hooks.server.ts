@@ -44,7 +44,8 @@ export const handle: Handle = async ({ event, resolve }) => {
   }
   
   // find the user based on the session
-  event.locals.user = await getUser(decodedClaims.uid)
+  const user = await getUser(decodedClaims.uid);
+  event.locals.user = { ...user };
   log("uid: ", decodedClaims.uid)
 
   // load page as normal

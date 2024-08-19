@@ -1,25 +1,32 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
+	import { onMount } from 'svelte';
 	import { _getInitialData, _cleanData } from './+page';
 	import { updateTitle } from '$lib/stores/title';
 	import {
 		capitalize,
 		handleBrowseClick,
-		handleFileChange,
 		handleKeyDown,
-		roverServices,
-		upworkExperience
+		handleRatingsKeyDown
 	} from '$lib/utils';
+	import { upworkExperience, roverServices } from '$lib/constants';
 
 	import { db, storage } from '$lib/firebase/client';
 	import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
-	import { collection, doc, setDoc } from 'firebase/firestore';
+	import { collection, doc, getDoc, setDoc } from 'firebase/firestore';
 
 	import MultiSelect from 'svelte-multiselect';
-	import { Label, Input, Select, Textarea, Accordion, AccordionItem } from 'flowbite-svelte';
+	import {
+		Label,
+		Input,
+		Select,
+		Textarea,
+		Accordion,
+		AccordionItem,
+		Button
+	} from 'flowbite-svelte';
 	import IconNumberInput from '$lib/components/IconNumberInput.svelte';
-	import Duration from '$lib/components/Duration.svelte';
 
 	import job_categories from '$lib/job_categories.json';
 	const platform = $page.data.user?.platform;
@@ -34,10 +41,57 @@
 		''
 	];
 
-	// Initialize data
-	const loadedData = _getInitialData($page.data.user?.uid);
-	let roverData: any = loadedData.roverData;
-	let upworkData: any = loadedData.upworkData;
+	let file: File;
+	let imageUrlPreview: string = null;
+	$: fileName = file ? file.name : 'Upload a Photo';
+	let url: string;
+	let cut;
+
+	let roverData: any;
+	let upworkData: any;
+	
+	onMount(async () => {
+		// Fetch user profile data
+		const profile = await getDoc(doc(db, 'users', $page.data.user.uid, 'settings', 'profile'));
+		if (profile.exists()) {
+			const data = profile.data();
+			cut = data.platformCut;
+		}
+
+		// Extract search parameter 'id'
+		const queryParams = new URLSearchParams(window.location.search);
+		const id = queryParams.get('id');
+
+		if (id) {
+			// Fetch document data based on 'id'
+			docID = id;
+			const docRef = doc(db, 'upload', 'manual', $page.data.user?.platform, docID);
+			getDoc(docRef).then((doc) => {
+				if (doc.exists()) {
+					for (const [key, value] of Object.entries(doc.data())) {
+						if (value !== null && value !== undefined) {
+							if ($page.data.user?.platform == 'rover') {
+								roverData[key] = value;
+								
+							} else {
+								upworkData[key] = value;
+							}
+							if (key === 'url') {
+                                imageUrlPreview = value;
+                            }
+						}
+					}
+				}
+			});
+		}
+	});
+
+	if (!roverData || !upworkData) {
+		// Initialize data
+		const loadedData = _getInitialData($page.data.user?.uid, cut);
+		roverData = loadedData.roverData;
+		upworkData = loadedData.upworkData;
+	}
 
 	const upworkJobCategories = Object.keys(job_categories);
 
@@ -48,16 +102,13 @@
 	$: dataChanged =
 		JSON.stringify($page.data.user?.platform == 'rover' ? roverData : upworkData) !==
 		JSON.stringify(initialData);
-
-	let file: File;
-	let imageUrlPreview: string = null;
-	$: fileName = file ? file.name : 'Upload a Photo';
-	let url: string;
-
-	async function onFileChange(event: Event) {
-		file = await handleFileChange(event);
-		if (file) {
-			imageUrlPreview = URL.createObjectURL(file);
+	
+	async function handleFileChange(event: Event) {
+		const fileInput = event.target as HTMLInputElement;
+		imageUrlPreview = URL.createObjectURL(fileInput.files[0]);
+		if (fileInput.files && fileInput.files.length > 0) {
+			file = fileInput.files[0];
+			fileName = file.name;
 		}
 	}
 
@@ -67,43 +118,75 @@
 
 		const fileInput = document.getElementById('selectedFile') as HTMLInputElement;
 		fileInput.value = ''; // Clear the file input
+		if (platform === 'rover') {
+			roverData.url = '';
+		} else {
+			upworkData.url = '';
+		}
 	}
 
 	function calculateRoverIncome() {
-		// if we know units and rate but not income, calculate income
+		// if we know # units and rate but not income, calculate income
 		if (roverData.rate && roverData.unitsWorked && !roverData.income) {
 			roverData.income = roverData.rate * roverData.unitsWorked;
-            // if we know income and platform cut but not cut income, calculate cut income
-			if (!roverData.cutIncome) { 
+			// if we know income and platform cut but not cut income, calculate cut income
+			if (!roverData.cutIncome) {
 				if (roverData.platformCutType === 'percent') {
 					roverData.cutIncome = (roverData.income * (100 - roverData.platformCut)) / 100;
 				} else {
 					roverData.cutIncome = roverData.income - roverData.platformCut;
 				}
 			}
-        // if we know cut income and platform cut but not income, calculate income
+			// if we know cut income and platform cut but not income, calculate income
 		} else if (!roverData.income && roverData.cutIncome) {
 			if (roverData.platformCutType === 'percent') {
 				roverData.income = (roverData.cutIncome / (100 - roverData.platformCut)) * 100;
 			} else {
 				roverData.income = roverData.cutIncome + roverData.platformCut;
 			}
-        // if we know income but not cut income, calculate income before platform cut
+			// if we know income but not cut income, calculate income before platform cut
 		} else if (roverData.income && !roverData.cutIncome) {
-            roverData.cutIncome = roverData.income*(100-roverData.platformCut)/100;
-        } else if (roverData.income && roverData.cutIncome) {
-            if (roverData.platformCutType === 'percent') {
-                roverData.platformCut = (roverData.income - roverData.cutIncome) / roverData.income * 100;
-            } else {
-                roverData.platformCut = roverData.income - roverData.cutIncome;
-            }
-        }
-        
+			roverData.cutIncome = (roverData.income * (100 - roverData.platformCut)) / 100;
+		} else if (roverData.income && roverData.cutIncome) {
+			if (roverData.platformCutType === 'percent') {
+				roverData.platformCut = ((roverData.income - roverData.cutIncome) / roverData.income) * 100;
+			} else {
+				roverData.platformCut = roverData.income - roverData.cutIncome;
+			}
+		}
 	}
 
-    function calculateUpworkIncome() {
-
-    }
+	function calculateUpworkIncome() {
+		if (upworkData.hourlyCharge && upworkData.unitsWorked && !upworkData.cutIncome) {
+			// if we know # units and rate and platform cut but not cut income, calculate cut income
+			if (upworkData.platformCutType === 'percent') {
+				upworkData.cutIncome =
+					(upworkData.hourlyCharge * upworkData.unitsWorked * (100 - upworkData.platformCut)) / 100;
+				// console.log(typeof upworkData.hourlyCharge, typeof upworkData.unitsWorked);
+			} else {
+				upworkData.cutIncome = upworkData.rate * upworkData.unitsWorked - upworkData.platformCut;
+			}
+		}
+		// if we know fixed charge but not cut income, calculate income before platform cut
+		else if (upworkData.fixedCharge && !upworkData.cutIncome) {
+			if (upworkData.platformCutType === 'percent') {
+				upworkData.cutIncome = (upworkData.fixedCharge * (100 - upworkData.platformCut)) / 100;
+			} else {
+				upworkData.cutIncome = upworkData.fixedCharge - upworkData.platformCut;
+			}
+		} else if (upworkData.fixedCharge && upworkData.cutIncome) {
+			if (upworkData.platformCutType === 'percent') {
+				upworkData.platformCut =
+					((upworkData.fixedCharge - upworkData.cutIncome) / upworkData.fixedCharge) * 100;
+			} else {
+				upworkData.platformCut = upworkData.fixedCharge - upworkData.cutIncome;
+			}
+		} else if (upworkData.cutIncome && !upworkData.fixedCharge) {
+			if (upworkData.platformCutType === 'percent')
+				upworkData.fixedCharge = (upworkData.cutIncome / (100 - upworkData.platformCut)) * 100;
+			else upworkData.fixedCharge = upworkData.cutIncome + upworkData.platformCut;
+		}
+	}
 
 	async function submitManual() {
 		// Reset error messages
@@ -123,7 +206,7 @@
 				dateError = 'Please Enter Date';
 				errorMessage += ' Date,';
 			}
-			if (!roverData.type.length) {
+			if (!roverData.type || !roverData.type.length) {
 				typeError = 'Please Enter Service Offered';
 				errorMessage += ' Service Offered,';
 			}
@@ -134,29 +217,38 @@
 			if (dateError || incomeError || typeError || timeError) {
 				return;
 			}
+		} else if (platform === 'upwork') {
+			if (!upworkData.date) {
+				dateError = 'Please Enter Date';
+				errorMessage += ' Date,';
+			}
+			// console.log(upworkData)
+			if (!upworkData.type || !upworkData.type.length) {
+				typeError = 'Please Enter Job Category';
+				errorMessage += ' Job Category,';
+			}
+			if (!upworkData.hourlyCharge && !upworkData.fixedCharge) {
+				incomeError = 'Please Enter Income';
+				errorMessage += ' Income,';
+			}
+			// console.log(!upworkData.hoursPerWeek.hours && !upworkData.hoursPerWeek.minutes )
+			// console.log(upworkData.startTime, upworkData.endTime)
+			// console.log(!upworkData.startTime && !upworkData.endTime)
+			// console.log(!upworkData.unitsWorked)
+			if (
+				!upworkData.hoursPerWeek.hours &&
+				!upworkData.hoursPerWeek.minutes &&
+				upworkData.startTime === upworkData.endTime &&
+				!(upworkData.unitsWorked && (upworkData.workUnits === 'Hours' || 'Minutes'))
+			) {
+				timeError = 'Or Add (Estimated) Hours Worked';
+				errorMessage += ' Time Worked,';
+			}
+			if (dateError || incomeError || typeError || timeError) {
+				return;
+			}
 		}
-		else if (platform == 'upwork') {
-            if (!upworkData.date) {
-                dateError = 'Please Enter Date';
-                errorMessage += ' Date,';
-            }
-            if (!upworkData.type.length) {
-                typeError = 'Please Enter Job Category';
-                errorMessage += ' Job Category,';
-            }
-            if (!upworkData.hourlyCharge && !upworkData.fixedCharge) {
-                incomeError = 'Please Enter Income';
-                errorMessage += ' Income,';
-            }
-            if (!upworkData.hoursPerWeek.hours && !upworkData.hoursPerWeek.minutes && !(upworkData.startTime && upworkData.endTime) && !upworkData.unitsWorked) {
-                timeError = 'Or Add (Estimated) Hours Worked';
-                errorMessage += ' Time Worked,';
-            }
-            if (dateError || incomeError || typeError || timeError) {
-                return;
-            }
-        }
-		// uploading file to storage and retrieving url
+
 		if (file) {
 			const storageRef = ref(
 				storage,
@@ -164,38 +256,40 @@
 			);
 			const result = await uploadBytes(storageRef, file);
 			url = await getDownloadURL(result.ref);
+			if (platform === 'rover') {
+				roverData.url = url;
+			} else {
+				upworkData.url = url;
+			}
 		}
 
 		const collectionRef = collection(db, 'upload', 'manual', platform);
 
 		// clean up upload data
 		if (platform === 'rover') {
-			roverData = _cleanData(upworkData, roverData, platform, initialData);
+			roverData = _cleanData(upworkData, roverData, platform, initialData).roverData;
 		} else {
-			upworkData = _cleanData(upworkData, roverData, platform, initialData);
+			upworkData = _cleanData(upworkData, roverData, platform, initialData).upworkData;
 		}
 
 		const docRef = docID ? doc(collectionRef, docID) : doc(collectionRef);
 
 		const updateDataObject = (platform: string) => {
-			const dataObjects = {
-				rover: {
-					...roverData
-				},
-				upwork: {
-					...upworkData
-				}
-			};
-			const dataToUpdate = dataObjects[platform];
+			const dataToUpdate = platform === 'rover' ? roverData : upworkData;
+			// console.log("got data object", dataToUpdate)
 			if (dataToUpdate) {
 				setDoc(docRef, dataToUpdate, { merge: true });
+				// console.log("set data")
 				successMessage = docID ? 'Update Successful!' : 'Submission Successful!';
 				docID = docRef.id;
 				// Update initial data after successful submission
+				// console.log("about to reset initials data")
 				initialData = { ...dataToUpdate };
+				// console.log("reset done")
 			}
 		};
 		updateDataObject($page.data.user?.platform);
+		// console.log("got through it all")
 	}
 </script>
 
@@ -206,11 +300,13 @@
 				<div class="flex flex-col -mb-4">
 					<Label>Start Date<span class="text-red-500">* {dateError}</span></Label>
 					<Input type="date" bind:value={roverData.date} class="mb-4 min-h-5" />
-					<Label>Start Time <span class="text-red-500">
-                        {#if timeError}
-                        Please specify start/end times
-                        {/if}
-                    </span></Label>
+					<Label
+						>Start Time <span class="text-red-500">
+							{#if timeError}
+								Please specify start/end times
+							{/if}
+						</span></Label
+					>
 					<Input type="time" bind:value={roverData.startTime} class="mb-4" />
 
 					<Label>End Date</Label>
@@ -221,7 +317,7 @@
 				</div>
 
 				<Accordion flush class="">
-					<AccordionItem class="max-h-0 overflow-hidden">
+					<AccordionItem class="max-h-0 overflow-hidden" open>
 						<span slot="header">Income<span class="text-red-500">* {incomeError}</span></span>
 						<div class="flex flex-col pb-3 bg-gray-100 rounded-lg">
 							<Label>Income (after platform cut)</Label>
@@ -241,7 +337,10 @@
 								</div>
 							</div>
 							<div class="mt-3">
-								<Label># of {roverData.workUnits} Worked <span class="text-red-500">{timeError}</span></Label>
+								<Label
+									># of {roverData.workUnits} Worked
+									<span class="text-red-500">{timeError}</span></Label
+								>
 								<Input
 									type="number"
 									bind:value={roverData.unitsWorked}
@@ -289,7 +388,7 @@
 				<div class="flex flex-col">
 					<Label>Tips</Label>
 					<IconNumberInput bind:value={roverData.tips} />
-                
+
 					<Label class="mt-4">Travel to gig</Label>
 					<div class="flex items-center mt-1 mb-4">
 						<div class="w-1/2 mr-2">
@@ -317,6 +416,7 @@
 					<MultiSelect
 						options={roverServices}
 						bind:value={roverData.type}
+						maxSelect={1}
 						style="--sms-bg: rgb(249, 250, 251); padding: 8px; border-radius: 8px;"
 						--sms-focus-border="2px solid blue"
 					/>
@@ -330,103 +430,115 @@
 				<div class="flex flex-col">
 					<Label>Start Date <span class="text-red-500">*{dateError}</span></Label>
 					<Input type="date" bind:value={upworkData.date} class="mb-4 min-h-5" />
-    				
-                    
-					<Label>Start Time <span class="text-red-500">
-                        {#if timeError}
-                        Please specify start/end times
-                        {/if}
-                    </span></Label>
+
+					<Label
+						>Start Time <span class="text-red-500">
+							{#if timeError}
+								Please specify start/end times
+							{/if}
+						</span></Label
+					>
 					<Input type="time" bind:value={upworkData.startTime} class="mb-4" />
 
 					<Label>End Date</Label>
 					<Input type="date" bind:value={upworkData.endDate} class="mb-4" />
 
-                    <Label>End Time</Label>
-					<Input type="time" bind:value={upworkData.endTime} class="mb-4"/>
-					
-                    <Label>Job Category<span class="text-red-500">*{typeError}</span></Label>
+					<Label>End Time</Label>
+					<Input type="time" bind:value={upworkData.endTime} class="mb-4" />
+
+					<Label>Job Category<span class="text-red-500">*{typeError}</span></Label>
 					<MultiSelect
 						options={upworkJobCategories}
+						maxSelect={1}
 						bind:value={upworkData.type}
 						style="--sms-bg: rgb(249, 250, 251); padding: 8px; border-radius: 8px;"
 						--sms-focus-border="2px solid blue"
 					/>
-                    <Accordion flush class="">
-                        <AccordionItem class="max-h-0 overflow-hidden">
-                            <span slot="header">Income<span class="text-red-500">*{incomeError}</span></span>
-                            <div class="flex flex-col pb-3 bg-gray-100 rounded-lg">
-                                <div class="flex items-center justify-between mt-1">
-                                    <Label>Rate of Charge</Label>
-                                    <Label>Unit of Work</Label>
-                                </div>
-                                <div class="flex items-center mt-1">
-                                    <div class="w-1/2 mr-2">
-                                        <IconNumberInput bind:value={upworkData.hourlyCharge} className="mr-2" />
-                                    </div>
-                                    <div class="w-1/2 ml-2">
-                                        <Input type="text" bind:value={upworkData.workUnits} />
-                                    </div>
-                                </div>
-                                <span class="flex flex-col items-center mt-2">Or</span>
-                                <Label>Fixed price</Label>
-                                <IconNumberInput bind:value={upworkData.fixedCharge} className="mt-1" />
-            
-                                <div class="mt-3">
-                                    <Label># of {upworkData.workUnits} Worked <span class="text-red-500">Or Enter (Estimated) {upworkData.workUnits} worked</span></Label>
-                                    
-                                    <Input
-                                        type="number"
-                                        bind:value={upworkData.unitsWorked}
-                                        on:keydown={handleKeyDown}
-                                    />
-                                </div>
+					<Accordion flush class="">
+						<AccordionItem class="max-h-0 overflow-hidden" open>
+							<span slot="header">Income<span class="text-red-500">*{incomeError}</span></span>
+							<div class="flex flex-col pb-3 bg-gray-100 rounded-lg">
+								<div class="flex items-center justify-between mt-1">
+									<Label>Rate of Charge</Label>
+									<Label>Unit of Work</Label>
+								</div>
+								<div class="flex items-center mt-1">
+									<div class="w-1/2 mr-2">
+										<IconNumberInput bind:value={upworkData.hourlyCharge} className="mr-2" />
+									</div>
+									<div class="w-1/2 ml-2">
+										<Input type="text" bind:value={upworkData.workUnits} />
+									</div>
+								</div>
+								<Label
+									># of {upworkData.workUnits} Worked
+									{#if timeError}
+										<span class="text-red-500"
+											>Or Enter (Estimated) {upworkData.workUnits} worked</span
+										>
+									{/if}
+								</Label>
 
-                                <hr class="border-t border-gray-300 my-4" />
-                                <Label>Income after Platform Cut</Label>
-                                <IconNumberInput bind:value={upworkData.cutIncome} className="mr-2" />
-                                <div class="flex items-center justify-between mt-1">
-                                    <Label>Platform Cut</Label>
-                                    <Label>Cut Units</Label>
-                                </div>
-                                <div class="flex items-center">
-                                    <div class="w-3/4 mr-2">
-                                        <Input
-                                            type="number"
-                                            bind:value={upworkData.platformCut}
-                                            className="mt-1"
-                                            on:keydown={handleKeyDown}
-                                        />
-                                    </div>
-                                    <div class="w-1/4 mr-2">
-                                        <Select
-                                            items={[
-                                                { value: 'percent', name: '%' },
-                                                { value: 'dollar', name: '$' }
-                                            ]}
-                                            bind:value={upworkData.platformCutType}
-                                            style="--sms-bg: rgb(249, 250, 251); padding: 8px; border-radius: 8px;"
-                                            --sms-focus-border="2px solid blue"
-                                        />
-                                    </div>
-                                </div>
-                                <button
-                                    class="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 mt-2"
-                                    on:click={calculateUpworkIncome}
-                                >
-                                    Calculate
-                                </button>
-                            </div>
-                        </AccordionItem>
-                    </Accordion>
+								<Input
+									type="number"
+									bind:value={upworkData.unitsWorked}
+									on:keydown={handleKeyDown}
+								/>
+								<span class="flex flex-col items-center mt-2">Or</span>
+								<Label>Fixed price</Label>
+								<IconNumberInput bind:value={upworkData.fixedCharge} className="mt-1" />
 
-                    {#if upworkData.workUnits !== 'Hours'}
-                    <Label>(Estimated) Time Worked <span class="text-red-500 py-2">Or Time Worked</span></Label>
-                    <Duration
-                        bind:hours={upworkData.hoursPerWeek.hours}
-                        bind:minutes={upworkData.hoursPerWeek.minutes}
-                    />
-                    {/if}
+								<hr class="border-t border-gray-300 my-4" />
+								<Label>Income after Platform Cut</Label>
+								<IconNumberInput bind:value={upworkData.cutIncome} className="mr-2" />
+								<div class="flex items-center justify-between mt-1">
+									<Label>Platform Cut</Label>
+									<Label>Cut Units</Label>
+								</div>
+								<div class="flex items-center">
+									<div class="w-3/4 mr-2">
+										<Input
+											type="number"
+											bind:value={upworkData.platformCut}
+											className="mt-1"
+											on:keydown={handleKeyDown}
+										/>
+									</div>
+									<div class="w-1/4 mr-2">
+										<Select
+											items={[
+												{ value: 'percent', name: '%' },
+												{ value: 'dollar', name: '$' }
+											]}
+											bind:value={upworkData.platformCutType}
+											style="--sms-bg: rgb(249, 250, 251); padding: 8px; border-radius: 8px;"
+											--sms-focus-border="2px solid blue"
+										/>
+									</div>
+								</div>
+								<button
+									class="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 mt-2"
+									on:click={calculateUpworkIncome}
+								>
+									Calculate
+								</button>
+							</div>
+						</AccordionItem>
+					</Accordion>
+
+					{#if upworkData.workUnits !== 'Hours'}
+						<Label
+							>(Estimated) Time Worked
+							{#if timeError}
+								<span class="text-red-500 py-2">Or Time Worked</span>
+							{/if}
+						</Label>
+						<Input
+							type="number"
+							bind:value={upworkData.hoursPerWeek}
+							on:keydown={handleRatingsKeyDown}
+						/>
+					{/if}
 
 					<Label class="mt-4">History of Working with Client</Label>
 					<Input type="text" bind:value={upworkData.clientHistory} class="mt-1" />
@@ -444,7 +556,6 @@
 					<Label>Notes</Label>
 					<Textarea type="text" bind:value={upworkData.notes} class="mt-1" />
 				</div>
-
 			</div>
 		{/if}
 		<div class="flex flex-col">
@@ -479,7 +590,7 @@
 				id="selectedFile"
 				style="display: none;"
 				accept="video/*,image/*"
-				on:change={onFileChange}
+				on:change={handleFileChange}
 			/>
 
 			<div class="flex items-center justify-center">
@@ -494,35 +605,56 @@
 				<p class="text-red-600 mt-2">{errorMessage}</p>
 			{/if}
 		</div>
-		<div class="flex flex-row items-center gap-4 mt-6">
-			<button
-				class={`flex-1 py-2 rounded ${dataChanged ? 'bg-black text-white' : 'bg-gray-400 text-gray-600 cursor-not-allowed opacity-50'} text-sm md:text-base lg:text-lg truncate`}
-				on:click={submitManual}
-				disabled={!dataChanged}
-				style="min-width: 120px;"
-			>
-				{docID ? 'Update' : 'Submit'}
-			</button>
-			{#if docID}
-				<button
-					class="flex-1 py-2 rounded bg-blue-500 text-white hover:bg-blue-600 text-sm md:text-base lg:text-base truncate"
-					on:click={() => goto('/protected/trends/personal')}
-					style="min-width: 120px;"
+
+		<div class="flex flex-col gap-4 mt-6">
+			<div class="flex flex-row items-center gap-4">
+				<Button
+					class="flex-1 py-2 text-sm md:text-base lg:text-lg truncate"
+					color={dataChanged ? 'blue' : 'light'}
+					disabled={!dataChanged}
+					on:click={submitManual}
+					style="border-radius: 4px; min-width: 120px; flex-grow: 1;"
 				>
-					See in Trends
-				</button>
+					{docID ? 'Update' : 'Submit'}
+				</Button>
+
+				{#if docID}
+					<Button
+						class="flex-1 py-2 text-sm md:text-base lg:text-base truncate"
+						color="blue"
+						on:click={() => goto('/protected/trends/personal')}
+						style="border-radius: 4px; min-width: 120px; flex-grow: 1;"
+					>
+						See in Trends
+					</Button>
+				{/if}
+			</div>
+
+			{#if docID}
+				<div class="flex flex-row items-center gap-4">
+					<form method="POST" action="?/reload">
+						<Button
+							class="flex-1 py-3 text-sm md:text-base lg:text-base"
+							color="blue"
+							style="border-radius: 4px; min-width: 120px; flex-grow: 1;"
+							type="submit"
+						>
+							New Income
+						</Button>
+					</form>
+					<form method="POST" action="?/manage">
+						
+					<Button
+						class="flex-1 py-3 text-sm md:text-base lg:text-base"
+						color="blue"
+						style="border-radius: 4px; min-width: 120px; flex-grow: 1;"
+						type="submit"
+						>
+						Manage
+					</Button>
+					</form>
+				</div>
 			{/if}
 		</div>
-		{#if docID}
-			<form method="POST" class="flex flex-row items-center">
-				<button
-					class="flex-1 my-2 py-3 rounded bg-blue-500 text-white hover:bg-blue-600 text-sm md:text-base lg:text-base truncate"
-					style="min-width: 120px;"
-					type="submit"
-				>
-					New Income
-				</button>
-			</form>
-		{/if}
 	</div>
 </div>
