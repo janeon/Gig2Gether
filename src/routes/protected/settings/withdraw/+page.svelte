@@ -8,7 +8,10 @@
     
     import { db } from "$lib/firebase/client.js";
     import { deleteDoc, doc } from "firebase/firestore";
-    
+	import { updateTitle } from "$lib/stores/title.js";
+
+    updateTitle("Manage Data");
+
     export let data
 
     let toDelete : Data[] = []

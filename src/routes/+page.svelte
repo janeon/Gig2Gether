@@ -26,10 +26,10 @@
     ];
   
     const howItWorks = [
-      { img: '/Registration.png', heading: 'User Registration', text: 'Create your Gig2Gether account by your phone number and complete a short demographics form to finalize registration.' },
-      { img: '/Sharing-Settings.png', heading: 'Choose Data to Share', text: 'Set your preferences for data sharing and visibility to maintain control over your information.' },
-      { img: '/Data-Uploading.png', heading: 'Upload Your Data', text: 'Easily upload your gig work data through our secure system.' },
-      { img: '/Trends.png', heading: 'Explore Trends', text: 'Access personal trends to track your performance over time. View collective insights to compare your data with aggregated statistics.' },
+      { img: '/register.png', heading: 'User Registration', text: 'Create your Gig2Gether account by your phone number and complete a short demographics form to finalize registration.' },
+      { img: '/sharing.png', heading: 'Choose Data to Share', text: 'Set your preferences for data sharing and visibility to maintain control over your information.' },
+      { img: '/expenses.png', heading: 'Upload Your Data', text: 'Upload and track your (taxable) earnings and expenses.' },
+      { img: '/personal.png', heading: 'Explore Trends', text: 'Access personal trends to track your performance over time. View collective insights to compare your data with aggregated statistics.' },
       { img: '/Planner.png', heading: 'Optimize with the Planner', text: 'Use Planner to strategically choose work locations and times. Leverage your historical data to improve earnings and efficiency in your gig work.' },
       { img: '/Community.png', heading: 'Community Engagement', text: 'Connect with fellow gig workers in our community. Exchange experiences, discuss issues, and share successful strategies to thrive in the gig economy.' }
     ];
