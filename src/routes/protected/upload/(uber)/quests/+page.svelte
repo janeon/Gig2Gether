@@ -14,8 +14,7 @@
 		currentTime,
 		extractAfterEquals,
 		capitalize,
-		handleBrowseClick,
-		handleFileChange
+		handleBrowseClick
 	} from '$lib/utils';
 	import { updateTitle } from '$lib/stores/title';
 	import { onMount } from 'svelte';
@@ -28,6 +27,11 @@
 	let dateError = '';
 
 	let docID: string | null = null;
+
+	let file: File;
+	let imageUrlPreview: string;
+	$: fileName = file ? file.name : 'Upload a Photo';
+	let url: string;
 
 	let questData = {
 		timestamp: new Date(),
@@ -45,6 +49,7 @@
 		earnings: null,
 		distance: null,
 		tips: null,
+		url: null,
 		uid: $page.data.user?.uid
 	};
 
@@ -61,6 +66,9 @@
 					for (const [key, value] of Object.entries(doc.data())) {
 						if (value !== null && value !== undefined) {
 							questData[key] = value;
+							if (key === 'url') {
+								imageUrlPreview = value;
+							}
 						}
 					}
 				}
@@ -72,15 +80,15 @@
 
 	$: dataChanged = JSON.stringify(questData) !== JSON.stringify(initialData);
 
-	let file: File;
-	let imageUrlPreview: string;
-	$: fileName = file ? file.name : 'Upload a Photo';
-	let url: string;
-
-	async function onFileChange(event: Event) {
-		file = await handleFileChange(event);
-		if (file) {
-			imageUrlPreview = URL.createObjectURL(file);
+	function onFileChange(event) {
+		const fileInput = event.target as HTMLInputElement;
+		if (fileInput.files && fileInput.files.length > 0) {
+			file = fileInput.files[0];
+			const reader = new FileReader();
+			reader.onload = (e) => {
+				imageUrlPreview = e.target.result as string;
+			};
+			reader.readAsDataURL(file);
 		}
 	}
 
@@ -125,6 +133,7 @@
 			);
 			const result = await uploadBytes(storageRef, file);
 			url = await getDownloadURL(result.ref);
+			questData.url = url;
 		}
 
 		const collectionRef = collection(db, 'upload', 'manual', 'quests');

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { goto, invalidateAll } from '$app/navigation';
+	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 	import { _getInitialData, _cleanData } from './+page';
@@ -7,7 +7,6 @@
 	import {
 		capitalize,
 		handleBrowseClick,
-		handleFileChange,
 		handleKeyDown,
 		handleRatingsKeyDown
 	} from '$lib/utils';
@@ -42,10 +41,15 @@
 		''
 	];
 
+	let file: File;
+	let imageUrlPreview: string = null;
+	$: fileName = file ? file.name : 'Upload a Photo';
+	let url: string;
+	let cut;
+
 	let roverData: any;
 	let upworkData: any;
-
-	let cut;
+	
 	onMount(async () => {
 		// Fetch user profile data
 		const profile = await getDoc(doc(db, 'users', $page.data.user.uid, 'settings', 'profile'));
@@ -68,9 +72,13 @@
 						if (value !== null && value !== undefined) {
 							if ($page.data.user?.platform == 'rover') {
 								roverData[key] = value;
+								
 							} else {
 								upworkData[key] = value;
 							}
+							if (key === 'url') {
+                                imageUrlPreview = value;
+                            }
 						}
 					}
 				}
@@ -94,16 +102,13 @@
 	$: dataChanged =
 		JSON.stringify($page.data.user?.platform == 'rover' ? roverData : upworkData) !==
 		JSON.stringify(initialData);
-
-	let file: File;
-	let imageUrlPreview: string = null;
-	$: fileName = file ? file.name : 'Upload a Photo';
-	let url: string;
-
-	async function onFileChange(event: Event) {
-		file = await handleFileChange(event);
-		if (file) {
-			imageUrlPreview = URL.createObjectURL(file);
+	
+	async function handleFileChange(event: Event) {
+		const fileInput = event.target as HTMLInputElement;
+		imageUrlPreview = URL.createObjectURL(fileInput.files[0]);
+		if (fileInput.files && fileInput.files.length > 0) {
+			file = fileInput.files[0];
+			fileName = file.name;
 		}
 	}
 
@@ -246,6 +251,11 @@
 			);
 			const result = await uploadBytes(storageRef, file);
 			url = await getDownloadURL(result.ref);
+			if (platform === 'rover') {
+				roverData.url = url;
+			} else {
+				upworkData.url = url;
+			}
 		}
 
 		const collectionRef = collection(db, 'upload', 'manual', platform);
@@ -575,7 +585,7 @@
 				id="selectedFile"
 				style="display: none;"
 				accept="video/*,image/*"
-				on:change={onFileChange}
+				on:change={handleFileChange}
 			/>
 
 			<div class="flex items-center justify-center">

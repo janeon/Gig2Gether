@@ -253,13 +253,6 @@ export function transformHourlyData(data: { [key: string]: { totalEarnings: numb
 
 
 /* Handlers */
-export async function handleFileChange(event: Event) {
-	const fileInput = event.target as HTMLInputElement;
-	if (fileInput.files && fileInput.files.length > 0) {
-		return fileInput.files[0];
-	}
-	return null;
-}
 
 export function handleKeyDown(event: KeyboardEvent) {
     if (

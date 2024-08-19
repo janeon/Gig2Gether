@@ -2,13 +2,13 @@
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 
-	import { db, storage } from "$lib/firebase/client";
-    import { getDownloadURL, ref, uploadBytes} from "firebase/storage";
+	import { db, storage } from '$lib/firebase/client';
+	import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 	import { collection, doc, getDoc, setDoc } from 'firebase/firestore';
 
-	import { currentTime, extractAfterEquals, capitalize, handleBrowseClick, handleFileChange } from '$lib/utils';
+	import { currentTime, extractAfterEquals, capitalize, handleBrowseClick } from '$lib/utils';
 	import { updateTitle } from '$lib/stores/title';
-	
+
 	import { Label, Input, Textarea, Button } from 'flowbite-svelte';
 	import IconNumberInput from '$lib/components/IconNumberInput.svelte';
 	import { onMount } from 'svelte';
@@ -19,6 +19,11 @@
 	let errorMessage = 'Please enter:';
 	let fareError = '';
 	let dateError = '';
+
+	let file: File;
+	let imageUrlPreview: string;
+	$: fileName = file ? file.name : 'Upload a Photo';
+	let url: string;
 
 	// Uber Expenses
 	let tripData = {
@@ -36,6 +41,7 @@
 		boost: null,
 		withholdings: null,
 		note: '',
+		url: '',
 		uid: $page.data.user?.uid
 	};
 
@@ -52,6 +58,9 @@
 					for (const [key, value] of Object.entries(doc.data())) {
 						if (value !== null && value !== undefined) {
 							tripData[key] = value;
+							if (key === 'url') {
+								imageUrlPreview = value;
+							}
 						}
 					}
 				}
@@ -66,40 +75,40 @@
 	// Track if data has changed
 	$: dataChanged = JSON.stringify(tripData) !== JSON.stringify(initialData);
 
-	let file: File
-    let imageUrlPreview : string
-    $: fileName = file ? file.name : 'Upload a Photo';
-    let url : string
-
-    async function onFileChange(event: Event) {
-        file = await handleFileChange(event);
-        if (file) {
-            imageUrlPreview = URL.createObjectURL(file);
-        }
-    }
+	function onFileChange(event) {
+		const fileInput = event.target as HTMLInputElement;
+		if (fileInput.files && fileInput.files.length > 0) {
+			file = fileInput.files[0];
+			const reader = new FileReader();
+			reader.onload = (e) => {
+				imageUrlPreview = e.target.result as string;
+			};
+			reader.readAsDataURL(file);
+		}
+	}
 
 	function clearFile() {
-        fileName = 'Upload a Photo';
-        imageUrlPreview = '';
-        
-        const fileInput = document.getElementById('selectedFile') as HTMLInputElement;
-        fileInput.value = ''; // Clear the file input
-    }
+		fileName = 'Upload a Photo';
+		imageUrlPreview = '';
+
+		const fileInput = document.getElementById('selectedFile') as HTMLInputElement;
+		fileInput.value = ''; // Clear the file input
+	}
 
 	async function submitManualTrip() {
 		errorMessage = 'Please enter:';
 		fareError = dateError = '';
 		if (!tripData.fare || !tripData.date) {
-            if (!tripData.fare) {
+			if (!tripData.fare) {
 				fareError = 'Please Enter Fare';
-                errorMessage += " Fare,";
-            }
-            if (!tripData.date) {
+				errorMessage += ' Fare,';
+			}
+			if (!tripData.date) {
 				dateError = 'Please Enter Trip Date';
-                errorMessage += " Date";
-            }
-            return;
-        }
+				errorMessage += ' Date';
+			}
+			return;
+		}
 
 		// Process properties if no errors
 		const properties = ['fare', 'surge', 'waitTimeBonus', 'tips', 'boost', 'withholdings'];
@@ -110,16 +119,19 @@
 		});
 
 		if (file) {
-            const storageRef = ref(storage, 
-			`uploads/${$page.data.user.platform}/trips/${$page.data.user.uid}/${file.name}`);
-            const result = await uploadBytes(storageRef, file);
-            url = await getDownloadURL(result.ref);
-        }
+			const storageRef = ref(
+				storage,
+				`uploads/${$page.data.user.platform}/trips/${$page.data.user.uid}/${file.name}`
+			);
+			const result = await uploadBytes(storageRef, file);
+			url = await getDownloadURL(result.ref);
+			tripData.url = url;
+		}
 
 		const collectionRef = collection(db, 'upload', 'manual', 'trips');
 		const docRef = docID ? doc(collectionRef, docID) : doc(collectionRef);
 		await setDoc(docRef, tripData, { merge: true });
-        successMessage = docID ? 'Update Successful!' : 'Submission Successful!';
+		successMessage = docID ? 'Update Successful!' : 'Submission Successful!';
 		docID = docRef.id;
 		// Update initial data after successful submission
 		initialData = { ...tripData };
@@ -130,24 +142,23 @@
 	<div class="py-2 flex flex-col items-center w-full">
 		<div class="w-full max-w-md space-y-5">
 			<div class="flex flex-col">
-				<Label>Date<span class="text-red-500">*{dateError}</span>
-				</Label>
-				<Input type="date" bind:value={tripData.date} class="mt-1" required/>
+				<Label>Date<span class="text-red-500">*{dateError}</span></Label>
+				<Input type="date" bind:value={tripData.date} class="mt-1" required />
 			</div>
 
 			<div class="flex flex-col">
-				<Label>Start Time</Label> 
-                <Input type="time" bind:value={tripData.time} class="mt-1" />
+				<Label>Start Time</Label>
+				<Input type="time" bind:value={tripData.time} class="mt-1" />
 			</div>
 
 			<div class="flex flex-col">
-				<Label>End Time</Label> 
+				<Label>End Time</Label>
 				<Input type="time" bind:value={tripData.endTime} class="mt-1" />
 			</div>
 
 			<div class="flex flex-col">
 				<Label>Fare<span class="text-red-500">*{fareError}</span></Label>
-				<IconNumberInput bind:value={tripData.fare} className="mt-1"/>
+				<IconNumberInput bind:value={tripData.fare} className="mt-1" />
 			</div>
 
 			<div class="flex flex-col">
@@ -176,104 +187,111 @@
 			</div>
 
 			<div class="flex flex-col">
-                <Label>Note</Label>
-                <Textarea bind:value={tripData.note} rows="4" placeholder="To remember this trip by"
-                class="mt-1 border border-gray-300 rounded-lg px-3 py-2 bg-gray-50"/>
-            </div>
+				<Label>Note</Label>
+				<Textarea
+					bind:value={tripData.note}
+					rows="4"
+					placeholder="To remember this trip by"
+					class="mt-1 border border-gray-300 rounded-lg px-3 py-2 bg-gray-50"
+				/>
+			</div>
 
 			<div class="flex flex-col">
 				<!-- https://stackoverflow.com/questions/1084925/input-type-file-show-only-button -->
-				<div class="flex {(fileName === 'Upload a Photo') ? 'flex-row' : 'flex-col'} items-center space-x-4 pt-5 justify-center">
-					<input 
-					type="button" 
-					value="Browse" 
-					on:click={handleBrowseClick} 
-					class="bg-gray-500 text-white font-bold py-2 px-4 rounded hover:bg-gray-700" 
+				<div
+					class="flex {fileName === 'Upload a Photo'
+						? 'flex-row'
+						: 'flex-col'} items-center space-x-4 pt-5 justify-center"
+				>
+					<input
+						type="button"
+						value="Browse"
+						on:click={handleBrowseClick}
+						class="bg-gray-500 text-white font-bold py-2 px-4 rounded hover:bg-gray-700"
 					/>
 					<p class="text-center">{fileName}</p>
 				</div>
 
 				{#if imageUrlPreview}
-                <div class="flex justify-center mt-4">
-                    <button 
-                        on:click={clearFile} 
-                        class="bg-red-500 text-white font-bold py-2 px-4 rounded hover:bg-red-700"
-                    >
-                        Clear
-                    </button>
-                </div>
-                {/if}
-				
-				<input 
-					type="file" 
-					id="selectedFile" 
-					style="display: none;" 
-					accept="video/*,image/*" 
-					on:change={onFileChange} 
+					<div class="flex justify-center mt-4">
+						<button
+							on:click={clearFile}
+							class="bg-red-500 text-white font-bold py-2 px-4 rounded hover:bg-red-700"
+						>
+							Clear
+						</button>
+					</div>
+				{/if}
+
+				<input
+					type="file"
+					id="selectedFile"
+					style="display: none;"
+					accept="video/*,image/*"
+					on:change={onFileChange}
 				/>
-			
-				<div class = "flex items-center justify-center">
-					<img src={imageUrlPreview} class="rounded-sm mt-2 object-contain w-1/2 " alt="" />
+
+				<div class="flex items-center justify-center">
+					<img src={imageUrlPreview} class="rounded-sm mt-2 object-contain w-1/2" alt="" />
 				</div>
 			</div>
 		</div>
-            <div class="flex justify-center mt-2">
-				{#if successMessage}
-					<p class="text-green-600 mt-2">{successMessage}</p>
-				{/if}
-				{#if errorMessage !== "Please enter:"}
-					<p class="text-red-600 mt-2">{errorMessage}</p>
-				{/if}
-			</div>
-			<div class="flex flex-col gap-4 mt-6">
-				<div class="flex flex-row items-center gap-4">
+		<div class="flex justify-center mt-2">
+			{#if successMessage}
+				<p class="text-green-600 mt-2">{successMessage}</p>
+			{/if}
+			{#if errorMessage !== 'Please enter:'}
+				<p class="text-red-600 mt-2">{errorMessage}</p>
+			{/if}
+		</div>
+		<div class="flex flex-col gap-4 mt-6">
+			<div class="flex flex-row items-center gap-4">
+				<Button
+					class="flex-1 py-2 text-sm md:text-base lg:text-lg truncate"
+					color={dataChanged ? 'dark' : 'light'}
+					disabled={!dataChanged}
+					on:click={submitManualTrip}
+					style="border-radius: 4px; min-width: 120px; flex-grow: 1;"
+				>
+					{docID ? 'Update' : 'Submit'}
+				</Button>
+
+				{#if docID}
 					<Button
-						class="flex-1 py-2 text-sm md:text-base lg:text-lg truncate"
-						color={dataChanged ? 'dark' : 'light'}
-						disabled={!dataChanged}
-						on:click={submitManualTrip}
+						class="flex-1 py-2 text-sm md:text-base lg:text-base truncate"
+						color="blue"
+						on:click={() => goto('/protected/trends/personal')}
 						style="border-radius: 4px; min-width: 120px; flex-grow: 1;"
 					>
-						{docID ? 'Update' : 'Submit'}
+						See in Trends
 					</Button>
-	
-					{#if docID}
+				{/if}
+			</div>
+
+			{#if docID}
+				<div class="flex flex-row items-center gap-4">
+					<form method="POST" action="?/reload">
 						<Button
-							class="flex-1 py-2 text-sm md:text-base lg:text-base truncate"
+							class="flex-1 py-3 text-sm md:text-base lg:text-base"
 							color="blue"
-							on:click={() => goto('/protected/trends/personal')}
 							style="border-radius: 4px; min-width: 120px; flex-grow: 1;"
+							type="submit"
 						>
-							See in Trends
+							New Trip
 						</Button>
-					{/if}
-				</div>
-	
-				{#if docID}
-					<div class="flex flex-row items-center gap-4">
-						<form method="POST" action="?/reload">
-							<Button
-								class="flex-1 py-3 text-sm md:text-base lg:text-base"
-								color="blue"
-								style="border-radius: 4px; min-width: 120px; flex-grow: 1;"
-								type="submit"
-							>
-								New Trip
-							</Button>
-						</form>
-						<form method="POST" action="?/manage">
-							
+					</form>
+					<form method="POST" action="?/manage">
 						<Button
 							class="flex-1 py-3 text-sm md:text-base lg:text-base"
 							color="dark"
 							style="border-radius: 4px; min-width: 120px; flex-grow: 1;"
 							type="submit"
-							>
+						>
 							Manage
 						</Button>
-						</form>
-					</div>
-				{/if}
-			</div>
+					</form>
+				</div>
+			{/if}
+		</div>
 	</div>
 </div>

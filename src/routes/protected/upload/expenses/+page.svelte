@@ -10,7 +10,7 @@
     import { Label, Input, Textarea, Button } from "flowbite-svelte";
     import IconNumberInput from '$lib/components/IconNumberInput.svelte';
     
-    import { currentTime, handleBrowseClick, handleFileChange } from "$lib/utils";
+    import { currentTime, handleBrowseClick } from "$lib/utils";
     import { updateTitle } from "$lib/stores/title";
     import { capitalize, extractAfterEquals } from "$lib/utils";
 	import { onMount } from "svelte";
@@ -29,9 +29,14 @@
         description: '',
         amount: null,
         uid: $page.data.user.uid,
-        timestamp: new Date()
+        timestamp: new Date(), 
+        url: null,
     };
 
+    let file: File
+    let imageUrlPreview : string
+    $: fileName = file ? file.name : 'Upload a Photo (e.g., Receipts)';
+    let url : string | null = null;
     let docID:string | null = null;
 
     onMount(() => {
@@ -47,10 +52,14 @@
 					for (const [key, value] of Object.entries(doc.data())) {
 						if (value !== null && value !== undefined) {
 							data[key] = value;
+                            if (key === 'url') {
+                                imageUrlPreview = value;
+                            }
 						}
 					}
 				}
 			});
+            
 		}
 	});
 
@@ -69,17 +78,14 @@
     const roverExpenseType = ["Pet Supplies", "Transportation", "Other"];
     const upworkExpenseType = ["Software", "Office Supplies", "Insurance", "Other"];
 
-    let file: File
-    let imageUrlPreview : string
-    $: fileName = file ? file.name : 'Upload a Photo (e.g., Receipts)';
-    let url : string
-
-    async function onFileChange(event: Event) {
-        file = await handleFileChange(event);
-        if (file) {
-            imageUrlPreview = URL.createObjectURL(file);
-        }
-    }
+	async function handleFileChange(event: Event) {
+		const fileInput = event.target as HTMLInputElement;
+		imageUrlPreview = URL.createObjectURL(fileInput.files[0]);
+		if (fileInput.files && fileInput.files.length > 0) {
+			file = fileInput.files[0];
+			fileName = file.name;
+		}
+	}
 
     function clearFile() {
         fileName = 'Upload a Photo (e.g., Receipts)';
@@ -109,6 +115,7 @@
             `uploads/${$page.data.user.platform}/expenses/${$page.data.user.uid}/${file.name}`);
             const result = await uploadBytes(storageRef, file);
             url = await getDownloadURL(result.ref);
+            data.url = url;
         }
 
         errorMessage = "Please enter:";
@@ -199,7 +206,7 @@
                     id="selectedFile" 
                     style="display: none;" 
                     accept="video/*,image/*" 
-                    on:change={onFileChange} 
+                    on:change={handleFileChange} 
                 />
 
                 <div class = "flex items-center justify-center">
