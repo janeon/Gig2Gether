@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { addDoc, collection, doc, getDoc } from 'firebase/firestore';
+	import { addDoc, collection, doc, getDoc, setDoc } from 'firebase/firestore';
 	import { db, storage } from '$lib/firebase/client';
 	import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 
@@ -21,6 +21,7 @@
 	let url: string;
 	let type: string;
 	let uploading = false;
+	let id: string;
 
 	let imageUrlPreview: string;
 	$: fileName = file ? file.name : 'Share a Photo/Video';
@@ -126,8 +127,12 @@
 				sharing: postSharing,
 				username: $page.data.user.username
 			};
-
-			await addDoc(collection(db, 'stories', $page.data.user.platform, 'posts'), postData);
+			if (!id) {
+				await addDoc(collection(db, 'stories', $page.data.user.platform, 'posts'), postData);
+			} else {
+				await setDoc(doc(db, 'stories', $page.data.user.platform, 'posts', id), postData);
+			}
+				// await addDoc(collection(db, 'stories', $page.data.user.platform, 'posts'), postData);
 			goto('/protected/stories/story-feed');
 		} catch {
 			uploading = false;
@@ -163,7 +168,7 @@
 
 		// Extract search parameter 'id'
 		const queryParams = new URLSearchParams(window.location.search);
-		const id = queryParams.get('id');
+		id = queryParams.get('id');
 
 		if (id) {
 			// Fetch document data based on 'id'
@@ -328,6 +333,6 @@
 			<i class="fa-solid fa-spinner loadingSpinner animate-spin" />
 		</Button>
 	{:else}
-		<BlueButton onclick={uploadContent} buttonText="Upload Content"></BlueButton>
+		<BlueButton onclick={uploadContent} buttonText={id ? "Update":"Upload Content"}></BlueButton>
 	{/if}
 </div>
