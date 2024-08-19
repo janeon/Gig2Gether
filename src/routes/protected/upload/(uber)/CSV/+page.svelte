@@ -15,7 +15,7 @@
 
     let csv: File;
     let url: string;
-    let date = new Date();
+    let timestamp = new Date();
     let note = '';
     let successMessage = '';
     let errorMessage = '';
@@ -79,7 +79,7 @@
         await setDoc(docRef, {
             name: fileuploadprops.id,
             url: url,
-            date: date,
+            timestamp: timestamp,
             type: "CSV",
             title: csv.name,
             uid: user.uid,
@@ -89,7 +89,7 @@
         const batch = writeBatch(db);
         data.forEach((row, index) => {
             const subDocRef = doc(collection(docRef, "trips"), `trip_${index}`);
-            batch.set(subDocRef, { ...row, date: date, csvDownloadURL: url });
+            batch.set(subDocRef, { ...row, timestamp: timestamp, csvDownloadURL: url });
         });
 
         try {

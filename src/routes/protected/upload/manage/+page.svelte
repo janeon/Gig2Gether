@@ -17,12 +17,6 @@
         for (let dataDoc of toDelete) {
             let docRef: any;
             switch (dataDoc.type) {
-                case "Story":
-                    docRef = doc(db, 'stories', data.user.platform, "posts", dataDoc.id)
-                    break;
-                case "Manual":
-                    docRef = doc(db, 'upload', 'manual', data.user.platform, dataDoc.id)
-                    break;
                 case "Expense":
                     docRef = doc(db, 'upload', 'expenses', data.user.platform, dataDoc.id)
                     break;
@@ -52,7 +46,9 @@
         <BlueButton onclick={()=>{if (toDelete.length > 0) {modal=true}}} buttonText="Delete Data" />
     </div>
     <Modal title="Are you sure you want to delete these uploads?" bind:open={modal} autoclose>
-        <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">Deleting the selected data will permanently remove it from the database. To see it again in trends, you would need to reupload all content included.</p>
+        <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+            Deleting the selected data will permanently remove it from the database. 
+            To see it again in trends, you would need to reupload all content included.</p>
         <div class="flex flex-row space-x-2">
             <Button color="red" on:click={deleteData}>Yes I'm Sure</Button>
             <Button color="dark">Change My Selection</Button>

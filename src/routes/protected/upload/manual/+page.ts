@@ -7,8 +7,9 @@ export function _cleanData(upworkData: UpworkData, roverData: RoverData, platfor
 		const roverMoneyFields = ['income', 'cutIncome', 'tips', 'rate'];
 		roverMoneyFields.forEach((property) => {
 			if (roverData[property]) {
-				// console.log(property, roverData[property]);
+				console.log(property, roverData[property]);
 				roverData[property] = extractAfterEquals(roverData[property].toString());
+				console.log(property, roverData[property]);
 			}
 		});
 		if (

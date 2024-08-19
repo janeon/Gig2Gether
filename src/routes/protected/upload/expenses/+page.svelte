@@ -4,15 +4,16 @@
 
     import { db, storage } from "$lib/firebase/client";
     import { getDownloadURL, ref, uploadBytes} from "firebase/storage";
-    import { collection, doc, setDoc } from "firebase/firestore";
+    import { collection, doc, getDoc, setDoc } from "firebase/firestore";
 
     import MultiSelect from 'svelte-multiselect';    
-    import { Label, Input, Textarea } from "flowbite-svelte";
+    import { Label, Input, Textarea, Button } from "flowbite-svelte";
     import IconNumberInput from '$lib/components/IconNumberInput.svelte';
     
     import { currentTime, handleBrowseClick, handleFileChange } from "$lib/utils";
     import { updateTitle } from "$lib/stores/title";
     import { capitalize, extractAfterEquals } from "$lib/utils";
+	import { onMount } from "svelte";
     
     updateTitle(capitalize($page.data.user?.platform) + " Expenses");
 
@@ -32,6 +33,26 @@
     };
 
     let docID:string | null = null;
+
+    onMount(() => {
+		// Extract search parameter 'id'
+		const queryParams = new URLSearchParams(window.location.search);
+		const id = queryParams.get('id');
+
+		if (id) {
+			docID = id;
+			const docRef = doc(db, 'upload', 'expenses', $page.data.user?.platform, docID);
+			getDoc(docRef).then((doc) => {
+				if (doc.exists()) {
+					for (const [key, value] of Object.entries(doc.data())) {
+						if (value !== null && value !== undefined) {
+							data[key] = value;
+						}
+					}
+				}
+			});
+		}
+	});
 
     // Store the initial data for comparison
     let initialData = { ...data };
@@ -196,33 +217,55 @@
             {/if}
         </div>  
         
-        <div class="flex flex-row items-center gap-4 mt-6">
-            <button
-                class={`flex-1 py-2 rounded ${dataChanged ? 'bg-black text-white' : 'bg-gray-400 text-gray-600 cursor-not-allowed opacity-50'} text-sm md:text-base lg:text-lg truncate`}
-                on:click={submitExpenses}
-                disabled={!dataChanged}
-                style="min-width: 120px;">
-                {docID ? "Update" : "Submit"}
-            </button>
-            {#if docID}
-                <button
-                    class="flex-1 py-2 rounded bg-blue-500 text-white hover:bg-blue-600 text-sm md:text-base lg:text-base truncate"
-                    on:click={() => goto("/protected/trends/personal")}
-                    style="min-width: 120px;">
-                    See in Trends
-                </button>
-            {/if}
-        </div>      
-        {#if docID}
-        <form method="POST">
-            <button
-            class="flex-1 my-2 py-3 rounded bg-blue-500 text-white hover:bg-blue-600 text-sm md:text-base lg:text-base truncate"
-            style="min-width: 120px;"
-            type="submit"
-            >
-            New Expense
-            </button>
-        </form>
-        {/if}
+        <div class="flex flex-col gap-4 mt-6">
+			<div class="flex flex-row items-center gap-4">
+				<Button
+					class="flex-1 py-2 text-sm md:text-base lg:text-lg truncate"
+					color={dataChanged ? 'dark' : 'light'}
+					disabled={!dataChanged}
+					on:click={submitExpenses}
+					style="border-radius: 4px; min-width: 120px; flex-grow: 1;"
+				>
+					{docID ? 'Update' : 'Submit'}
+				</Button>
+
+				{#if docID}
+					<Button
+						class="flex-1 py-2 text-sm md:text-base lg:text-base truncate"
+						color="blue"
+						on:click={() => goto('/protected/trends/personal')}
+						style="border-radius: 4px; min-width: 120px; flex-grow: 1;"
+					>
+						See in Trends
+					</Button>
+				{/if}
+			</div>
+
+			{#if docID}
+				<div class="flex flex-row items-center gap-4">
+					<form method="POST" action="?/reload">
+						<Button
+							class="flex-1 py-3 text-sm md:text-base lg:text-base"
+							color="blue"
+							style="border-radius: 4px; min-width: 120px; flex-grow: 1;"
+							type="submit"
+						>
+							New Expense
+						</Button>
+					</form>
+					<form method="POST" action="?/manage">
+						
+					<Button
+						class="flex-1 py-3 text-sm md:text-base lg:text-base"
+						color="dark"
+						style="border-radius: 4px; min-width: 120px; flex-grow: 1;"
+						type="submit"
+						>
+						Manage
+					</Button>
+					</form>
+				</div>
+			{/if}
+		</div>
         </div>
 </div>

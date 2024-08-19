@@ -160,6 +160,26 @@
 		if (postSharing.includes('private')) {
 			sharePrivate = true;
 		}
+
+		// Extract search parameter 'id'
+		const queryParams = new URLSearchParams(window.location.search);
+		const id = queryParams.get('id');
+
+		if (id) {
+			// Fetch document data based on 'id'
+			const docRef = doc(db, 'stories', $page.data.user.platform, 'posts', id);
+			const docSnap = await getDoc(docRef);
+
+			if (docSnap.exists()) {
+				const data = docSnap.data();
+				type = data.type;
+				title = data.title;
+				description = data.description;
+				tags = data.tags || [];
+				postSharing = data.sharing || [];
+				imageUrlPreview = data.url || '';
+			}
+		}
 	});
 </script>
 

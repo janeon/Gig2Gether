@@ -16,7 +16,8 @@ export interface Data {
     type: string,
     date: Date,
     title: string,
-    id: string
+    id: string,
+    platform: string,
 }
 
 export interface RoverData {

@@ -7,28 +7,12 @@ export async function load({ parent }) {
 	let postedData = [];
 	const data = await parent();
 
-	// stories
-	let snapshot = await getDocs(
-		query(collection(db, 'stories', data.user.platform, 'posts'), 
-		where('uid', '==', data.user.uid),
-		orderBy("date", "desc"))
-	);
-	snapshot.forEach((doc) => {
-		const post: Data = { date: new Date(), type: '', title: '', id: '', platform: '' };
-		post.platform = data.user.platform;
-		post.date = doc.data().date.toDate();
-		post.type = 'Story';
-		post.title = doc.data().title;
-		post.id = doc.id;
-		postedData.push(post);
-	});
-
 	// expenses
-	snapshot = await getDocs(
+	let snapshot = await getDocs(
 		query(
 			collection(db, 'upload', 'expenses', data.user.platform),
 			where('uid', '==', data.user.uid),
-			orderBy("timestamp", "asc")
+			orderBy('timestamp', 'asc')
 		)
 	);
 	let expenseCount = 1;
@@ -48,10 +32,12 @@ export async function load({ parent }) {
 		// quests & trips
 		for (const entryType of ['quests', 'trips']) {
 			snapshot = await getDocs(
-				query(collection(db, 'upload', 'manual', entryType), 
-				where('uid', '==', data.user.uid),
-				orderBy("timestamp", "asc")
-			));
+				query(
+					collection(db, 'upload', 'manual', entryType),
+					where('uid', '==', data.user.uid),
+					orderBy('timestamp', 'asc')
+				)
+			);
 			let count = 1;
 			snapshot.forEach((doc) => {
 				const post: Data = { date: new Date(), type: '', title: '', id: '', platform: '' };
@@ -61,22 +47,41 @@ export async function load({ parent }) {
 				post.title = doc.data().notes || '';
 				let title = '';
 				for (const item of [doc.data().note, post.type]) {
-					if (item)
-						title += item + ' ';
+					if (item) title += item + ' ';
 				}
-				post.title = title.substring(0, title.length-2)+' #'+count;
+				post.title = title.substring(0, title.length - 2) + ' #' + count;
 				post.id = doc.id;
 				postedData.push(post);
 				count++;
 			});
 		}
+
+		// uber csvs
+		let csvCount = 1;
+		snapshot = await getDocs(
+			query(
+				collection(db, 'upload', 'csv', 'entries'),
+				where('uid', '==', data.user.uid),
+				orderBy('timestamp', 'asc')
+			)
+		);
+		snapshot.forEach((doc) => {
+			const post: Data = { date: new Date(), type: '', title: '', id: '', platform: '' };
+			post.platform = data.user.platform;
+			post.date = doc.data().timestamp.toDate();
+			post.type = 'CSV';
+			post.title = '#' + csvCount + ': ' + doc.data().title;
+			post.id = doc.id;
+			postedData.push(post);
+			csvCount++;
+		});
 	} else {
 		// upwork & rover incomes
 		snapshot = await getDocs(
 			query(
 				collection(db, 'upload', 'manual', data.user.platform),
 				where('uid', '==', data.user.uid),
-				orderBy("timestamp", "asc")
+				orderBy('timestamp', 'asc')
 			)
 		);
 		let incomeCount = 1;
@@ -97,25 +102,6 @@ export async function load({ parent }) {
 		});
 	}
 
-	// uber csvs
-	let csvCount = 1;
-	snapshot = await getDocs(
-		query(collection(db, 'upload', 'csv', 'entries'), 
-		where('uid', '==', data.user.uid),
-		orderBy("timestamp", "asc")
-	)
-	);
-	snapshot.forEach((doc) => {
-		const post: Data = { date: new Date(), type: '', title: '', id: '', platform: '' };
-		post.platform = data.user.platform;
-		post.date = doc.data().timestamp.toDate();
-		post.type = 'CSV';
-		post.title = '#' + csvCount + ': ' + doc.data().title ;
-		post.id = doc.id;
-		postedData.push(post);
-		csvCount++;
-	});
-
 	postedData = postedData.sort((a: Data, b: Data) => {
 		return a.date.getTime() - b.date.getTime();
 	});
@@ -124,3 +110,5 @@ export async function load({ parent }) {
 		posts: postedData
 	};
 }
+
+
