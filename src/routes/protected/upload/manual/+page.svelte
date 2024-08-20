@@ -24,7 +24,10 @@
 		Textarea,
 		Accordion,
 		AccordionItem,
-		Button
+		Button,
+
+		NumberInput
+
 	} from 'flowbite-svelte';
 	import IconNumberInput from '$lib/components/IconNumberInput.svelte';
 
@@ -194,6 +197,7 @@
 		timeError = incomeError = typeError = dateError = '';
 
 		if (platform === 'rover') {
+			calculateRoverIncome();
 			if (
 				!roverData.income &&
 				!roverData.cutIncome &&
@@ -218,8 +222,9 @@
 				return;
 			}
 		} else if (platform === 'upwork') {
-			if (!upworkData.date) {
-				dateError = 'Please Enter Date';
+			calculateUpworkIncome();
+			if (!upworkData.date || !upworkData.endDate) {
+				dateError = 'Please Enter Start/End Date';
 				errorMessage += ' Date,';
 			}
 			// console.log(upworkData)
@@ -341,7 +346,7 @@
 									># of {roverData.workUnits} Worked
 									<span class="text-red-500">{timeError}</span></Label
 								>
-								<Input
+								<NumberInput
 									type="number"
 									bind:value={roverData.unitsWorked}
 									on:keydown={handleKeyDown}
@@ -440,7 +445,7 @@
 					>
 					<Input type="time" bind:value={upworkData.startTime} class="mb-4" />
 
-					<Label>End Date</Label>
+					<Label>End Date<span class="text-red-500">* {dateError}</span></Label>
 					<Input type="date" bind:value={upworkData.endDate} class="mb-4" />
 
 					<Label>End Time</Label>
@@ -479,7 +484,7 @@
 									{/if}
 								</Label>
 
-								<Input
+								<NumberInput
 									type="number"
 									bind:value={upworkData.unitsWorked}
 									on:keydown={handleKeyDown}

@@ -19,6 +19,7 @@
     const deleteData = async()=> {
         for (let dataDoc of toDelete) {
             let docRef: any;
+
             switch (dataDoc.type) {
                 case "Expense":
                     docRef = doc(db, 'upload', 'expenses', data.user.platform, dataDoc.id)
@@ -31,6 +32,9 @@
                     break;
                 case "CSV":
                     docRef = doc(db, 'upload', "csv", 'entries', dataDoc.id)
+                    break;
+                case "Income":
+                    docRef = doc(db, 'upload', "manual", data.user.platform, dataDoc.id)
                     break;
             }
             await deleteDoc(docRef)

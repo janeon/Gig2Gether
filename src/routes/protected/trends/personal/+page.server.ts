@@ -1,55 +1,104 @@
 import { db } from '$lib/firebase/client';
 import { collection, getDocs, query } from 'firebase/firestore';
 import { getHoursDifference, calculateHourlyRates, calculateMissingTime, transformHourlyData }  from '$lib/utils';
-import { monthMap } from '$lib/constants';
 
 export async function load ({ locals }) {
     const snapshot = await getDocs(
         query(collection(db,"upload", "manual", locals.user.platform))
     );
+    let workSegments = [];
+    let weeklyEarnings = [];
+    let averageEarningsPerHour = 0;
     switch (locals.user.platform) {
         case 'rover':
-            return getRoverData(snapshot);
-        case 'upwork':
-            return getUpworkData(snapshot);
+            { workSegments = getRoverHourlyData(snapshot, locals.user.uid).workSegments;
+            const roverWeekly = getRoverWeeklyData(snapshot, locals.user.uid);
+            weeklyEarnings = roverWeekly.weekdayEarnings;
+            averageEarningsPerHour = roverWeekly.averageEarningsPerHour;
+            return { workSegments, weeklyEarnings, averageEarningsPerHour }; }
+        case 'upwork': {
+            const upworkWeekly = getUpworkWeeklyData(snapshot, locals.user.uid);
+            weeklyEarnings = upworkWeekly.weekdayEarnings;
+            averageEarningsPerHour = upworkWeekly.averageEarningsPerHour;
+            return { workSegments, weeklyEarnings, averageEarningsPerHour };
+        }
         default:
             return {
-                workSegments: [],
-                monthlySegments: []
+                workSegments: workSegments, // this is the default return value for rover
+                weeklyEarnings: weeklyEarnings, // this is the default return value for upwork
+                averageEarningsPerHour: averageEarningsPerHour
             };
     }
 
 }
 
-function getUpworkData(snapshot) {
-    const monthlyEarnings = Object.values(monthMap).map(month => ({ x: month, y: 0.0 }));
+function getUpworkWeeklyData(snapshot, uid) {
+    const weekdayEarnings = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(day => ({ x: day, y: 0.0 }));
+    const weekdayHours = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(day => ({ x: day, y: 0.0 }));
     snapshot.forEach(async (item) => {
-        if (!item.data().startDate && !item.data().endDate) {
+        if (item.data().uid !== uid) {
             return;
         }
-        let endDate = item.data().endDate;
-        if (!endDate) { // this should never happen, but I'm paranoid
-            endDate = item.data().startDate;
+        if (!item.data().startDate && !item.data().endDate) {
+            return {} ;
         }
-        const monthIndex = parseInt(endDate.slice(5, 7), 10) - 1;
-        if (item.data().fixedCharge) 
-            monthlyEarnings[monthIndex].y += item.data().fixedCharge;
-        else if (item.data().hourlyCharge && item.data().hoursPerWeek.hours) {
-            monthlyEarnings[monthIndex].y += item.data().hourlyCharge * item.data().hoursPerWeek.hours;
+        else if (!item.data().endDate) { // this should never happen, but I'm paranoid
+            item.data().endDate = item.data().startDate;
+        }
+        let hoursWorked;
+        if (getHoursDifference(item.data().startTime, item.data().endTime)) {
+            hoursWorked = getHoursDifference(item.data().startTime, item.data().endTime);
+        }
+        else if ((item.data().workUnits === "Hours" || item.data().workUnits === "Minutes")) {
+            hoursWorked = item.data().workUnits === "Hours"
+            ? item.data().unitsWorked
+            : item.data().unitsWorked / 60;
+        }
+        if (item.data().hoursPerWeek) 
+            hoursWorked = item.data().hoursPerWeek.hours;      
+        // console.log(hoursWorked);  
+        
+        const dayIndex = new Date(item.data().endDate).getDay();
+        weekdayHours[dayIndex].y += hoursWorked;
+        if (item.data().cutIncome) {
+            weekdayEarnings[dayIndex].y += item.data().cutIncome as number;
+        }
+        else if (item.data().fixedCharge) {
+            weekdayEarnings[dayIndex].y += item.data().fixedCharge as number;
+        }
+        else if (item.data().hourlyCharge && item.data().hoursPerWeek) {
+            weekdayEarnings[dayIndex].y += item.data().hourlyCharge * item.data().hoursPerWeek;
         }
         else {
             // do not have monthly earnings for this item
-            return;
+            return {} ;
         }
     });
+
+    let totalEarnings = 0;
+    let totalHours = 0;
+    // divide each earning entry by hours worked to get hourly rate
+    weekdayEarnings.forEach((entry, index) => {
+        if (weekdayHours[index].y) {
+            totalEarnings += entry.y;
+            totalHours += weekdayHours[index].y;
+            entry.y = (entry.y / weekdayHours[index].y);
+        }
+        entry.x = entry.x.slice(0, 3); // Shortens to 'Mon', 'Tue', etc.
+    });
+
     return {
-        monthlyEarnings : monthlyEarnings
+        weekdayEarnings : weekdayEarnings,
+        averageEarningsPerHour : totalHours > 0 ? totalEarnings / totalHours : 0
     }
 }
 
-function getRoverData(snapshot) {
+function getRoverHourlyData(snapshot, uid) {
     const workSessions = [];
     snapshot.forEach(async (item) => {
+        if (item.data().uid !== uid) {
+            return;
+        }
         const hoursWorked = getHoursDifference(item.data().startTime, item.data().endTime) || item.data().unitsWorked;
         if (!item.data().startTime || !item.data().endTime) {
             if (!item.data().startTime && !item.data().endTime) {
@@ -91,4 +140,75 @@ function getRoverData(snapshot) {
     return {
 		workSegments: transformHourlyData(hourlyRates)
 	};
+}
+
+function getRoverWeeklyData(snapshot, uid) {
+    const weekdayEarnings = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(day => ({ x: day, y: 0.0 }));
+    const weekdayHours = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(day => ({ x: day, y: 0.0 }));
+    snapshot.forEach(async (item) => {
+        // error checking
+        if (item.data().uid !== uid) {
+            return;
+        }
+        if (!item.data().startDate && !item.data().endDate) {
+            return {} ;
+        }
+        else if (!item.data().endDate) { // this should never happen, but I'm paranoid
+            item.data().endDate = item.data().startDate;
+        }
+        // getting ours worked
+        let hoursWorked;
+        if (getHoursDifference(item.data().startTime, item.data().endTime)) {
+            hoursWorked = getHoursDifference(item.data().startTime, item.data().endTime) as number;
+        }
+        else if ((item.data().workUnits === "Hours" || item.data().workUnits === "Minutes")) {
+            hoursWorked = item.data().workUnits === "Hours"
+            ? item.data().unitsWorked as number
+            : item.data().unitsWorked / 60;
+        }
+        if (item.data().hoursPerWeek) 
+            hoursWorked = item.data().hoursPerWeek.hours as number;      
+        // console.log(hoursWorked);  
+        
+        // getting day of the week
+        const dayIndex = new Date(item.data().endDate).getDay();
+        
+        // adding hours worked to total hours worked for that day
+        weekdayHours[dayIndex].y += hoursWorked;
+        
+        // adding earnings to total earnings for that day across weeks
+        if (item.data().cutIncome) {
+            weekdayEarnings[dayIndex].y += item.data().cutIncome as number;
+        }
+        else if (item.data().income) {
+            weekdayEarnings[dayIndex].y += item.data().income as number;
+        }
+        else if (item.data().rate && item.data().unitsWorked) {
+            weekdayEarnings[dayIndex].y += item.data().rate * item.data().unitsWorked as number;
+        }
+        else {
+            // do not have monthly earnings for this item
+            return {} ;
+        }
+    });
+
+    let totalEarnings = 0;
+    let totalHours = 0;
+
+    // divide each earning entry by hours worked to get hourly rate
+    weekdayEarnings.forEach((entry, index) => {
+        if (weekdayHours[index].y) {
+            totalEarnings += entry.y;
+            totalHours += weekdayHours[index].y;
+            entry.y = (entry.y / weekdayHours[index].y);
+        }
+        entry.x = entry.x.slice(0, 3); // Shortens to 'Mon', 'Tue', etc.
+    });
+
+    // console.log(totalEarnings, totalHours, weekdayHours);
+
+    return {
+        weekdayEarnings : weekdayEarnings,
+        averageEarningsPerHour : totalHours > 0 ? totalEarnings / totalHours : 0
+    }
 }

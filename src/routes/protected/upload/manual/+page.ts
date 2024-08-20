@@ -2,14 +2,17 @@ import { currentDate, currentTime, extractAfterEquals } from '$lib/utils';
 import type { RoverData, UpworkData } from '$lib/types';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function _cleanData(upworkData: UpworkData, roverData: RoverData, platform: string, initialData: any): { roverData: RoverData } | { upworkData: UpworkData } {
+export function _cleanData(
+	upworkData: UpworkData,
+	roverData: RoverData,
+	platform: string,
+	initialData: any
+): { roverData: RoverData } | { upworkData: UpworkData } {
 	if (platform === 'rover') {
 		const roverMoneyFields = ['income', 'cutIncome', 'tips', 'rate'];
 		roverMoneyFields.forEach((property) => {
 			if (roverData[property]) {
-				console.log(property, roverData[property]);
 				roverData[property] = extractAfterEquals(roverData[property].toString());
-				console.log(property, roverData[property]);
 			}
 		});
 		if (
@@ -19,14 +22,16 @@ export function _cleanData(upworkData: UpworkData, roverData: RoverData, platfor
 			roverData.startTime = null;
 			roverData.endTime = null;
 		}
-		return { roverData } ;
+		return { roverData };
 	}
 
 	if (platform === 'upwork') {
-		if (upworkData.hourlyCharge) {
-			upworkData.hourlyCharge = extractAfterEquals(upworkData.hourlyCharge);
-		}
-		
+		['hourlyCharge', 'fixedCharge'].forEach((property) => {
+			if (upworkData[property]) {
+				upworkData[property] = extractAfterEquals(upworkData[property]);
+			}
+		});
+
 		if (upworkData.endDate === initialData.endDate && !upworkData.date) {
 			upworkData.endDate = null;
 		}
@@ -42,11 +47,14 @@ export function _cleanData(upworkData: UpworkData, roverData: RoverData, platfor
 	}
 }
 
-export function _getInitialData(uid: string, cut: number): { upworkData: UpworkData; roverData: RoverData } {
+export function _getInitialData(
+	uid: string,
+	cut: number
+): { upworkData: UpworkData; roverData: RoverData } {
 	const upworkData: UpworkData = {
 		date: null,
 		endDate: currentDate,
-		uid: uid ,
+		uid: uid,
 		startTime: currentTime,
 		endTime: currentTime,
 		timestamp: new Date(),
@@ -57,7 +65,7 @@ export function _getInitialData(uid: string, cut: number): { upworkData: UpworkD
 		clientLocation: '',
 		hoursPerWeek: 0,
 		clientHistory: '',
-		platformCut: cut || 20,
+		platformCut: cut || 10,
 		platformCutType: 'percent',
 		experience: [],
 		unitsWorked: null,
@@ -66,7 +74,7 @@ export function _getInitialData(uid: string, cut: number): { upworkData: UpworkD
 	};
 
 	const roverData: RoverData = {
-		date: null ,
+		date: null,
 		endDate: currentDate,
 		uid: uid,
 		timestamp: new Date(),

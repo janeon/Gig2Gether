@@ -3,7 +3,6 @@
     import { title as titleStore } from "$lib/stores/title";
     import { onMount, onDestroy } from 'svelte';
 
-    export let data;
     let mobile: boolean;
     onMount(() => {
         mobile = window.navigator.userAgent.match(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i) !== null;
