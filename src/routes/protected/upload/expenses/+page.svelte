@@ -123,7 +123,7 @@
         errorMessage = "Please enter:";
         const collectionRef = collection(db, "upload", "expenses", $page.data.user.platform);
         const docRef = docID ? doc(collectionRef, docID) : doc(collectionRef);
-        data.amount = extractAfterEquals(data.amount) as number;
+        data.amount = extractAfterEquals(data.amount);
 
         await setDoc(docRef, data, { merge: true });
         successMessage = docID ? 'Update Successful!' : 'Submission Successful!';
@@ -242,9 +242,7 @@
 					<Button
 						class="flex-1 py-2 text-sm md:text-base lg:text-base truncate"
 						color="blue"
-						on:click={() => goto(`${basePath}?id=${encodeURIComponent(docID)}`)}
-                        
-                        }
+						on:click={() => goto(`${basePath}?expense=${true}`)}
 						style="border-radius: 4px; min-width: 120px; flex-grow: 1;"
 					>
 						See in Trends

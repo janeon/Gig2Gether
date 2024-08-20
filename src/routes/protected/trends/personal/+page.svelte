@@ -189,7 +189,13 @@
 
   onMount(() => {
     cal = new CalHeatmap();
-    showEarnings();  // Initialize with the 'earnings' mode
+    const queryParams = new URLSearchParams(window.location.search);
+		const expense = queryParams.get('expense');
+    if (expense) {
+      showExpenses();
+    } else {
+      showEarnings();
+    }
   });
 
   let mobile: boolean;
