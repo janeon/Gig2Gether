@@ -7,6 +7,8 @@
   import CalHeatmap from 'cal-heatmap';
   import Tooltip from 'cal-heatmap/plugins/Tooltip';
   import 'cal-heatmap/cal-heatmap.css';
+	import { db } from "$lib/firebase/client.js";
+	import { doc, setDoc } from "firebase/firestore";
 
   export let data;
   const hourlySegments = data.workSegments;
@@ -188,7 +190,9 @@
   );
   }
 
-  onMount(() => {
+  onMount(async () => {
+    const docRef = doc(db, 'logging', 'trends_visits', $page.data.user.uid, new Date().toISOString().split('T')[0]);
+    await setDoc(docRef, {time: new Date().toTimeString().split(' ')[0].substring(0, 5)});
     cal = new CalHeatmap();
     const queryParams = new URLSearchParams(window.location.search);
 		const expense = queryParams.get('expense');
