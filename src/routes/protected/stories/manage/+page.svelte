@@ -24,7 +24,7 @@
         switch (dataDoc.type) {
             case "Story":
                 docRef = doc(db, 'stories', data.user.platform, "posts", dataDoc.id);
-                newDocRef = doc(db, 'logging', 'stories', data.user.platform, "posts", dataDoc.id);
+                newDocRef = doc(db, 'logging', 'stories', data.user.platform, dataDoc.id);
                 break;
         }
 
@@ -32,7 +32,7 @@
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
             const docData = docSnap.data();
-
+            docData.deletedAt = new Date().toISOString(); // Add the delete timestamp
             // Add the document to the new collection
             await setDoc(newDocRef, docData);
 

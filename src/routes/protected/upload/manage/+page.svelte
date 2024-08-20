@@ -43,18 +43,18 @@
                 loggingRef = doc(db, 'logging', "manual", data.user.platform, dataDoc.id);
                 break;
         }
-
-        // Copy the document to the logging collection
+        // Copy the document to the logging collection with a delete timestamp
         const docSnapshot = await getDoc(docRef);
         if (docSnapshot.exists()) {
-            await setDoc(loggingRef, docSnapshot.data());
-        }
+            const data = docSnapshot.data();
+            data.deletedAt = new Date().toISOString(); // Add the delete timestamp
+            await setDoc(loggingRef, data);
 
-        // Delete the document from the original collection
-        await deleteDoc(docRef);
+            // Delete the document from the original collection
+            await deleteDoc(docRef);
+        }
     }
 
-    invalidateAll();
 };
 </script>
 
