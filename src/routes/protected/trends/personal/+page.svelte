@@ -11,7 +11,7 @@
   export let data;
   const hourlySegments = data.workSegments;
   const weekdayEarnings = data.weeklyEarnings;
-  const averageHourlyPay = data.averageEarningsPerHour;
+  const averageHourlyPay = data.averageEarningsPerHour || 'upcoming soon...';
   const calEarnings = data.calEarnings;
   const calExpenses = data.calExpenses; 
   updateTitle('My Trends');
@@ -204,9 +204,6 @@
       mobile = window.navigator.userAgent.match(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i) !== null;
   });
 </script>
-<h1 class="text-lg font-bold text-red-600 mb-4 text-center">
-  The content displayed is an example of breakdowns layout. It does not contain real user data.
-</h1>
 
 <div class="flex flex-col md:flex-row justify-center items-stretch">
   <!-- First Card with Chart -->
