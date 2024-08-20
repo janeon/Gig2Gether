@@ -4,9 +4,11 @@
 	import { updateTitle } from '$lib/stores/title';
 	import ScheduleSelector from 'react-schedule-selector';
 	import { Button } from 'flowbite-svelte';
+	import { plan } from '$lib/stores/plan';
+
 
 	let next = false;
-	const handleClick = () => (next ? goto('./work-breakdown') : (next = true));
+	const handleClick = () => (next ? navigateWithStore() : (next = true));
 
 	next
 		? updateTitle('What time would you like to work?')
@@ -25,6 +27,11 @@
 		schedule = newSchedule;
 	};
 
+	function navigateWithStore() {
+		plan.set({ key: schedule });
+		goto('./work-breakdown');
+	}
+
 	// Get today's date
 	const today = new Date();
 </script>
@@ -36,8 +43,8 @@
 				<react:ScheduleSelector
 					selection={schedule}
 					selectionScheme="square"
-					minTime={8}
-					maxTime={22}
+					minTime={6}
+					maxTime={24}
 					hourlyChunks={1}
 					startDate={selectedDates[0]}
 					numDays={calculateDaysBetween(selectedDates)}
@@ -45,8 +52,8 @@
 				/>
 			</div>
 		{:else}
-			<div class="flex justify-center">
-				<p class="text-gray-500 mb-7">Select a Range of Dates</p>
+			<div class="flex flex-col items-center">
+				<p class="text-gray-500 mb-1">Select a Range of Dates (Beginning + End)</p>
 			</div>
 			<div class="flex justify-center mb-6">
 				<SveltyPicker
@@ -55,6 +62,10 @@
 					startDate={today}
 					bind:value={selectedDates}
 				/>
+			</div>
+			<div class="flex flex-col items-center">
+				<p class="text-gray-500 mb-1">It's ok if you don't want to work some days in between</p>
+				<p class="text-gray-500 mb-1">You will make the selection in the next step</p>
 			</div>
 		{/if}
 
