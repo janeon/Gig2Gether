@@ -67,7 +67,7 @@
 		{ label: 'Demographics', href: '/protected/settings/demographics' },
 		{ label: 'Sharing Preferences', href: '/protected/settings/sharing-preferences' },
 		{ label: 'Manage Data', href: '/protected/settings/withdraw' },
-		{ label: 'Reminders', href: '/protected/settings/notifications' }
+		{ label: 'Survey', href: '/protected/settings/survey' }
 	];
 
 	const stories = [

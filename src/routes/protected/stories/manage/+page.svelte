@@ -7,24 +7,42 @@
     import DataRow from "$lib/components/DataRow.svelte";
     
     import { db } from "$lib/firebase/client.js";
-    import { deleteDoc, doc } from "firebase/firestore";
+    import { deleteDoc, doc, getDoc, setDoc } from "firebase/firestore";
+	import { updateTitle } from "$lib/stores/title.js";
     
     export let data
 
+    updateTitle("Manage Stories");
+
     let toDelete : Data[] = []
     let modal = false
-    const deleteData = async()=> {
-        for (let dataDoc of toDelete) {
-            let docRef: any;
-            switch (dataDoc.type) {
-                case "Story":
-                    docRef = doc(db, 'stories', data.user.platform, "posts", dataDoc.id)
-                    break;
-            }
-            await deleteDoc(docRef)
+    const deleteData = async () => {
+    for (let dataDoc of toDelete) {
+        let docRef: any;
+        let newDocRef: any;
+
+        switch (dataDoc.type) {
+            case "Story":
+                docRef = doc(db, 'stories', data.user.platform, "posts", dataDoc.id);
+                newDocRef = doc(db, 'logging', 'stories', data.user.platform, dataDoc.id);
+                break;
         }
-        invalidateAll()
+
+        // Retrieve the document data
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            const docData = docSnap.data();
+            docData.deletedAt = new Date().toISOString(); // Add the delete timestamp
+            // Add the document to the new collection
+            await setDoc(newDocRef, docData);
+
+            // Delete the document from the current collection
+            await deleteDoc(docRef);
+        }
     }
+
+    invalidateAll();
+};
 </script>
 
 <div class="justify-items-center py-2 max-w-lg mx-auto">
