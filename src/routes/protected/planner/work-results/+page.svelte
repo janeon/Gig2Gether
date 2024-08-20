@@ -3,11 +3,26 @@
     import { page } from "$app/stores";
     import { goto } from "$app/navigation";
     import { updateTitle } from "$lib/stores/title";
+    import { plan } from "$lib/stores/plan";
+	import { db } from "$lib/firebase/client";
+	import { doc, setDoc } from "firebase/firestore";
 
+    let data;
+    $: data = $plan;
     updateTitle("Results");
-
+    let submitted = false
     async function previousPage() {
+        plan.set({ key: data.key });
         goto('./work-breakdown');
+    }
+
+    async function handleSubmit() {
+        const docRef = doc(db, 'planner', $page.data.user.platform, $page.data.user.uid, "entries");
+        const cleanData = Object.fromEntries(  
+            Object.entries(data.key).filter(([_, value]) => value !== undefined)
+        );
+        await setDoc(docRef, cleanData);
+        submitted = true;
     }
 </script>
 
@@ -89,6 +104,7 @@
                 arrow={false}>
                 The content displayed is an example of results layout. It does not contain real user data.
             </Tooltip>
+            <Button on:click={handleSubmit} color="blue">{submitted? "Done" : "Submit"}</Button>
         </div>
     </div>
 </div>

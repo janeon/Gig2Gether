@@ -6,6 +6,7 @@
     import { page } from '$app/stores';
     import { goto } from '$app/navigation';
     import { updateTitle } from '$lib/stores/title';
+    import { plan } from '$lib/stores/plan';
 
     updateTitle('Breakdown of Costs and Earnings');
 
@@ -14,6 +15,7 @@
     }
 
     async function navigatePage(direction: string) {
+        plan.set({ key: data.key });
         goto(`./${direction}`);
     }
 
@@ -94,7 +96,11 @@
     const netEarnings = calculateNetEarnings(grossEarnings, totalExpenses);
 
     platformData.summary.push({ name: 'Net Earnings', amount: `$${netEarnings.toFixed(2)}` });
+
+    let data;
+    $: data = $plan;
 </script>
+<!-- <p>Shared data: {data?.key}</p> -->
 
 <div class="flex flex-col items-center p-4 w-full">
     <div class="w-full max-w-4xl flex flex-col space-y-4">
