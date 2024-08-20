@@ -3,14 +3,17 @@
   import { onMount } from 'svelte';
   import { updateTitle } from "$lib/stores/title";
   
-  import { Chart, Card } from 'flowbite-svelte';
+  import { Chart, Card, Toggle } from 'flowbite-svelte';
   import CalHeatmap from 'cal-heatmap';
   import Tooltip from 'cal-heatmap/plugins/Tooltip';
   import 'cal-heatmap/cal-heatmap.css';
 
   export let data;
   const hourlySegments = data.workSegments;
-  const monthlyEarnings = data.monthlyEarnings;
+  const weekdayEarnings = data.weeklyEarnings;
+  const averageHourlyPay = data.averageEarningsPerHour || 'upcoming soon...';
+  const calEarnings = data.calEarnings;
+  const calExpenses = data.calExpenses; 
   updateTitle('My Trends');
 
   let cal: CalHeatmap;
@@ -31,31 +34,40 @@
               { x: '8pm', y: 1.5 }
           ],
           rover: hourlySegments,
-          upwork: monthlyEarnings
+          upwork: weekdayEarnings
       };
       switch (platform) {
           case 'uber':
               seriesData = platformData.uber;
-              title = 'Driver Earnings Per Hour';
+              title = 'Driver Earnings';
               subtitle = 'Pickup Time (Hours of the Day)';
               break;
           case 'rover':
               seriesData = platformData.rover;
-              title = 'Sitter Earnings Per Hour';
+              title = 'Sitter Earnings';
               subtitle = 'Hours of the Day';
               break;
           case 'upwork':
               seriesData = platformData.upwork;
-              title = 'Earnings Per Month';
-              subtitle = 'Days of the Month';
+              title = 'Hourly Earnings Per Day';
+              subtitle = 'Days of the Week';
               break;
       }
   }
 
+  const name = {
+    'uber': 'Hourly ($)',
+    'rover': 'Hourly ($)',
+    'upwork': 'Hourly ($)',
+  };
   // Chart options
-  const options = {
+  let hourly = false;
+
+  let options;
+  const isRover = $page.data.user.platform === 'rover';
+  options = {
     colors: viewMode === 'earnings' ? ['#B6E1B0', '#4CAF50'] : ['#EFE8EE', '#6A1B9A'],
-    series: [{ name: 'Fair Per Minute ($)', color: viewMode === 'earnings' ? '#4CAF50' : '#6A1B9A', data: seriesData }],
+    series: [{ name: 'Hourly ($)', color: viewMode === 'earnings' ? '#4CAF50' : '#6A1B9A', data: seriesData }],
     chart: { type: 'bar', height: '320px', fontFamily: 'Inter, sans-serif', toolbar: { show: false } },
     plotOptions: { bar: { horizontal: false, columnWidth: '70%', borderRadiusApplication: 'end', borderRadius: 8 } },
     tooltip: { shared: true, intersect: false, style: { fontFamily: 'Inter, sans-serif' } },
@@ -69,6 +81,8 @@
     fill: { opacity: 1 },
   };
 
+  $: options.series = (hourly && isRover) ? [{ name: 'Hourly ($)', color: viewMode === 'earnings' ? '#4CAF50' : '#6A1B9A', data: seriesData }] : [{ name: 'Earnings ($)', color: '#4CAF50', data: weekdayEarnings }];
+
   function handlePrevious() {
       cal.previous();
   }
@@ -77,25 +91,26 @@
       cal.next();
   }
 
+  const upperEnd = { "uber": 300, "rover": 400, "upwork": 800 };
   function showEarnings() {
     viewMode = 'earnings';
     // Repaint the calendar heatmap with earnings colors
     cal.paint({
       data: {
-        source: '/fixtures/seattle-weather.csv', // Ensure correct path
-        type: 'csv',
+        source: calEarnings,
         x: 'date',
-        y: d => +d[viewMode],
+        y: 'value',
         groupY: 'min',
       },
       verticalOrientation: false,
       range: 1,
       itemSelector: '#cal-heatmap',
       date: { 
-        start: new Date('2024-08-01'),
+        start: new Date().toISOString().split('T')[0],
         max: new Date('2024-12-31'),
-        min: new Date('2024-01-01')},
-      scale: { color: { type: 'log', scheme: 'Greens' } },
+        min: new Date('2022-01-01')},
+      scale: { 
+        color: { type: 'linear', scheme: 'Greens', domain: [0, upperEnd[$page.data.user?.platform]]} },
       domain: {
         type: 'month',
         padding: [10, 10, 10, 10],
@@ -122,7 +137,7 @@
       {
         text: function (date, value, dayjsDate) {
           return (
-            (value ? value*30 : 'No data') + ' on ' + dayjsDate.format('LL')
+            (value ? value : 'No data') + ' on ' + dayjsDate.format('LL')
           );
         },
       },
@@ -130,26 +145,26 @@
   ]);
   }
 
+  const upperEndExpenses = { "uber": 100, "rover": 200, "upwork": 400 };
   function showExpenses() {
     viewMode = 'expenses';
     // Repaint the calendar heatmap with expenses colors
     cal.paint({
       data: {
-        source: '/fixtures/seattle-weather.csv', // Ensure correct path
-        type: 'csv',
+        source: calExpenses, 
         x: 'date',
-        y: d => +d[viewMode],
+        y: 'value',
         groupY: 'min',
       },
       verticalOrientation: false,
       range: 1,
       itemSelector: '#cal-heatmap',
       date: { 
-        start: new Date('2024-08-01'),
+        start: new Date().toISOString().split('T')[0],
           max: new Date('2024-12-31'),
-          min: new Date('2024-01-01')
+          min: new Date('2022-01-01')
       }, // Updated start date
-      scale: { color: { type: 'linear', scheme: 'Purples' } },
+      scale: { color: { type: 'linear', scheme: 'Purples', domain: [-1*upperEndExpenses[$page.data.user?.platform], upperEndExpenses[$page.data.user?.platform]] } },
       domain: {
         type: 'month',
         padding: [10, 10, 10, 10],
@@ -175,7 +190,13 @@
 
   onMount(() => {
     cal = new CalHeatmap();
-    showEarnings();  // Initialize with the 'earnings' mode
+    const queryParams = new URLSearchParams(window.location.search);
+		const expense = queryParams.get('expense');
+    if (expense) {
+      showExpenses();
+    } else {
+      showEarnings();
+    }
   });
 
   let mobile: boolean;
@@ -184,39 +205,41 @@
   });
 </script>
 
-<h1 class="text-lg font-bold text-red-600 mb-4 text-center">
-  The content displayed is an example of breakdowns layout. It does not contain real user data.
-</h1>
-<div class="flex flex-col md:flex-row justify-center">      
-  <div class="flex justify-center p-2">
-    <Card>
+<div class="flex flex-col md:flex-row justify-center items-stretch">
+  <!-- First Card with Chart -->
+  <div class="flex justify-center p-2 items-stretch">
+    <Card class="flex-1">
+      {#if $page.data.user.platform === "rover"}
+      <Toggle bind:checked={hourly}>{hourly ? "Show Daily" : "Show Hourly"}</Toggle>
+      {/if}
       <div class="flex justify-center pb-4 mb-4 border-b border-gray-200 dark:border-gray-700">
         <h3 class="text-2xl font-bold text-gray-900 dark:text-white">
-          {title}
+          {(hourly && isRover)? "Hourly " : "Daily "}{title}
         </h3>
       </div>
       <Chart {options} />
       <div class="grid grid-cols-1 items-center border-gray-200 border-t dark:border-gray-700 justify-between">
         <div class="flex justify-center items-center pt-5">
           <h1 class="text-sm font-semibold text-gray-900 dark:text-white px-3 py-2">
-            {subtitle}
+            {(hourly && isRover) ? 'Hours of the Day' : 'Days of the Week'}
           </h1>
         </div>
       </div>
     </Card>
   </div>
 
-  <div class="flex justify-center p-2">
-    <Card>
+  <!-- Calendar Card -->
+  <div class="flex justify-center p-2 items-stretch">
+    <Card class="flex-1">
       <div class="flex flex-col">
         <h1 class="text-2xl font-bold text-gray-900 mb-3 text-center">Calendar</h1>
 
         <!-- Buttons for Earnings and Expenses -->
         <div class="flex justify-center space-x-4 mb-4">
           <button
-          class={`text-white font-semibold px-4 py-2 rounded hover:bg-green-600 bg-green-500 ${
-            viewMode === 'earnings' ? 'border-2 border-gray-700' : ''
-          }`}
+            class={`text-white font-semibold px-4 py-2 rounded hover:bg-green-600 bg-green-500 ${
+              viewMode === 'earnings' ? 'border-2 border-gray-700' : ''
+            }`}
             on:click={showEarnings}
             disabled={viewMode === 'earnings'}
           >
@@ -270,13 +293,15 @@
   </div>
 </div>
 
-<div class="flex justify-center p-2">
-  <Card>
-    <div class="flex flex-col items-center">
-      <h1 class="text-2xl font-bold text-gray-900 mb-3 text-center">Other Information</h1>
-      <p class="text-sm font-normal text-gray-700 dark:text-gray-400 leading-tight mb-3">Average Job Length: XXXX</p>
-      <p class="text-sm font-normal text-gray-700 dark:text-gray-400 leading-tight mb-3">Average Work/Day: XXXX</p>
-      <p class="text-sm font-normal text-gray-700 dark:text-gray-400 leading-tight mb-3">Average Hourly Pay: XXXX</p>
-    </div>
-  </Card>
+<div class="flex flex-col md:flex-row justify-center items-stretch">
+
+  <!-- General Information Card -->
+  <div class="flex justify-center p-2 items-stretch">
+    <Card class="flex-1">
+      <div class="flex flex-col items-center">
+        <h1 class="text-2xl font-bold text-gray-900 mb-3 text-center">General Information</h1>
+        <p class="text-sm font-normal text-gray-700 dark:text-gray-400 leading-tight mb-3">Average Hourly Pay: {averageHourlyPay}</p>
+      </div>
+    </Card>
+  </div>
 </div>

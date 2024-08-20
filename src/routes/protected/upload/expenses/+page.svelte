@@ -38,6 +38,7 @@
     $: fileName = file ? file.name : 'Upload a Photo (e.g., Receipts)';
     let url : string | null = null;
     let docID:string | null = null;
+    const basePath = '/protected/trends/personal';
 
     onMount(() => {
 		// Extract search parameter 'id'
@@ -241,7 +242,7 @@
 					<Button
 						class="flex-1 py-2 text-sm md:text-base lg:text-base truncate"
 						color="blue"
-						on:click={() => goto('/protected/trends/personal')}
+						on:click={() => goto(`${basePath}?expense=${true}`)}
 						style="border-radius: 4px; min-width: 120px; flex-grow: 1;"
 					>
 						See in Trends

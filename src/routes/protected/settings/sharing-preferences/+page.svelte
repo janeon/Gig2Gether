@@ -5,7 +5,6 @@
     import { db } from "$lib/firebase/client";
     import { collection, doc, getDoc, setDoc } from "firebase/firestore";
     import { updateTitle } from "$lib/stores/title";
-    import BlueButton from "$lib/components/BlueButton.svelte";
     import { onMount } from "svelte";
 
     updateTitle("Sharing Preferences");
