@@ -78,9 +78,10 @@
 			<div class="text-left mb-4">
 				<h1 class="text-2xl font-bold mb-4 text-black">
 					The next <a
-							href="https://www.irs.gov/businesses/small-businesses-self-employed/estimated-taxes"
-							target="_blank"
-							class="text-blue-500 underline">estimated tax payment</a>
+						href="https://www.irs.gov/businesses/small-businesses-self-employed/estimated-taxes"
+						target="_blank"
+						class="text-blue-500 underline">estimated tax payment</a
+					>
 					day is {getNextTaxDate().toLocaleDateString()}
 				</h1>
 				<div class="flex justify-center space-x-4 text-center">
@@ -189,8 +190,8 @@
 								You have to file an income tax return if your <span class="font-semibold"
 									>net earnings from self-employment were $400 or more.</span
 								>
-								If your net earnings from self-employment were less than $400, you still have to
-								file an income tax return if you meet any other filing requirement listed in the
+								If your net earnings from self-employment were less than $400, you still have to file
+								an income tax return if you meet any other filing requirement listed in the
 								<a
 									href="https://www.irs.gov/pub/irs-pdf/i1040gi.pdf"
 									target="_blank"
@@ -242,8 +243,8 @@
 									target="_blank"
 									class="text-blue-500 underline">Form 1040-ES</a
 								>
-								also contains blank vouchers you can use to mail your estimated tax payments. Other
-								payment options, including pay by phone and online methods, can be found at
+								also contains blank vouchers you can use to mail your estimated tax payments. Other payment
+								options, including pay by phone and online methods, can be found at
 								<a
 									href="https://www.irs.gov/payments"
 									target="_blank"
@@ -455,7 +456,7 @@
 					>
 				</div>
 			</div>
-		</div>		
+		</div>
 
 		<div class="flex flex-col items-start bg-gray-100 p-4 rounded-lg">
 			<h1 class="text-2xl font-bold mb-4 text-black">Tips for effective tax management</h1>
@@ -467,8 +468,8 @@
 					target="_blank"
 					rel="noopener noreferrer">Recordkeeping</a
 				>
-				can help you track your income, deduct expenses and complete your tax return. Save expense
-				receipts to lower your taxable income, and keep records of all gig work income,
+				can help you track your income, deduct expenses and complete your tax return. Save expense receipts
+				to lower your taxable income, and keep records of all gig work income,
 				<span class="font-semibold">even without Forms 1099.</span>
 			</p>
 			<h2 class="text-lg font-semibold mb-2">Pay estimated tax</h2>

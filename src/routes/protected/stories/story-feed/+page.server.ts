@@ -1,13 +1,13 @@
 import { db } from "$lib/firebase/client";
-import { collection, getDocs, orderBy, query, doc } from "firebase/firestore";
+import { collection, getDocs, orderBy, query } from "firebase/firestore";
 
 export async function load() {
     const platforms = ["rover", "uber", "upwork"]
     let posts = []
-    for (let platform of platforms) {
+    for (const platform of platforms) {
     const snapshot = await getDocs(query(collection(db, 'stories', platform, "posts"), orderBy("date", "desc")))
     snapshot.forEach(async(item) => {
-        let post = item.data()
+        const post = item.data()
         post.date = post.date.toDate()
         post.id = item.id
         posts.push(post)

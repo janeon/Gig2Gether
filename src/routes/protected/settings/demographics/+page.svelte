@@ -28,7 +28,7 @@
         {value: "other", name: 'Other'},
         {value: null, name: "Do not wish to share"}
     ]
-    let dataToSetToStore = { age: null, gender: '', race: ''};
+    let dataToSetToStore:any = { age: null, gender: '', race: ''};
     let initialData:any;
 
     $: dataChanged = JSON.stringify(dataToSetToStore) !== JSON.stringify(initialData);
@@ -64,18 +64,14 @@
     })
 
 </script>
-        <div class="py-5">
+        <div class="flex flex-col">
             <Label>Age</Label>
             <NumberInput bind:value={dataToSetToStore.age} type = "number"/>
-        </div>
-        
-        <div class="py-5">
-            <Label>Gender</Label>
+
+            <Label class="mt-4">Gender</Label>
             <Select items={genders} bind:value={dataToSetToStore.gender}/>
-        </div>
-        
-        <div class="py-5">
-            <Label>Race</Label>
+
+            <Label class="mt-4">Race</Label>
             <Select items={races} bind:value={dataToSetToStore.race}/>
         </div>
         
@@ -89,7 +85,7 @@
             <NumberInput bind:value={dataToSetToStore.otherGigHours} type = "number"/>
         </div> -->
 
-        <div class="flex justify-center ">
+        <div class="flex justify-center mt-4">
             <button
             class={`flex-1 py-2 rounded ${dataChanged ? 'bg-black text-white' : 'bg-gray-400 text-gray-600 cursor-not-allowed opacity-50'} text-sm md:text-base lg:text-lg truncate`}
             on:click={submitDemographics}>

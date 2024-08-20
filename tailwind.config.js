@@ -72,6 +72,7 @@ const config = {
 			screens: {
 				'xs': '250px',  // Custom breakpoint for 350px
 				'sm': '300px',  // Custom breakpoint for slightly larger width
+				'md': '700px',  // Custom breakpoint for slightly larger width
 			},
 		}
 	},

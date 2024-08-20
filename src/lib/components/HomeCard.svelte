@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { Card } from 'flowbite-svelte';
 	import { goto } from '$app/navigation';
 	import '@fortawesome/fontawesome-free/css/all.min.css';

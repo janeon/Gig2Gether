@@ -1,11 +1,10 @@
-<script>
+<script lang="ts">
     import { Button } from 'flowbite-svelte';
     import "../app.css";
     import { goto } from '$app/navigation';    
     import { page } from '$app/stores';
 
     let loggedIn = $page.data.user===undefined ? false : true;
-
     
     const sections = [
       {

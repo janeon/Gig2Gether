@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import {
 		Sidebar,
@@ -13,11 +13,13 @@
 		Dropdown,
 		DropdownDivider,
 		DropdownHeader,
-		DropdownItem
+		DropdownItem,
+		Badge
 	} from 'flowbite-svelte';
 	import { sineIn } from 'svelte/easing';
 	import '@fortawesome/fontawesome-free/css/all.min.css';
 	import { capitalize } from '$lib/utils';
+	import { profileStatus } from '$lib/stores/profileCompletion';
 	import { enhance } from '$app/forms';
 	import type { ActionData } from '../../routes/protected/$types';
 	import { goto } from '$app/navigation';
@@ -31,10 +33,20 @@
 		'text-customBeige-700 dark:text-customBeige-500 hover:text-customBeige-600 dark:hover:text-customBeige-300';
 	let mobile: boolean;
 
+	let profileCompletion;
+	let unsubscribe;
+	$: unsubscribe = profileStatus.subscribe((value) => {
+		profileCompletion = value.isCompleted;
+	});
+
 	onMount(() => {
 		mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
 			window.navigator.userAgent
 		);
+	});
+
+	onDestroy(() => {
+		unsubscribe();
 	});
 
 	let hidden2 = true;
@@ -54,13 +66,14 @@
 		{ label: 'My Account', href: '/protected/settings/account' },
 		{ label: 'Demographics', href: '/protected/settings/demographics' },
 		{ label: 'Sharing Preferences', href: '/protected/settings/sharing-preferences' },
-		{ label: 'Delete Data', href: '/protected/settings/withdraw' },
+		{ label: 'Manage Data', href: '/protected/settings/withdraw' },
 		{ label: 'Reminders', href: '/protected/settings/notifications' }
 	];
 
 	const stories = [
 		{ label: 'Story Feed', href: '/protected/stories/story-feed' },
-		{ label: 'Share Story', href: '/protected/stories/share-story' }
+		{ label: 'Share Story', href: '/protected/stories/share-story' },
+		{ label: 'Manage Stories', href: '/protected/stories/manage' }
 	];
 
 	const trends = [
@@ -81,14 +94,15 @@
 			{ label: 'Quests', href: '/protected/upload/quests' },
 			{ label: 'Trips', href: '/protected/upload/trips' }
 		];
-	} else if ($page.data.user?.platform === 'rover') {
-		upload_options = [{ label: 'Income', href: '/protected/upload/manual' }];
-	} else if ($page.data.user?.platform === 'upwork') {
+	} else if ($page.data.user?.platform === 'rover' || $page.data.user?.platform === 'upwork') {
 		upload_options = [{ label: 'Income', href: '/protected/upload/manual' }];
 	}
 
 	// Add common items
-	upload_options.push({ label: 'Expenses', href: '/protected/upload/expenses' });
+	upload_options.push(
+		{ label: 'Expenses', href: '/protected/upload/expenses' },
+		{ label: 'Manage Uploads', href: '/protected/upload/manage' }
+	);
 
 	const options = {
 		settings: settings,
@@ -107,10 +121,14 @@
 			window.location.href = href; // Navigate to the href
 		}, 100); // Small delay to ensure scrolling completes
 	}
+
+	function handleLogout() {
+		(form as HTMLFormElement).submit();
+	}
 </script>
 
 <!-- Hamburger button for smaller screensize -->
-<div class="relative flex items-center py-3 bg-gray-700 text-white">
+<div class="relative flex items-center py-3 bg-gray-700 text-white block md:hidden">
 	{#if mobile}
 		<Button
 			on:click={() => (hidden2 = false)}
@@ -138,7 +156,7 @@
 				<DropdownItem>Notifications</DropdownItem>
 				<DropdownDivider />
 				<form action="/logout" method="POST" use:enhance bind:this={form}>
-					<DropdownItem slot="footer" on:click={() => form.submit()}>Log out</DropdownItem>
+					<DropdownItem slot="footer" on:click={handleLogout}>Log out</DropdownItem>
 				</form>
 			</Dropdown>
 		</div>
@@ -146,19 +164,43 @@
 </div>
 
 <!-- Sidebar for medium and large screens -->
-<Sidebar {activeUrl} class="w-64 bg-transparent hidden md:block">
+<Sidebar {activeUrl} class="w-1/4 max-w-64 bg-transparent hidden md:block">
 	<SidebarWrapper>
 		<SidebarGroup>
 			{#each options[option] as { label, href }}
-				<SidebarItem
-					{label}
-					{href}
-					on:click={(e) => {
-						e.preventDefault(); // Prevent default behavior
-						handleNavigation(href);
-						closeDrawer(); // Close drawer after navigation
-					}}
-				/>
+				<!-- Badge next to SidebarItem -->
+				{#if label === 'My Worker Profile' && activeUrl === '/protected/settings/profile'}
+					<a class="flex items-center mb-2" {href}>
+						<SidebarItem
+							{label}
+							{href}
+							on:click={(e) => {
+								e.preventDefault(); // Prevent default behavior
+								handleNavigation(href);
+								closeDrawer(); // Close drawer after navigation
+							}}
+							class="flex-1"
+						/>
+						<div class="flex items-center ml-2">
+							{#key profileCompletion}
+								<Badge color={profileCompletion} class="ml-2">
+									{profileCompletion === 'green' ? 'DONE' : 'TODO'}
+								</Badge>
+							{/key}
+						</div>
+					</a>
+				{:else}
+					<SidebarItem
+						{label}
+						{href}
+						on:click={(e) => {
+							e.preventDefault(); // Prevent default behavior
+							handleNavigation(href);
+							closeDrawer(); // Close drawer after navigation
+						}}
+						class="flex-1"
+					/>
+				{/if}
 			{/each}
 		</SidebarGroup>
 	</SidebarWrapper>
@@ -189,15 +231,39 @@
 			<SidebarWrapper>
 				<SidebarGroup>
 					{#each options[option] as { label, href }}
-						<SidebarItem
-							{label}
-							{href}
-							on:click={() => {
-								window.scrollTo(0, 0);
-								goto(href);
-								closeDrawer();
-							}}
-						/>
+						<!-- Badge next to SidebarItem -->
+						{#if label === 'My Worker Profile' && activeUrl === '/protected/settings/profile'}
+							<a class="flex items-center mb-2" {href}>
+								<SidebarItem
+									{label}
+									{href}
+									on:click={(e) => {
+										e.preventDefault(); // Prevent default behavior
+										handleNavigation(href);
+										closeDrawer(); // Close drawer after navigation
+									}}
+									class="flex-1"
+								/>
+								<div class="flex items-center ml-2">
+									{#key profileCompletion}
+										<Badge color={profileCompletion} class="ml-2">
+											{profileCompletion === 'green' ? 'DONE' : 'TODO'}
+										</Badge>
+									{/key}
+								</div>
+							</a>
+						{:else}
+							<SidebarItem
+								{label}
+								{href}
+								on:click={(e) => {
+									e.preventDefault(); // Prevent default behavior
+									handleNavigation(href);
+									closeDrawer(); // Close drawer after navigation
+								}}
+								class="flex-1"
+							/>
+						{/if}
 					{/each}
 				</SidebarGroup>
 			</SidebarWrapper>
