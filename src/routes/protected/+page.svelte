@@ -53,12 +53,14 @@
 			{ label: 'Quests', route: '/protected/upload/quests' }] 
 			: 
 			[{ label: 'Earnings', route: '/protected/upload/manual' }]),
-			{ label: 'Expenses', route: '/protected/upload/expenses' }
+			{ label: 'Expenses', route: '/protected/upload/expenses' },
+			{ label: 'Manage', route: '/protected/upload/manage' }
 		] }, 
 		{ iconClass: 'fa-book', title: 'Stories', route: '/protected/stories/story-feed', 
 		buttons: [
 			{ label: 'View', route: '/protected/stories/story-feed' }, 
-			{ label: 'Share', route: '/protected/stories/share-story' }] }, 
+			{ label: 'Share', route: '/protected/stories/share-story' },
+			{ label: 'Manage', route: '/protected/stories/manage' }] }, 
 			{ iconClass: 'fa-chart-line', title: 'Trends', route: '/protected/trends/personal', 
 			buttons: [
 				{ label: 'Personal', route: '/protected/trends/personal' }, 
