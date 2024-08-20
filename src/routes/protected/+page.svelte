@@ -70,7 +70,7 @@
 				{ label: 'Demographics', route: '/protected/settings/demographics' }, 
 				{ label: 'Sharing', route: '/protected/settings/sharing-preferences' }, 
 				{ label: 'Manage Data', route: '/protected/settings/withdraw' }, 
-				{ label: 'Reminders', route: '/protected/settings/notifications' }] }, 
+				{ label: 'Survey', route: '/protected/settings/survey' }] }, 
 			{ iconClass: 'fa-calendar', title: 'Planner', route: '/protected/planner/work-day', 
 			buttons: [{ label: 'Achieve Goals', route: '/protected/planner/work-day' }, 
 			{ label: 'Prepare Taxes', route: '/protected/planner/tax' }] }] 
