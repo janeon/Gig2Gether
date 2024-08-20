@@ -3,36 +3,48 @@ import { collection, getDocs, query } from 'firebase/firestore';
 import { getHoursDifference, calculateHourlyRates, calculateMissingTime, transformHourlyData }  from '$lib/utils';
 
 export async function load ({ locals }) {
-    const snapshot = await getDocs(
+    const earnings = await getDocs(
         query(collection(db,"upload", "manual", locals.user.platform))
+    );
+    const expenses = await getDocs(
+        query(collection(db,"upload", "expenses", locals.user.platform))
     );
     let workSegments = [];
     let weeklyEarnings = [];
     let averageEarningsPerHour = 0;
+    let calEarnings = [];
+    let calExpenses = []
     switch (locals.user.platform) {
         case 'rover':
-            { workSegments = getRoverHourlyData(snapshot, locals.user.uid).workSegments;
-            const roverWeekly = getRoverWeeklyData(snapshot, locals.user.uid);
+            { workSegments = getRoverHourlyData(earnings, locals.user.uid).workSegments;
+            const roverWeekly = getRoverWeeklyData(earnings, locals.user.uid);
             weeklyEarnings = roverWeekly.weekdayEarnings;
             averageEarningsPerHour = roverWeekly.averageEarningsPerHour;
-            return { workSegments, weeklyEarnings, averageEarningsPerHour }; }
+            calEarnings = roverWeekly.calEarnings;
+            break; }
         case 'upwork': {
-            const upworkWeekly = getUpworkWeeklyData(snapshot, locals.user.uid);
+            const upworkWeekly = getUpworkWeeklyData(earnings, locals.user.uid);
             weeklyEarnings = upworkWeekly.weekdayEarnings;
             averageEarningsPerHour = upworkWeekly.averageEarningsPerHour;
-            return { workSegments, weeklyEarnings, averageEarningsPerHour };
+            calEarnings = upworkWeekly.calEarnings;
+            break;
         }
-        default:
-            return {
-                workSegments: workSegments, // this is the default return value for rover
-                weeklyEarnings: weeklyEarnings, // this is the default return value for upwork
-                averageEarningsPerHour: averageEarningsPerHour
-            };
+        case "uber": {
+            break;
+        }
     }
-
+    calExpenses = getExpenses(expenses, locals.user.uid);
+    return {
+        workSegments: workSegments, // this is the default return value for rover
+        weeklyEarnings: weeklyEarnings, // this is the default return value for upwork
+        averageEarningsPerHour: averageEarningsPerHour,
+        calEarnings: calEarnings,
+        calExpenses: calExpenses
+    };
 }
 
 function getUpworkWeeklyData(snapshot, uid) {
+    const calEarnings = []
     const weekdayEarnings = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(day => ({ x: day, y: 0.0 }));
     const weekdayHours = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(day => ({ x: day, y: 0.0 }));
     snapshot.forEach(async (item) => {
@@ -62,12 +74,15 @@ function getUpworkWeeklyData(snapshot, uid) {
         weekdayHours[dayIndex].y += hoursWorked;
         if (item.data().cutIncome) {
             weekdayEarnings[dayIndex].y += item.data().cutIncome as number;
+            calEarnings.push({date: item.data().endDate, value: item.data().cutIncome as number})
         }
         else if (item.data().fixedCharge) {
             weekdayEarnings[dayIndex].y += item.data().fixedCharge as number;
+            calEarnings.push({date: item.data().endDate, value: item.data().fixedCharge as number})
         }
         else if (item.data().hourlyCharge && item.data().hoursPerWeek) {
             weekdayEarnings[dayIndex].y += item.data().hourlyCharge * item.data().hoursPerWeek;
+            calEarnings.push({date: item.data().endDate, value: item.data().hourlyCharge * item.data().hoursPerWeek})
         }
         else {
             // do not have monthly earnings for this item
@@ -89,7 +104,8 @@ function getUpworkWeeklyData(snapshot, uid) {
 
     return {
         weekdayEarnings : weekdayEarnings,
-        averageEarningsPerHour : totalHours > 0 ? totalEarnings / totalHours : 0
+        averageEarningsPerHour : totalHours > 0 ? totalEarnings / totalHours : 0,
+        calEarnings: calEarnings
     }
 }
 
@@ -145,8 +161,10 @@ function getRoverHourlyData(snapshot, uid) {
 function getRoverWeeklyData(snapshot, uid) {
     const weekdayEarnings = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(day => ({ x: day, y: 0.0 }));
     const weekdayHours = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(day => ({ x: day, y: 0.0 }));
+    const calEarnings = [];
+
     snapshot.forEach(async (item) => {
-        // error checking
+        // error checking 
         if (item.data().uid !== uid) {
             return;
         }
@@ -179,12 +197,19 @@ function getRoverWeeklyData(snapshot, uid) {
         // adding earnings to total earnings for that day across weeks
         if (item.data().cutIncome) {
             weekdayEarnings[dayIndex].y += item.data().cutIncome as number;
+            calEarnings.push({date: item.data().endDate, value: item.data().cutIncome as number})
         }
         else if (item.data().income) {
             weekdayEarnings[dayIndex].y += item.data().income as number;
+            calEarnings.push({date: item.data().endDate, value: item.data().income as number})
         }
         else if (item.data().rate && item.data().unitsWorked) {
             weekdayEarnings[dayIndex].y += item.data().rate * item.data().unitsWorked as number;
+            calEarnings.push({date: item.data().endDate, value: item.data().rate * item.data().unitsWorked as number})
+        }
+        else if (item.data().rate && hoursWorked) {
+            weekdayEarnings[dayIndex].y += item.data().rate * hoursWorked as number;
+            calEarnings.push({date: item.data().endDate, value: item.data().rate * hoursWorked as number})
         }
         else {
             // do not have monthly earnings for this item
@@ -209,6 +234,23 @@ function getRoverWeeklyData(snapshot, uid) {
 
     return {
         weekdayEarnings : weekdayEarnings,
-        averageEarningsPerHour : totalHours > 0 ? totalEarnings / totalHours : 0
+        averageEarningsPerHour : totalHours > 0 ? totalEarnings / totalHours : 0,
+        calEarnings: calEarnings
     }
+}
+
+function getExpenses(snapshot, uid) {
+    const expenses = [];
+    snapshot.forEach(async (item) => {
+        if (item.data().uid !== uid) {
+            return;
+        }
+        if (item.data().amount) {
+            expenses.push({
+                date: item.data().date,
+                value: item.data().amount
+            });
+        }
+    });
+    return expenses;
 }

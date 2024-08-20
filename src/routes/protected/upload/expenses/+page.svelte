@@ -38,6 +38,7 @@
     $: fileName = file ? file.name : 'Upload a Photo (e.g., Receipts)';
     let url : string | null = null;
     let docID:string | null = null;
+    const basePath = '/protected/trends/personal';
 
     onMount(() => {
 		// Extract search parameter 'id'
@@ -122,7 +123,7 @@
         errorMessage = "Please enter:";
         const collectionRef = collection(db, "upload", "expenses", $page.data.user.platform);
         const docRef = docID ? doc(collectionRef, docID) : doc(collectionRef);
-        data.amount = extractAfterEquals(data.amount);
+        data.amount = extractAfterEquals(data.amount) as number;
 
         await setDoc(docRef, data, { merge: true });
         successMessage = docID ? 'Update Successful!' : 'Submission Successful!';
@@ -241,7 +242,9 @@
 					<Button
 						class="flex-1 py-2 text-sm md:text-base lg:text-base truncate"
 						color="blue"
-						on:click={() => goto('/protected/trends/personal')}
+						on:click={() => goto(`${basePath}?id=${encodeURIComponent(docID)}`)}
+                        
+                        }
 						style="border-radius: 4px; min-width: 120px; flex-grow: 1;"
 					>
 						See in Trends

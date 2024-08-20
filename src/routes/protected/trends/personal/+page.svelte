@@ -12,7 +12,8 @@
   const hourlySegments = data.workSegments;
   const weekdayEarnings = data.weeklyEarnings;
   const averageHourlyPay = data.averageEarningsPerHour;
-
+  const calEarnings = data.calEarnings;
+  const calExpenses = data.calExpenses; 
   updateTitle('My Trends');
 
   let cal: CalHeatmap;
@@ -80,7 +81,6 @@
   };
 
   $: options.series = weekday ? [{ name: name[$page.data.user.platform], color: viewMode === 'earnings' ? '#4CAF50' : '#6A1B9A', data: seriesData }] : [{ name: 'Earnings ($)', color: '#4CAF50', data: weekdayEarnings }];
-  
 
   function handlePrevious() {
       cal.previous();
@@ -90,25 +90,26 @@
       cal.next();
   }
 
+  const upperEnd = { "uber": 300, "rover": 400, "upwork": 800 };
   function showEarnings() {
     viewMode = 'earnings';
     // Repaint the calendar heatmap with earnings colors
     cal.paint({
       data: {
-        source: '/fixtures/seattle-weather.csv', // Ensure correct path
-        type: 'csv',
+        source: calEarnings,
         x: 'date',
-        y: d => +d[viewMode],
+        y: 'value',
         groupY: 'min',
       },
       verticalOrientation: false,
       range: 1,
       itemSelector: '#cal-heatmap',
       date: { 
-        start: new Date('2024-08-01'),
+        start: new Date().toISOString().split('T')[0],
         max: new Date('2024-12-31'),
-        min: new Date('2024-01-01')},
-      scale: { color: { type: 'log', scheme: 'Greens' } },
+        min: new Date('2022-01-01')},
+      scale: { 
+        color: { type: 'linear', scheme: 'Greens', domain: [0, upperEnd[$page.data.user?.platform]]} },
       domain: {
         type: 'month',
         padding: [10, 10, 10, 10],
@@ -135,7 +136,7 @@
       {
         text: function (date, value, dayjsDate) {
           return (
-            (value ? value*30 : 'No data') + ' on ' + dayjsDate.format('LL')
+            (value ? value : 'No data') + ' on ' + dayjsDate.format('LL')
           );
         },
       },
@@ -143,26 +144,26 @@
   ]);
   }
 
+  const upperEndExpenses = { "uber": 100, "rover": 200, "upwork": 400 };
   function showExpenses() {
     viewMode = 'expenses';
     // Repaint the calendar heatmap with expenses colors
     cal.paint({
       data: {
-        source: '/fixtures/seattle-weather.csv', // Ensure correct path
-        type: 'csv',
+        source: calExpenses, 
         x: 'date',
-        y: d => +d[viewMode],
+        y: 'value',
         groupY: 'min',
       },
       verticalOrientation: false,
       range: 1,
       itemSelector: '#cal-heatmap',
       date: { 
-        start: new Date('2024-08-01'),
+        start: new Date().toISOString().split('T')[0],
           max: new Date('2024-12-31'),
-          min: new Date('2024-01-01')
+          min: new Date('2022-01-01')
       }, // Updated start date
-      scale: { color: { type: 'linear', scheme: 'Purples' } },
+      scale: { color: { type: 'linear', scheme: 'Purples', domain: [-1*upperEndExpenses[$page.data.user?.platform], upperEndExpenses[$page.data.user?.platform]] } },
       domain: {
         type: 'month',
         padding: [10, 10, 10, 10],
@@ -204,8 +205,9 @@
   <!-- First Card with Chart -->
   <div class="flex justify-center p-2 items-stretch">
     <Card class="flex-1">
+      {#if $page.data.user.platform === "rover"}
       <Toggle bind:checked={weekday}>{weekday ? "Show Daily" : "Show Hourly"}</Toggle>
-
+      {/if}
       <div class="flex justify-center pb-4 mb-4 border-b border-gray-200 dark:border-gray-700">
         <h3 class="text-2xl font-bold text-gray-900 dark:text-white">
           {weekday? "Hourly " : "Daily "}{title}
