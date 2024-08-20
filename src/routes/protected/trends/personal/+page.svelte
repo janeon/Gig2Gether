@@ -39,7 +39,7 @@
       switch (platform) {
           case 'uber':
               seriesData = platformData.uber;
-              title = 'Driver Earnings Per Hour';
+              title = 'Driver Earnings';
               subtitle = 'Pickup Time (Hours of the Day)';
               break;
           case 'rover':
@@ -61,12 +61,13 @@
     'upwork': 'Hourly ($)',
   };
   // Chart options
-  let weekday = false;
+  let weekday = true;
 
   let options;
+  const isRover = $page.data.user.platform === 'rover';
   options = {
     colors: viewMode === 'earnings' ? ['#B6E1B0', '#4CAF50'] : ['#EFE8EE', '#6A1B9A'],
-    series: [{ name: name[$page.data.user.platform], color: viewMode === 'earnings' ? '#4CAF50' : '#6A1B9A', data: seriesData }],
+    series: [{ name: 'Hourly ($)', color: viewMode === 'earnings' ? '#4CAF50' : '#6A1B9A', data: seriesData }],
     chart: { type: 'bar', height: '320px', fontFamily: 'Inter, sans-serif', toolbar: { show: false } },
     plotOptions: { bar: { horizontal: false, columnWidth: '70%', borderRadiusApplication: 'end', borderRadius: 8 } },
     tooltip: { shared: true, intersect: false, style: { fontFamily: 'Inter, sans-serif' } },
@@ -80,7 +81,7 @@
     fill: { opacity: 1 },
   };
 
-  $: options.series = weekday ? [{ name: name[$page.data.user.platform], color: viewMode === 'earnings' ? '#4CAF50' : '#6A1B9A', data: seriesData }] : [{ name: 'Earnings ($)', color: '#4CAF50', data: weekdayEarnings }];
+  $: options.series = (weekday && isRover) ? [{ name: 'Hourly ($)', color: viewMode === 'earnings' ? '#4CAF50' : '#6A1B9A', data: seriesData }] : [{ name: 'Earnings ($)', color: '#4CAF50', data: weekdayEarnings }];
 
   function handlePrevious() {
       cal.previous();
@@ -216,14 +217,14 @@
       {/if}
       <div class="flex justify-center pb-4 mb-4 border-b border-gray-200 dark:border-gray-700">
         <h3 class="text-2xl font-bold text-gray-900 dark:text-white">
-          {weekday? "Hourly " : "Daily "}{title}
+          {(weekday && isRover)? "Hourly " : "Daily "}{title}
         </h3>
       </div>
       <Chart {options} />
       <div class="grid grid-cols-1 items-center border-gray-200 border-t dark:border-gray-700 justify-between">
         <div class="flex justify-center items-center pt-5">
           <h1 class="text-sm font-semibold text-gray-900 dark:text-white px-3 py-2">
-            {weekday ? 'Hours of the Day' : 'Days of the Week'}
+            {(weekday && isRover) ? 'Hours of the Day' : 'Days of the Week'}
           </h1>
         </div>
       </div>
