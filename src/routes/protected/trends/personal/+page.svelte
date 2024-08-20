@@ -61,7 +61,7 @@
     'upwork': 'Hourly ($)',
   };
   // Chart options
-  let weekday = true;
+  let hourly = false;
 
   let options;
   const isRover = $page.data.user.platform === 'rover';
@@ -81,7 +81,7 @@
     fill: { opacity: 1 },
   };
 
-  $: options.series = (weekday && isRover) ? [{ name: 'Hourly ($)', color: viewMode === 'earnings' ? '#4CAF50' : '#6A1B9A', data: seriesData }] : [{ name: 'Earnings ($)', color: '#4CAF50', data: weekdayEarnings }];
+  $: options.series = (hourly && isRover) ? [{ name: 'Hourly ($)', color: viewMode === 'earnings' ? '#4CAF50' : '#6A1B9A', data: seriesData }] : [{ name: 'Earnings ($)', color: '#4CAF50', data: weekdayEarnings }];
 
   function handlePrevious() {
       cal.previous();
@@ -210,18 +210,18 @@
   <div class="flex justify-center p-2 items-stretch">
     <Card class="flex-1">
       {#if $page.data.user.platform === "rover"}
-      <Toggle bind:checked={weekday}>{weekday ? "Show Daily" : "Show Hourly"}</Toggle>
+      <Toggle bind:checked={hourly}>{hourly ? "Show Daily" : "Show Hourly"}</Toggle>
       {/if}
       <div class="flex justify-center pb-4 mb-4 border-b border-gray-200 dark:border-gray-700">
         <h3 class="text-2xl font-bold text-gray-900 dark:text-white">
-          {(weekday && isRover)? "Hourly " : "Daily "}{title}
+          {(hourly && isRover)? "Hourly " : "Daily "}{title}
         </h3>
       </div>
       <Chart {options} />
       <div class="grid grid-cols-1 items-center border-gray-200 border-t dark:border-gray-700 justify-between">
         <div class="flex justify-center items-center pt-5">
           <h1 class="text-sm font-semibold text-gray-900 dark:text-white px-3 py-2">
-            {(weekday && isRover) ? 'Hours of the Day' : 'Days of the Week'}
+            {(hourly && isRover) ? 'Hours of the Day' : 'Days of the Week'}
           </h1>
         </div>
       </div>
