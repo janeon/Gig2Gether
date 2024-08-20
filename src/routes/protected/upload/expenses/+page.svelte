@@ -33,12 +33,12 @@
 		url: null
 	};
 
-    let file: File
-    let imageUrlPreview : string
-    $: fileName = file ? file.name : 'Upload a Photo (e.g., Receipts)';
-    let url : string | null = null;
-    let docID:string | null = null;
-    const basePath = '/protected/trends/personal';
+	let file: File;
+	let imageUrlPreview: string;
+	$: fileName = file ? file.name : 'Upload a Photo (e.g., Receipts)';
+	let url: string | null = null;
+	let docID: string | null = null;
+	const basePath = '/protected/trends/personal';
 
 	onMount(() => {
 		// Extract search parameter 'id'
