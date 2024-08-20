@@ -287,6 +287,7 @@
 						color="blue"
 						on:click={() => goto('/protected/trends/personal')}
 						style="border-radius: 4px; min-width: 120px; flex-grow: 1;"
+						disabled={true}
 					>
 						See in Trends
 					</Button>
