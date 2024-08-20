@@ -7,7 +7,7 @@
     import DataRow from "$lib/components/DataRow.svelte";
     
     import { db } from "$lib/firebase/client.js";
-    import { deleteDoc, doc } from "firebase/firestore";
+    import { deleteDoc, doc, getDoc, setDoc } from "firebase/firestore";
 	import { updateTitle } from "$lib/stores/title.js";
     
     export let data
@@ -16,31 +16,46 @@
 
     let toDelete : Data[] = []
     let modal = false
-    const deleteData = async()=> {
-        for (let dataDoc of toDelete) {
-            let docRef: any;
+    const deleteData = async () => {
+    for (let dataDoc of toDelete) {
+        let docRef: any;
+        let loggingRef: any; // Reference for the logging collection
 
-            switch (dataDoc.type) {
-                case "Expense":
-                    docRef = doc(db, 'upload', 'expenses', data.user.platform, dataDoc.id)
-                    break;
-                case "Trips":
-                    docRef = doc(db, 'upload', "manual", 'trips', dataDoc.id)
-                    break;
-                case "Quests":
-                    docRef = doc(db, 'upload', "manual", 'quests', dataDoc.id)
-                    break;
-                case "CSV":
-                    docRef = doc(db, 'upload', "csv", 'entries', dataDoc.id)
-                    break;
-                case "Income":
-                    docRef = doc(db, 'upload', "manual", data.user.platform, dataDoc.id)
-                    break;
-            }
-            await deleteDoc(docRef)
+        switch (dataDoc.type) {
+            case "Expense":
+                docRef = doc(db, 'upload', 'expenses', data.user.platform, dataDoc.id);
+                loggingRef = doc(db, 'logging', 'expenses', data.user.platform, dataDoc.id);
+                break;
+            case "Trips":
+                docRef = doc(db, 'upload', "manual", 'trips', dataDoc.id);
+                loggingRef = doc(db, 'logging', "manual", 'trips', dataDoc.id);
+                break;
+            case "Quests":
+                docRef = doc(db, 'upload', "manual", 'quests', dataDoc.id);
+                loggingRef = doc(db, 'logging', "manual", 'quests', dataDoc.id);
+                break;
+            case "CSV":
+                docRef = doc(db, 'upload', "csv", 'entries', dataDoc.id);
+                loggingRef = doc(db, 'logging', "csv", 'entries', dataDoc.id);
+                break;
+            case "Income":
+                docRef = doc(db, 'upload', "manual", data.user.platform, dataDoc.id);
+                loggingRef = doc(db, 'logging', "manual", data.user.platform, dataDoc.id);
+                break;
         }
-        invalidateAll()
+
+        // Copy the document to the logging collection
+        const docSnapshot = await getDoc(docRef);
+        if (docSnapshot.exists()) {
+            await setDoc(loggingRef, docSnapshot.data());
+        }
+
+        // Delete the document from the original collection
+        await deleteDoc(docRef);
     }
+
+    invalidateAll();
+};
 </script>
 
 <div class="justify-items-center py-2">

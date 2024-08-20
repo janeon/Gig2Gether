@@ -7,7 +7,7 @@
     import DataRow from "$lib/components/DataRow.svelte";
     
     import { db } from "$lib/firebase/client.js";
-    import { deleteDoc, doc } from "firebase/firestore";
+    import { deleteDoc, doc, getDoc, setDoc } from "firebase/firestore";
 	import { updateTitle } from "$lib/stores/title.js";
 
     updateTitle("Manage Data");
@@ -16,33 +16,54 @@
 
     let toDelete : Data[] = []
     let modal = false
-    const deleteData = async()=> {
-        for (let dataDoc of toDelete) {
-            let docRef: any;
-            switch (dataDoc.type) {
-                case "Story":
-                    docRef = doc(db, 'stories', data.user.platform, "posts", dataDoc.id)
-                    break;
-                case "Manual":
-                    docRef = doc(db, 'upload', 'manual', data.user.platform, dataDoc.id)
-                    break;
-                case "Expense":
-                    docRef = doc(db, 'upload', 'expenses', data.user.platform, dataDoc.id)
-                    break;
-                case "Trips":
-                    docRef = doc(db, 'upload', "manual", 'trips', dataDoc.id)
-                    break;
-                case "Quests":
-                    docRef = doc(db, 'upload', "manual", 'quests', dataDoc.id)
-                    break;
-                case "CSV":
-                    docRef = doc(db, 'upload', "csv", 'entries', dataDoc.id)
-                    break;
-            }
-            await deleteDoc(docRef)
+    const deleteData = async () => {
+    for (let dataDoc of toDelete) {
+        let docRef: any;
+        let newDocRef: any;
+
+        // Determine the document reference based on its type
+        switch (dataDoc.type) {
+            case "Story":
+                docRef = doc(db, 'stories', data.user.platform, "posts", dataDoc.id);
+                newDocRef = doc(db, 'logging', 'stories', data.user.platform, "posts", dataDoc.id);
+                break;
+            case "Manual":
+                docRef = doc(db, 'upload', 'manual', data.user.platform, dataDoc.id);
+                newDocRef = doc(db, 'logging', 'manual', data.user.platform, dataDoc.id);
+                break;
+            case "Expense":
+                docRef = doc(db, 'upload', 'expenses', data.user.platform, dataDoc.id);
+                newDocRef = doc(db, 'logging', 'expenses', data.user.platform, dataDoc.id);
+                break;
+            case "Trips":
+                docRef = doc(db, 'upload', "manual", 'trips', dataDoc.id);
+                newDocRef = doc(db, 'logging', 'trips', dataDoc.id);
+                break;
+            case "Quests":
+                docRef = doc(db, 'upload', "manual", 'quests', dataDoc.id);
+                newDocRef = doc(db, 'logging', 'quests', dataDoc.id);
+                break;
+            case "CSV":
+                docRef = doc(db, 'upload', "csv", 'entries', dataDoc.id);
+                newDocRef = doc(db, 'logging', "csv", 'entries', dataDoc.id);
+                break;
         }
-        invalidateAll()
+
+        // Retrieve the document data
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            const docData = docSnap.data();
+
+            // Add the document to the new collection
+            await setDoc(newDocRef, docData);
+
+            // Delete the document from the current collection
+            await deleteDoc(docRef);
+        }
     }
+
+    invalidateAll();
+};
 </script>
 
 <div class="justify-items-center py-2">
