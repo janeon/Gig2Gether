@@ -153,7 +153,7 @@
 				</DropdownHeader>
 				<DropdownItem href="/protected">Home</DropdownItem>
 				<DropdownItem href="/protected/settings/account">Account</DropdownItem>
-				<DropdownItem>Notifications</DropdownItem>
+				<DropdownItem href="/protected/settings/survey">Survey</DropdownItem>
 				<DropdownDivider />
 				<form action="/logout" method="POST" use:enhance bind:this={form}>
 					<DropdownItem slot="footer" on:click={handleLogout}>Log out</DropdownItem>
