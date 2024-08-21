@@ -45,6 +45,7 @@
 	let age: number = null;
 	let gender: string = '';
 	let race: string = '';
+	let code: number;
 
 	let genders = [
 		{ value: 'male', name: 'Male' },
@@ -96,11 +97,14 @@
 			signInMethod = 'email';
 		} else {
 			signInMethod = 'phone';
-			sendCode();
+			console.log('Sending message');
+			await sendCode();
+			console.log('Message sent');
 		}
 	};
 
 	async function register(event: Event): Promise<void> {
+		console.log('Registering with phone');
 		event.preventDefault(); // Prevent the default form submission
 		// let username: form.username.value
 		if (form.username.value.length < 4) {
@@ -110,20 +114,25 @@
 		const count = await getCountFromServer(
 			query(collection(db, 'users'), where('username', '==', form.username.value))
 		);
+		console.log('Count received');
 		if (count.data().count > 0) {
 			form.formErrors = 'Username is in use';
 			return;
 		}
 
-		if (form.password.value != form.confirm.value) {
-			form.formErrors = 'Passwords do not match';
-			return;
+		if (signInMethod == 'email') {
+			if (form.password.value != form.confirm.value) {
+				form.formErrors = 'Passwords do not match';
+				return;
+			}
 		}
 
 		let cred = null;
 		try {
 			auth.useDeviceLanguage();
+			// console.log('device language received');
 			if (signInMethod == 'email') {
+				console.log('register with email');
 				cred = await createUserWithEmailAndPassword(
 					auth,
 					form.credentials.value,
@@ -131,6 +140,8 @@
 				);
 			}
 			if (signInMethod == 'phone') {
+				console.log('Registering with phone');
+				console.log('username', form.username.value);
 				const credential = PhoneAuthProvider.credential(
 					confirmationResult.verificationId,
 					form.code.value
@@ -231,7 +242,7 @@
 			</div>
 		{/if}
 
-		{#if signInMethod == 'email'}
+		{#if signInMethod === 'email'}
 			<div>
 				<Input
 					placeholder="Username"
@@ -298,7 +309,7 @@
 			</Checkbox>
 
 			<BlueButton onclick={register} type="submit" buttonText="Register" href="/protected" />
-		{:else if signInMethod == 'phone'}
+		{:else if signInMethod === 'phone'}
 			<div>
 				<Input
 					placeholder="Username"
@@ -312,6 +323,20 @@
 				<p class="text-xs">
 					This username will be visible to other Gig2Gether users when you share stories.
 				</p>
+			</div>
+			<div class="flex flex-col">
+				<Label>Age</Label>
+				<NumberInput bind:value={age} type="number" required />
+			</div>
+
+			<div class="flex flex-col">
+				<Label>Gender</Label>
+				<Select items={genders} bind:value={gender} required />
+			</div>
+
+			<div class="flex flex-col">
+				<Label>Race</Label>
+				<Select items={races} bind:value={race} required />
 			</div>
 			<div>
 				<Input
