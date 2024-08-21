@@ -14,6 +14,7 @@ export const actions = {
   const data = await request.formData()
   const token = data.get("token") as string;
 
+  console.log("Token received", token);
   const admin = getFirebaseServer();
   if (admin.error) {
       console.error("Error getting firebase admin");
@@ -28,13 +29,14 @@ export const actions = {
     // persmission to sign blob/create token must be granted on iam
     // https://stackoverflow.com/questions/57564505/unable-to-assign-iam-serviceaccounts-signblob-permission
     sessionCookie = await admin_auth.createSessionCookie(token, { expiresIn: expiresIn * 1000 });
+    console.log("session cookie received");
     } catch (error) {
       console.error("Error creating session cookie", (error as Error).message); 
       throw redirect(303, "/register-worker");
     }
 
   // DO NOT RENAME COOKIE 
-  // FIRBASE FUNCTIONS ALLOWS ONLY ONE COOKIE, IT MUST BE NAMED __session
+  // FIREBASE FUNCTIONS ALLOWS ONLY ONE COOKIE, IT MUST BE NAMED __session
   // https://stackoverflow.com/questions/76611381/how-to-forwarded-cookies-to-the-clound-function-when-deploying-sveltekit-to-fire
     cookies.set("__session", sessionCookie, {
     maxAge: expiresIn,
@@ -44,6 +46,7 @@ export const actions = {
     sameSite: "lax",
   });
 
+  // Redirect to protected page
   redirect(303, '/protected')
   }
 } satisfies Actions

@@ -130,7 +130,6 @@
 			}
 		}
 
-
 		let cred = null;
 		try {
 			auth.useDeviceLanguage();
@@ -148,6 +147,7 @@
 					form.code.value
 				);
 				cred = await signInWithCredential(auth, credential);
+				console.log('phone credentials received');
 			}
 		} catch (error) {
 			form.formErrors = (error as Error).message;
@@ -163,6 +163,7 @@
 				platform: selectedPlatform,
 				notifications: isChecked ? 'everyday' : 'never'
 			});
+			console.log('user credentials saved to db');
 			// Save demographics data to Firestore
 			const demographicsRef = doc(db, 'demographics', user.uid);
 			await setDoc(demographicsRef, {
@@ -170,6 +171,7 @@
 				gender: gender,
 				race: race
 			});
+			console.log('user demograpahics saved to db');
 			await auth.signOut();
 			token = await cred.user.getIdToken();
 
@@ -184,6 +186,7 @@
 				input.value = token;
 				form.appendChild(input);
 				form.submit();
+				console.log('form submitted');
 			}
 		} catch (err) {
 			console.error(err);
