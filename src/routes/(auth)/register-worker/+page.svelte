@@ -96,7 +96,14 @@
 		if (form.credentials.value.includes('@')) {
 			signInMethod = 'email';
 		} else {
-			signInMethod = 'phone';
+			const count = await getCountFromServer(
+			query(collection(db, 'users'), where('credentials', '==', form.credentials.value))
+		);
+		if (count.data().count > 0) {
+			form.formErrors = 'Phone is in use';
+			return;
+		}
+		signInMethod = 'phone';
 			await sendCode();
 		}
 	};
@@ -122,6 +129,7 @@
 				return;
 			}
 		}
+
 
 		let cred = null;
 		try {
