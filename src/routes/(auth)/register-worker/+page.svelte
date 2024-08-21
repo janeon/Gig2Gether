@@ -97,14 +97,11 @@
 			signInMethod = 'email';
 		} else {
 			signInMethod = 'phone';
-			console.log('Sending message');
 			await sendCode();
-			console.log('Message sent');
 		}
 	};
 
 	async function register(event: Event): Promise<void> {
-		console.log('Registering with phone');
 		event.preventDefault(); // Prevent the default form submission
 		// let username: form.username.value
 		if (form.username.value.length < 4) {
@@ -114,7 +111,6 @@
 		const count = await getCountFromServer(
 			query(collection(db, 'users'), where('username', '==', form.username.value))
 		);
-		console.log('Count received');
 		if (count.data().count > 0) {
 			form.formErrors = 'Username is in use';
 			return;
@@ -130,7 +126,6 @@
 		let cred = null;
 		try {
 			auth.useDeviceLanguage();
-			// console.log('device language received');
 			if (signInMethod == 'email') {
 				console.log('register with email');
 				cred = await createUserWithEmailAndPassword(
@@ -140,8 +135,6 @@
 				);
 			}
 			if (signInMethod == 'phone') {
-				console.log('Registering with phone');
-				console.log('username', form.username.value);
 				const credential = PhoneAuthProvider.credential(
 					confirmationResult.verificationId,
 					form.code.value
