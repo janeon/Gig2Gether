@@ -45,6 +45,7 @@
 	let age: number = null;
 	let gender: string = '';
 	let race: string = '';
+	let code: number;
 
 	let genders = [
 		{ value: 'male', name: 'Male' },
@@ -95,8 +96,15 @@
 		if (form.credentials.value.includes('@')) {
 			signInMethod = 'email';
 		} else {
-			signInMethod = 'phone';
-			sendCode();
+			const count = await getCountFromServer(
+			query(collection(db, 'users'), where('credentials', '==', form.credentials.value))
+		);
+		if (count.data().count > 0) {
+			form.formErrors = 'Phone is in use';
+			return;
+		}
+		signInMethod = 'phone';
+			await sendCode();
 		}
 	};
 
@@ -115,15 +123,18 @@
 			return;
 		}
 
-		if (form.password.value != form.confirm.value) {
-			form.formErrors = 'Passwords do not match';
-			return;
+		if (signInMethod == 'email') {
+			if (form.password.value != form.confirm.value) {
+				form.formErrors = 'Passwords do not match';
+				return;
+			}
 		}
 
 		let cred = null;
 		try {
 			auth.useDeviceLanguage();
 			if (signInMethod == 'email') {
+				console.log('register with email');
 				cred = await createUserWithEmailAndPassword(
 					auth,
 					form.credentials.value,
@@ -136,6 +147,7 @@
 					form.code.value
 				);
 				cred = await signInWithCredential(auth, credential);
+				console.log('phone credentials received');
 			}
 		} catch (error) {
 			form.formErrors = (error as Error).message;
@@ -151,6 +163,7 @@
 				platform: selectedPlatform,
 				notifications: isChecked ? 'everyday' : 'never'
 			});
+			console.log('user credentials saved to db');
 			// Save demographics data to Firestore
 			const demographicsRef = doc(db, 'demographics', user.uid);
 			await setDoc(demographicsRef, {
@@ -158,6 +171,7 @@
 				gender: gender,
 				race: race
 			});
+			console.log('user demograpahics saved to db');
 			await auth.signOut();
 			token = await cred.user.getIdToken();
 
@@ -172,6 +186,7 @@
 				input.value = token;
 				form.appendChild(input);
 				form.submit();
+				console.log('form submitted');
 			}
 		} catch (err) {
 			console.error(err);
@@ -231,7 +246,7 @@
 			</div>
 		{/if}
 
-		{#if signInMethod == 'email'}
+		{#if signInMethod === 'email'}
 			<div>
 				<Input
 					placeholder="Username"
@@ -298,7 +313,7 @@
 			</Checkbox>
 
 			<BlueButton onclick={register} type="submit" buttonText="Register" href="/protected" />
-		{:else if signInMethod == 'phone'}
+		{:else if signInMethod === 'phone'}
 			<div>
 				<Input
 					placeholder="Username"
@@ -312,6 +327,20 @@
 				<p class="text-xs">
 					This username will be visible to other Gig2Gether users when you share stories.
 				</p>
+			</div>
+			<div class="flex flex-col">
+				<Label>Age</Label>
+				<NumberInput bind:value={age} type="number" required />
+			</div>
+
+			<div class="flex flex-col">
+				<Label>Gender</Label>
+				<Select items={genders} bind:value={gender} required />
+			</div>
+
+			<div class="flex flex-col">
+				<Label>Race</Label>
+				<Select items={races} bind:value={race} required />
 			</div>
 			<div>
 				<Input
