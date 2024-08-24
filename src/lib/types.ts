@@ -14,7 +14,7 @@ export interface Post {
 
 export interface Data {
     type: string,
-    date: Date,
+    // date: Date,
     timestamp: Date,
     title: string,
     id: string,
