@@ -118,6 +118,10 @@
         padding: [10, 10, 10, 10],
         label: { 
           position: 'top', 
+          cellSize: 15,
+
+          // height: 90,
+          // width: 90,
           style: { 
             fontFamily: 'Inter, sans-serif', 
             textAlign: 'center', 
@@ -165,7 +169,8 @@
         start: new Date().toISOString().split('T')[0],
           max: new Date('2024-12-31'),
           min: new Date('2022-01-01')
-      }, // Updated start date
+      }, 
+      // Updated start date
       scale: { color: { type: 'linear', scheme: 'Purples', domain: [-1*upperEndExpenses[$page.data.user?.platform], upperEndExpenses[$page.data.user?.platform]] } },
       domain: {
         type: 'month',
@@ -174,8 +179,8 @@
           position: 'top', 
           style: { 
             fontFamily: 'Inter, sans-serif', 
-            textAlign: 'center', 
-            class: 'text-2lg font-semibold text-gray-900 dark:text-white px-3 py-2' } 
+            // textAlign: 'center', 
+            class: 'text-2lg font-bold text-blue-900 dark:text-white px-3 py-2' } 
         }
       },
       subDomain: {
@@ -309,3 +314,12 @@
     </Card>
   </div>
 </div>
+
+
+<style>
+    :global(.ch-domain-text) {
+      font-size: 20px !important;
+      font-weight: 600;
+      color: #000000;
+  }
+</style>
