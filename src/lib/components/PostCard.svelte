@@ -9,6 +9,7 @@
 
     import { Badge } from 'flowbite-svelte';
 	import '@fortawesome/fontawesome-free/css/all.min.css';
+	import { capitalize } from '$lib/utils';
 	
     export let postData: Post;
 
@@ -49,7 +50,10 @@
 <div class="border-t p-3 justify-items-center">
 	<div class="">
 		<div class="text-xs text-gray-500 gap-1">
-			<h3 class="capitalize text-sm font-semibold">{postData.username}</h3>
+			<div class="flex flex-row">
+				<h3 class="capitalize text-sm font-semibold">{postData.username}</h3>
+				<h4 class="text-xs text-gray-500 font-semibold ml-auto">{capitalize(postData.platform)}</h4>
+			</div>
 			<!-- {postData.date.getHours()}:{postData.date.getMinutes()} -->
 			<!-- {dayNames[postData.date.getDay()]} {postData.date.getMonth() +1}/{postData.date.getDate()}/{postData.date.getFullYear()} -->
 		</div>

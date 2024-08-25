@@ -20,10 +20,11 @@
 		return (endDate - startDate) / (1000 * 3600 * 24) + 1;
 	}
 
-	let selectedDates = ['', ''];
+	let selectedDates: [string, string] = ['', ''];
 
 	let schedule = [];
 	const handleChange = (newSchedule) => {
+		console.log(newSchedule);
 		schedule = newSchedule;
 	};
 
@@ -43,11 +44,12 @@
 				<react:ScheduleSelector
 					selection={schedule}
 					selectionScheme="square"
-					minTime={6}
+					minTime={0}
 					maxTime={24}
 					hourlyChunks={1}
 					startDate={selectedDates[0]}
 					numDays={calculateDaysBetween(selectedDates)}
+					dateFormat='ddd M/D'
 					onChange={handleChange}
 				/>
 			</div>
@@ -60,6 +62,7 @@
 					isRange={true}
 					pickerOnly={true}
 					startDate={today}
+					todayBtn={false}
 					bind:value={selectedDates}
 				/>
 			</div>

@@ -4,7 +4,7 @@
     </svg>` ;
     export let placeholder = '';
     export let value = ''; // Bind this value to the input
-    export let className = '';
+    export let className:string = '';
 
     const allowedPattern = /^[\d+\-*/().]*$/;
 

@@ -20,16 +20,25 @@
     let uploading:boolean = false;
 
     let uberData = {
-        rating: null, car: '', services: [], cities: [], dateJoined: currentDate, timestamp: currentTime, carSit: [], percentPassenger: null, gas: null, mileage: null, payments: null, healthcare: null, equipmentAmount: null, equipment: '', vehicle: []
+        rating: null, percentPassenger: null, gas: null, mileage: null, payments: null, healthcare: null, equipmentAmount: null, 
+        car: '', equipment: '', healthcareNotes: '', carModel: '',
+        services: [], cities: [], carSit: [],  vehicle: [],
+        dateJoined: currentDate, timestamp: currentTime
     };
     let roverData = {
-        rating: null, healthcare: null, healthcare_freq: '', other: '', platformCut: 20, equipment: null, pets: [], services: [], cities: [], transportation: [], times : [], dateJoined: currentDate, timestamp: new Date(), otherCost: null
+        platformCut: 20, dateJoined: currentDate, timestamp: new Date(),
+        rating: null, healthcare: null, equipment: null, otherCost: null, processDays: null,
+        healthcareFreq: '', other: '', equipmentNotes: '',
+        pets: [], services: [], cities: [], transportation: [], times : []
     };
     let upworkData = {
-        rating: null, services: [], platformCut: null, internetHome: null, healthcare:null, insurance:null, software: null, jss:null, hourlyCharge: null, dateJoined: currentDate, timestamp: currentTime, equipmentAmount: null, equipment: ''
+        rating: null, platformCut: null, internetHome: null, healthcare:null, insurance:null, software: null, jss:null, hourlyCharge: null, equipmentAmount: null,
+        dateJoined: currentDate, timestamp: currentTime, 
+        equipment: '', healthcareNotes: '', softwareNotes: '', internetNotes: '',
+        services: []
     };
 
-    const uberServices = ["UberX", "UberXL", "UberX Share", "UberX Comfort", "Uber Black", "Uber Black SUV", "WAV", "Uber Car Seat X", "Uber Green", "Uber Taxi"];
+    const uberServices = ["UberX", "UberXL", "UberX VIP", "UberX Share", "UberX Comfort", "Uber Premier", "WAV", "Uber Car Seat X", "Uber Green", "Uber Taxi", "Uber Pet", "UberX Priority"];
     const pets = ["Small Dog", "Medium Dog", "Giant Dog", "Cat", "Puppy"];
     const roverServices = ["Boarding", "House Sitting", "Drop-In Visits", "Doggy Day Care", "Dog Walking"];
     const upworkCategories = ["Development & IT", "Design & Creative", "Finance & Accounting", "Admin & Customer Support", "Engineering & Architecture", "Legal", "Sales & Marketing", "Writing & Translation"];
@@ -46,7 +55,7 @@
 
     // for prepopulating
     async function loadProfile() {
-        console.log("Loading profile")
+        // console.log("Loading profile")
         const collectionRef = collection(db, "users", $page.data.user?.uid, "settings");
         const docRef = doc(collectionRef, "profile");
         const docSnap = await getDoc(docRef);
@@ -57,8 +66,9 @@
         } else {
             data = docSnap.data();
         }
+        // console.log(data)
         const valid = validateData(data)
-        console.log("Valid", valid)
+        console.log(valid, "profile valid?")
         updateValue(valid);
         initialData = { ...data };
         switch ($page.data.user?.platform) {
@@ -92,7 +102,20 @@
         try {
             const collectionRef = collection(db, "users", $page.data.user?.uid, "settings");
             const docRef = doc(collectionRef, "profile");
-            const data = $page.data.user?.platform === "uber" ? uberData : roverData;
+            let data:any;
+            switch ($page.data.user?.platform) {
+                case "uber":
+                    data = uberData;
+                    break;
+                case "rover":
+                    data = roverData;
+                    break;
+                case "upwork":
+                    data = upworkData;
+                    break;
+                default:
+                    break;
+            }
             await setDoc(docRef, data, { merge: true });
             successMessage = "Profile Updated!"
             // Update initial data after successful submission
@@ -113,10 +136,7 @@
         uploading = false;
     }
 
-    let status;
-
     const unsubscribe = profileStatus.subscribe(value => {
-            const status = value.isCompleted;
         });
         
     onMount(() => {
@@ -151,8 +171,11 @@
             --sms-focus-border="2px solid blue"
         />
 
-        <Label class="mt-4">Car Driven</Label>
+        <Label class="mt-4">Car Driven (Make)</Label>
         <Input bind:value={uberData.car} />
+
+        <Label class="mt-4">Car Model</Label>
+        <Input bind:value={uberData.carModel} />
 
         <Label class="mt-4">What is you car situation?</Label>
         <MultiSelect options={uberCar} bind:value={uberData.carSit} 
@@ -164,10 +187,10 @@
         style="--sms-bg: rgb(249, 250, 251); padding: 8px; border-radius: 8px;"
             --sms-focus-border="2px solid blue"/>
     
-        <Label class="mt-4">Estimated % of time with passengers</Label>
+        <Label class="mt-4">Estimated % time with passengers (% non-idle time)</Label>
         <NumberInput on:keydown={handleKeyDown} bind:value={uberData.percentPassenger} class="mt-1" />
     
-        <Label class="mt-4">Estimated Price of gas</Label>
+        <Label class="mt-4">Estimated Price of gas (per tank)</Label>
         <NumberInput on:keydown={handleKeyDown} bind:value={uberData.gas} class="mt-1" />
 
         <Label class="mt-4">Your car's mileage</Label>
@@ -177,8 +200,11 @@
         <NumberInput on:keydown={handleKeyDown} bind:value={uberData.payments} class="mt-1" />
     
         <Label class="mt-4">Healthcare</Label>
+        <Textarea type="text" bind:value={uberData.healthcareNotes} class="mt-1" 
+        placeholder="Describe frequency (monthly, annual), name of plan, type of plan, etc."/>
+        
+        <Label class="mt-4">Healthcare Costs</Label>
         <NumberInput on:keydown={handleKeyDown} bind:value={uberData.healthcare} class="mt-1" />
-    
 
         <Label class="mt-4">Other expenses/equipments</Label>
         <Textarea type="text" bind:value={uberData.equipment} class="mt-1" />
@@ -223,21 +249,30 @@
         <MultiSelect options={roverTimesTypes} bind:value={roverData.times} 
         style="--sms-bg: rgb(249, 250, 251); padding: 8px; border-radius: 8px;"
         --sms-focus-border="2px solid blue"/>
-    
+
         <Label class="mt-4">Healthcare Costs</Label>
         <NumberInput on:keydown={handleKeyDown} type="number" bind:value={roverData.healthcare} on:keydown={handleKeyDown} />
 
-        <Label class="mt-4">Frequency of Healthcare Charge</Label>
-        <Input type="text" bind:value={roverData.healthcare_freq} placeholder="Annual, quarterly, monthly ..."/>
+        <Label class="mt-4">Describe Healthcare Coverage</Label>
+        <Input type="text" bind:value={roverData.healthcareFreq} placeholder="Frequency (annual, monthly), type/name of plan ..."/>
     
         <Label class="mt-4">Equipment Costs</Label>
         <NumberInput on:keydown={handleKeyDown} bind:value={roverData.equipment} class="mt-1" placeholder="For leashes, bikes, etc"/>
-    
+
+        <Label class="mt-4">Describe Equipment(s)</Label>
+        <Textarea type="text" bind:value={roverData.equipmentNotes} class="mt-1" 
+        placeholder="Type of Equipment and/or Frequency of Charge"/>
+
         <Label class="mt-4">Platform's Cut (%)</Label>
         <NumberInput on:keydown={handleKeyDown} bind:value={roverData.platformCut} class="mt-1"/>
     
+        <Label class="mt-4">Processing Days</Label>
+        <NumberInput on:keydown={handleKeyDown} bind:value={roverData.processDays} 
+        class="mt-1" placeholder="# of days Rover takes to process payments"/>
+
         <Label class="mt-4">Any other costs we missed?</Label>
-        <Textarea type="text" bind:value={roverData.other} class="mt-1" />
+        <Textarea type="text" bind:value={roverData.other} class="mt-1" 
+        placeholder="Describe recurrent charges (pet food, subscriptions) & their frequency (annual/monthly/weekly)"/>
 
         <Label class="mt-4">Cost of Missed Expenses </Label>
         <NumberInput on:keydown={handleKeyDown} bind:value={roverData.otherCost} class="mt-1"/>
@@ -247,14 +282,14 @@
     <Label>Upwork Rating</Label>
     <NumberInput type="number" bind:value={upworkData.rating} on:keydown={handleRatingsKeyDown} />
 
-    <Label>Work Categories</Label>
+    <Label class="mt-4">Work Categories</Label>
     <MultiSelect options={upworkCategories} bind:selected={upworkData.services}
         style="--sms-bg: rgb(249, 250, 251); padding: 8px; border-radius: 8px;"
         --sms-focus-border="2px solid blue"
     />
 
-    <Label>Job Success Score</Label>
-    <NumberInput on:keydown={handleKeyDown} type="number" bind:value={upworkData.jss} on:keydown={handleKeyDown} />
+    <Label class="mt-4">Job Success Score</Label>
+    <NumberInput on:keydown={handleKeyDown} type="number" bind:value={upworkData.jss} on:keydown={handleRatingsKeyDown} />
 </div>
 
 <div class="flex flex-col">
@@ -270,27 +305,37 @@
 <div class="flex flex-col">
     <Label>Software costs</Label>
     <NumberInput on:keydown={handleKeyDown} type="text" bind:value={upworkData.software} class="mt-1" />
+
+    <Label class="mt-4">Describe Software</Label>
+    <Textarea type="text" bind:value={upworkData.softwareNotes} class="mt-1" 
+    placeholder="Describe frequency (monthly, annual) & name of purchased software"/>
 </div>
 
 <div class="flex flex-col">
     <Label>Healthcare</Label>
     <NumberInput on:keydown={handleKeyDown} bind:value={upworkData.healthcare} class="mt-1" />
+    <Label class="mt-4">Describe Healthcare</Label>
+    <Textarea type="text" bind:value={upworkData.healthcareNotes} class="mt-1" 
+    placeholder="Describe frequency (monthly, annual) & name/type of healthcare plan"/>
 </div>
 
-<div class="flex flex-col">
+<!-- <div class="flex flex-col">
     <Label>Insurance expenses</Label>
     <NumberInput on:keydown={handleKeyDown} bind:value={upworkData.insurance} class="mt-1" />
-</div>
+</div> -->
 
 <div class="flex flex-col">
     <Label>Home Internet</Label>
     <NumberInput on:keydown={handleKeyDown} bind:value={upworkData.internetHome} class="mt-1" />
+    <Label class="mt-4">Frequency of Internet Charges</Label>
+    <Textarea type="text" bind:value={upworkData.internetNotes} class="mt-1" 
+    placeholder="Describe frequency (monthly, annual) & name of internet"/>
 </div>
 
 <div class="flex flex-col">
     <Label>Other Equipment/Expenses</Label>
     <NumberInput on:keydown={handleKeyDown} bind:value={upworkData.equipmentAmount} class="mt-1" />
-    <Label>Describe expense</Label>
+    <Label class="mt-4">Describe expense</Label>
     <Input type="text" bind:value={upworkData.equipment} class="mt-1" />
 </div>
 
@@ -318,7 +363,7 @@
     <button
         class={`flex-1 py-2 px-5 rounded ${dataChanged ? 'bg-black text-white' : 'bg-gray-400 text-gray-600 cursor-not-allowed opacity-50'} text-sm md:text-base lg:text-lg truncate`}
         on:click={submitProfile}
-        disabled={!dataChanged}>
+        >
         Update
     </button>
     </div>
