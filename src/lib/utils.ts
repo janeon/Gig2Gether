@@ -52,7 +52,7 @@ export function validateData(data) {
             console.error(`Field ${key} is null or undefined.`);
             return false; // Field is null or undefined
         }
-        
+        // console.log("string?", key, typeof value === 'string');
         if (typeof value === 'string' && value.trim() === '') {
             console.error(`Field ${key} is an empty string.`);
             return false; // Field is an empty string
