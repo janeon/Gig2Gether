@@ -17,9 +17,9 @@ export async function load({ parent }) {
 	);
 	let expenseCount = 1;
 	snapshot.forEach((doc) => {
-		const post: Data = { date: new Date(), type: '', title: '', id: '', platform: '' };
+		const post: Data = { timestamp: new Date(), type: '', title: '', id: '', platform: '' };
 		post.platform = data.user.platform;
-		post.date = doc.data().timestamp.toDate();
+		post.timestamp = doc.data().timestamp.toDate();
 		post.type = 'Expense';
 		post.title = 'Expense #' + expenseCount;
 		post.id = doc.id;
@@ -40,9 +40,9 @@ export async function load({ parent }) {
 			);
 			let count = 1;
 			snapshot.forEach((doc) => {
-				const post: Data = { date: new Date(), type: '', title: '', id: '', platform: '' };
+				const post: Data = { timestamp: new Date(), type: '', title: '', id: '', platform: '' };
 				post.platform = data.user.platform;
-				post.date = doc.data().timestamp.toDate();
+				post.timestamp = doc.data().timestamp.toDate();
 				post.type = entryType.charAt(0).toUpperCase() + entryType.slice(1);
 				post.title = doc.data().notes || '';
 				let title = '';
@@ -66,9 +66,9 @@ export async function load({ parent }) {
 			)
 		);
 		snapshot.forEach((doc) => {
-			const post: Data = { date: new Date(), type: '', title: '', id: '', platform: '' };
+			const post: Data = { timestamp: new Date(), type: '', title: '', id: '', platform: '' };
 			post.platform = data.user.platform;
-			post.date = doc.data().timestamp.toDate();
+			post.timestamp = doc.data().timestamp.toDate();
 			post.type = 'CSV';
 			post.title = '#' + csvCount + ': ' + doc.data().title;
 			post.id = doc.id;
@@ -86,9 +86,9 @@ export async function load({ parent }) {
 		);
 		let incomeCount = 1;
 		snapshot.forEach((doc) => {
-			const post: Data = { date: new Date(), type: '', title: '', id: '', platform: '' };
+			const post: Data = { timestamp: new Date(), type: '', title: '', id: '', platform: '' };
 			post.platform = data.user.platform;
-			post.date = doc.data().timestamp.toDate();
+			post.timestamp = doc.data().timestamp.toDate();
 			post.type = 'Income';
 			post.title = '';
 			let title = '';
@@ -103,7 +103,7 @@ export async function load({ parent }) {
 	}
 
 	postedData = postedData.sort((a: Data, b: Data) => {
-		return a.date.getTime() - b.date.getTime();
+		return a.timestamp.getTime() - b.timestamp.getTime();
 	});
 
 	return {

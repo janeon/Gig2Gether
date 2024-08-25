@@ -50,7 +50,7 @@
 
 <div class="flex flex-row border-2 items-center">
 	<input type="checkbox" on:click={clickCheck} />
-	<p class="px-2 border-r-2">{docInfo.date.toLocaleDateString('en-US', { dateStyle: 'short' })}</p>
+	<p class="px-2 border-r-2">{docInfo.timestamp.toLocaleDateString('en-US', { dateStyle: 'short' })}</p>
 	<p class="px-2 border-r-2">{docInfo.type}</p>
 	<a
 		href={getDocPath(docInfo.platform, docInfo.type, docInfo.id)}

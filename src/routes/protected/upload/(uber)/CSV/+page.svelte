@@ -3,7 +3,7 @@
 	import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 	import { db, storage } from '$lib/firebase/client';
 
-	import { Button, Label, Textarea } from 'flowbite-svelte';
+	import { Button, Label, Select, Textarea } from 'flowbite-svelte';
 	import BlueButton from '$lib/components/BlueButton.svelte';
 
 	import { page } from '$app/stores';
@@ -18,6 +18,7 @@
 	let url: string;
 	let timestamp = new Date();
 	let note = '';
+	let csvType = '';
 	let successMessage = '';
 	let errorMessage = '';
 	let uploading = false;
@@ -48,7 +49,8 @@
 				name: fileId,
 				url: url,
 				timestamp: timestamp,
-				note: note
+				note: note,
+				csvType: csvType
 			}, { merge: true });
             manage = true;
 			return;
@@ -105,7 +107,8 @@
 			type: 'CSV',
 			title: csv.name,
 			uid: user.uid,
-			note: note
+			note: note,
+			csvType: csvType
 		}, { merge: true });
 
 		const batch = writeBatch(db);
@@ -142,11 +145,18 @@
 				url = data.url;
 				timestamp = data.timestamp;
 				note = data.note;
+				csvType = data.csvType;
 				prev_fileName = data.title;
                 fileName = data.title;
 			}
 		}
 	});
+
+	const csvOptions = [
+	{ value: 'payments', name: 'Payments (driver_payments-x.csv)' },
+	{ value: 'lifetime', name: 'Lifetime Trips (driver_lifetime_trips-x.csv)' },
+	{ value: 'analytics', name: 'App Analytics (driver_app_analytics-x.csv)' }
+];
 </script>
 
 <div class="text-center">
@@ -159,6 +169,14 @@
 	</p>
 
 	<p class="mt-4">Next, browse and upload the CSV files one at a time.</p>
+
+	<Label class="mt-4">Choose CSV File Type</Label>
+	<Select
+		items={csvOptions}
+		bind:value={csvType}
+		style="--sms-bg: rgb(249, 250, 251); padding: 8px; border-radius: 8px;"
+		--sms-focus-border="2px solid blue"
+	/>
 
 	<div class="flex flex-col items-center">
 		<div class="flex items-center space-x-4 pt-5 justify-center">

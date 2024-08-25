@@ -7,6 +7,15 @@ import {
 	transformHourlyData
 } from '$lib/utils';
 
+const weekdays = [
+	'Monday',
+	'Tuesday',
+	'Wednesday',
+	'Thursday',
+	'Friday',
+	'Saturday',
+	'Sunday'
+];
 export async function load({ locals }) {
     const manualData = locals.user.platform === 'uber' ? 'trips' : locals.user.platform;
 	const earnings = await getDocs(query(collection(db, 'upload', 'manual', manualData)));
@@ -51,31 +60,16 @@ export async function load({ locals }) {
 
 function getUpworkWeeklyData(snapshot, uid) {
 	const calEarnings = [];
-	const weekdayEarnings = [
-		'Monday',
-		'Tuesday',
-		'Wednesday',
-		'Thursday',
-		'Friday',
-		'Saturday',
-		'Sunday'
-	].map((day) => ({ x: day, y: 0.0 }));
-	const weekdayHours = [
-		'Monday',
-		'Tuesday',
-		'Wednesday',
-		'Thursday',
-		'Friday',
-		'Saturday',
-		'Sunday'
-	].map((day) => ({ x: day, y: 0.0 }));
+	const weekdayEarnings = weekdays.map((day) => ({ x: day, y: 0.0 }));
+	const weekdayHours = weekdays.map((day) => ({ x: day, y: 0.0 }));
 	snapshot.forEach(async (item) => {
 		if (item.data().uid !== uid) {
 			return;
 		}
-		if (!item.data().startDate && !item.data().endDate) {
-			return {};
-		} else if (!item.data().endDate) {
+		// if (!item.data().startDate && !item.data().endDate) {
+		// 	return {};
+		// } 
+		else if (!item.data().endDate) {
 			// this should never happen, but I'm paranoid
 			item.data().endDate = item.data().startDate;
 		}
@@ -182,26 +176,11 @@ function getRoverHourlyData(snapshot, uid) {
 }
 
 function getRoverWeeklyData(snapshot, uid) {
-	const weekdayEarnings = [
-		'Monday',
-		'Tuesday',
-		'Wednesday',
-		'Thursday',
-		'Friday',
-		'Saturday',
-		'Sunday'
-	].map((day) => ({ x: day, y: 0.0 }));
-	const weekdayHours = [
-		'Monday',
-		'Tuesday',
-		'Wednesday',
-		'Thursday',
-		'Friday',
-		'Saturday',
-		'Sunday'
-	].map((day) => ({ x: day, y: 0.0 }));
+	const weekdayEarnings = weekdays.map((day) => ({ x: day, y: 0.0 }));
+	const weekdayHours = weekdays.map((day) => ({ x: day, y: 0.0 }));
 	const calEarnings = [];
 
+	// console.log("getting rover weekly data");
 	snapshot.forEach(async (item) => {
 		// error checking
 		if (item.data().uid !== uid) {
@@ -228,7 +207,7 @@ function getRoverWeeklyData(snapshot, uid) {
 
 		// getting day of the week
 		const dayIndex = new Date(item.data().endDate).getDay();
-
+		// console.log(dayIndex, "day index", weekdays[dayIndex]);
 		// adding hours worked to total hours worked for that day
 		weekdayHours[dayIndex].y += hoursWorked;
 
@@ -280,15 +259,7 @@ function getRoverWeeklyData(snapshot, uid) {
 }
 
 function getUberWeeklyData(snapshot, uid) {
-	const weekdayEarnings = [
-		'Monday',
-		'Tuesday',
-		'Wednesday',
-		'Thursday',
-		'Friday',
-		'Saturday',
-		'Sunday'
-	].map((day) => ({ x: day, y: 0.0 }));
+	const weekdayEarnings = weekdays.map((day) => ({ x: day, y: 0.0 }));
     const calEarnings = [];
 
 	snapshot.forEach(async (item) => {
@@ -305,7 +276,7 @@ function getUberWeeklyData(snapshot, uid) {
             value: item.data().fare
         });
 	});
-    weekdayEarnings.forEach((entry, index) => {
+    weekdayEarnings.forEach((entry) => {
 		entry.x = entry.x.slice(0, 3); // Shortens to 'Mon', 'Tue', etc.
 	});
     return {
