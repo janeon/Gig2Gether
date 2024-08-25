@@ -268,17 +268,19 @@ export function handleKeyDown(event: KeyboardEvent) {
 
 export function handleRatingsKeyDown(event: KeyboardEvent) {
     const input = event.target as HTMLInputElement;
-    
+
     if (event.key === "." && input.value.includes(".")) {
         event.preventDefault(); // Prevent additional periods
     } else if (!/^\d$/.test(event.key) && 
+               event.key !== "." && 
                event.key !== "Backspace" && 
                event.key !== "ArrowLeft" && 
                event.key !== "ArrowRight" && 
                event.key !== "Tab") {
-        event.preventDefault(); // Prevent non-digit characters
+        event.preventDefault(); // Prevent non-digit characters except period
     }
 }
+
 
 export function handleBrowseClick() {
 	const fileInput = document.getElementById('selectedFile');
