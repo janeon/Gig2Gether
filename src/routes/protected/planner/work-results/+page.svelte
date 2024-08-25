@@ -17,7 +17,7 @@
     }
 
     async function handleSubmit() {
-        const docRef = doc(db, 'planner', $page.data.user.platform, $page.data.user.uid, "entries");
+        const docRef = doc(db, 'planner', $page.data.user.platform, $page.data.user.uid, new Date().toISOString().split('T')[0]);
         const cleanData = Object.fromEntries(  
             Object.entries(data.key).filter(([_, value]) => value !== undefined)
         );
