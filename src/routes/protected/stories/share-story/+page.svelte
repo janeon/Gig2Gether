@@ -12,6 +12,7 @@
 	import { page } from '$app/stores';
 	import { updateTitle } from '$lib/stores/title';
 	import { goto } from '$app/navigation';
+	import { handleBrowseClick } from '$lib/utils';
 	updateTitle('Share Story');
 
 	let tags: string[] = [];
@@ -31,8 +32,9 @@
 		errorMessageContent,
 		errorMessageType,
 		errorMessageTags,
-		errorMessageSharing
-	] = [[], false, '', '', '', ''];
+		errorMessageSharing,
+		errorMessage
+	] = [[], false, '', '', '', '', ''];
 
 	const commonTags = [
 		{ value: 'fair pay', label: 'Fair Pay' },
@@ -74,13 +76,6 @@
 		{ value: 'advocates', label: 'Advocates' }
 	];
 
-	function handleClick() {
-		const fileInput = document.getElementById('selectedFile');
-		if (fileInput) {
-			(fileInput as HTMLInputElement).click();
-		}
-	}
-
 	async function handleFileChange(event: Event) {
 		const fileInput = event.target as HTMLInputElement;
 		imageUrlPreview = URL.createObjectURL(fileInput.files[0]);
@@ -94,13 +89,15 @@
 		if (uploading) return;
 
 		// Error checking
-		errorMessageType = type ? '' : 'Please select a type';
+		errorMessageType = type ? '' : 'Please select a story type';
 		errorMessageTags = tags.length ? '' : 'Please select at least one tag';
 		errorMessageSharing = postSharing.length ? '' : 'Please choose a sharing preference';
 		errorMessageContent =
 			file || title.length || description.length ? '' : 'Please add content to share';
 
-		if (errorMessageType || errorMessageTags || errorMessageSharing || errorMessageContent) return;
+		if (errorMessageType || errorMessageTags || errorMessageSharing || errorMessageContent) {
+			errorMessage = 'Please fill out required fields'
+		}
 
 		// Ensure only 'private' is selected if included
 		if (postSharing.includes('private')) postSharing = ['private'];
@@ -190,27 +187,27 @@
 
 <!-- Issue/Strategy Selection -->
 
-<div class="flex justify-center py-2">
+<div class="flex py-2">
 	<div class="flex items-center space-x-2">
-		<h2 class="font-medium whitespace-nowrap">Story Type <span class="text-red-500">*</span>:</h2>
+		<h1 class="font-medium whitespace-nowrap">Select a Story Type <span class="text-red-500">*</span>:</h1>
 		<ButtonGroup>
 			{#each ['issue', 'strategy'] as option}
 				<Button
 					on:click={() => (type = option)}
-					class={`flex-1 ${type === option ? 'bg-blue-500 text-white font-bold' : 'bg-gray-200 text-gray-600 font-normal'} ${type === option ? 'focus:outline-none ring-2 ring-blue-500' : ''} hover:bg-transparent hover:text-current`}
+					class={`flex-1 ${type === option ? 'bg-blue-500 text-white font-bold' : 'bg-gray-200 text-gray-600 font-normal'} ${type === option ? 'focus:outline-none' : ''} hover:bg-transparent hover:text-current`}
 				>
 					{option.charAt(0).toUpperCase() + option.slice(1)}
 				</Button>
 			{/each}
 		</ButtonGroup>
-		<p class="text-red-500">{errorMessageType}</p>
+		<p class="text-red-500 font-medium">{errorMessageType}</p>
 	</div>
 </div>
 
 <!-- Tag selection -->
 <h1 class="font-medium whitespace-nowrap py-5">
 	Tag related topics!
-	<span class="text-red-500">*{errorMessageTags}</span>
+	<span class="text-red-500 font-medium">*{errorMessageTags}</span>
 </h1>
 {#if $page.data.user.platform == 'rover'}
 	<Tags tags={roverTags} bind:bindGroup={tags} />
@@ -221,7 +218,7 @@
 {/if}
 
 <div class="py-5">
-	Title: <span class="text-red-500">*{errorMessageContent}</span>
+	Title: <span class="text-red-500 font-medium">*{errorMessageContent}</span>
 	<Input placeholder="Short summary" bind:value={title} />
 
 	<div class="mt-4">
@@ -246,7 +243,7 @@
 		<input
 			type="button"
 			value="Browse"
-			on:click={handleClick}
+			on:click={handleBrowseClick}
 			class="bg-gray-500 text-white font-bold py-2 px-4 rounded hover:bg-gray-700"
 		/>
 		<p class="text-center">{fileName}</p>
@@ -267,8 +264,13 @@
 
 <div class="py-5">
 	<h2 class="font-medium mb-5 flex justify-center">
-		Who to Share With? <span class="text-red-500">*{errorMessageSharing}</span>
+		Who to Share With? <p class="text-red-500 font-medium">*</p>
 	</h2>
+	{#if errorMessageSharing.length}
+		<div class="flex justify-center">
+			<span class="text-red-500 font-medium">{errorMessageSharing}</span>
+		</div>
+	{/if}
 
 	{#if sharePrivate}
 		<div class="space-y-2">
@@ -324,15 +326,22 @@
 	{/if}
 </div>
 
-<div class="flex justify-center py-5">
-	{#if uploading}
-		<Button
-			class="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700"
-			on:click={uploadContent}
-		>
-			<i class="fa-solid fa-spinner loadingSpinner animate-spin" />
-		</Button>
-	{:else}
-		<BlueButton onclick={uploadContent} buttonText={id ? "Update":"Upload Content"}></BlueButton>
+<div class="flex flex-col items-center py-5 space-y-4">
+	{#if errorMessage.length}
+		<div class="text-red-500 font-medium text-center">
+			<p>{errorMessage}</p>
+		</div>
 	{/if}
+	<div>
+		{#if uploading}
+			<Button
+				class="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700"
+				on:click={uploadContent}
+			>
+				<i class="fa-solid fa-spinner loadingSpinner animate-spin" />
+			</Button>
+		{:else}
+			<BlueButton onclick={uploadContent} buttonText={id ? "Update" : "Upload Content"}></BlueButton>
+		{/if}
+	</div>
 </div>
