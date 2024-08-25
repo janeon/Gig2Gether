@@ -9,6 +9,7 @@
   import 'cal-heatmap/cal-heatmap.css';
 	import { db } from "$lib/firebase/client.js";
 	import { doc, setDoc } from "firebase/firestore";
+	import { capitalize } from "$lib/utils.js";
 
   export let data;
   const hourlySegments = data.workSegments;
@@ -51,37 +52,52 @@
               break;
           case 'upwork':
               seriesData = platformData.upwork;
-              title = 'Hourly Earnings Per Day';
+              title = 'Hourly Earnings';
               subtitle = 'Days of the Week';
               break;
       }
   }
-
-  const name = {
-    'uber': 'Hourly ($)',
-    'rover': 'Hourly ($)',
-    'upwork': 'Hourly ($)',
-  };
   // Chart options
   let hourly = false;
 
   let options;
   const isRover = $page.data.user.platform === 'rover';
   options = {
-    colors: viewMode === 'earnings' ? ['#B6E1B0', '#4CAF50'] : ['#EFE8EE', '#6A1B9A'],
-    series: [{ name: 'Hourly ($)', color: viewMode === 'earnings' ? '#4CAF50' : '#6A1B9A', data: seriesData }],
-    chart: { type: 'bar', height: '320px', fontFamily: 'Inter, sans-serif', toolbar: { show: false } },
-    plotOptions: { bar: { horizontal: false, columnWidth: '70%', borderRadiusApplication: 'end', borderRadius: 8 } },
-    tooltip: { shared: true, intersect: false, style: { fontFamily: 'Inter, sans-serif' } },
-    states: { hover: { filter: { type: 'darken', value: 1 } } },
-    stroke: { show: true, width: 0, colors: ['transparent'] },
-    grid: { show: false, strokeDashArray: 4, padding: { left: 2, right: 2, top: -14 } },
-    dataLabels: { enabled: false },
-    legend: { show: false },
-    xaxis: { floating: false, labels: { show: true, style: { fontFamily: 'Inter, sans-serif', cssClass: 'text-sm font-normal fill-gray-500 dark:fill-gray-400' } }, axisBorder: { show: false }, axisTicks: { show: false } },
-    yaxis: { show: false },
-    fill: { opacity: 1 },
-  };
+  colors: viewMode === 'earnings' ? ['#B6E1B0', '#4CAF50'] : ['#EFE8EE', '#6A1B9A'],
+  series: [{ name: 'Hourly ($)', color: viewMode === 'earnings' ? '#4CAF50' : '#6A1B9A', data: seriesData }],
+  chart: { type: 'bar', height: '320px', fontFamily: 'Inter, sans-serif', toolbar: { show: false } },
+  plotOptions: { bar: { horizontal: false, columnWidth: '70%', borderRadiusApplication: 'end', borderRadius: 8 } },
+  tooltip: {
+    shared: true,
+    intersect: false,
+    style: { fontFamily: 'Inter, sans-serif' },
+    y: {
+      formatter: function (val) {
+        return val.toFixed(2); // Truncate tooltip value to two decimal places
+      }
+    }
+  },
+  states: { hover: { filter: { type: 'darken', value: 1 } } },
+  stroke: { show: true, width: 0, colors: ['transparent'] },
+  grid: { show: false, strokeDashArray: 4, padding: { left: 2, right: 2, top: -14 } },
+  dataLabels: { enabled: false },
+  legend: { show: false },
+  xaxis: { floating: false, labels: { show: true, style: { fontFamily: 'Inter, sans-serif', cssClass: 'text-sm font-normal fill-gray-500 dark:fill-gray-400' } }, axisBorder: { show: false }, axisTicks: { show: false } },
+  yaxis: {
+    floating: false,
+    labels: {
+      show: true,
+      style: { fontFamily: 'Inter, sans-serif', cssClass: 'text-sm font-normal fill-gray-500 dark:fill-gray-400' },
+      formatter: function (val) {
+        return val.toFixed(0); // Truncate y-axis labels to two decimal places
+      }
+    },
+    axisBorder: { show: false },
+    axisTicks: { show: true }
+  },
+  fill: { opacity: 1 },
+};
+
 
   $: options.series = (hourly && isRover) ? [{ name: 'Hourly ($)', color: viewMode === 'earnings' ? '#4CAF50' : '#6A1B9A', data: seriesData }] : [{ name: 'Earnings ($)', color: '#4CAF50', data: weekdayEarnings }];
 
@@ -143,7 +159,7 @@
       {
         text: function (date, value, dayjsDate) {
           return (
-            (value ? value : 'No data') + ' on ' + dayjsDate.format('LL')
+            (value ? "$"+value : 'No data') + ' on ' + dayjsDate.format('LL')
           );
         },
       },
@@ -241,22 +257,26 @@
   <div class="flex justify-center p-2 items-stretch">
     <Card class="flex-1">
       <div class="flex flex-col">
-        <h1 class="text-2xl font-bold text-gray-900 mb-3 text-center">Calendar</h1>
+        <h1 class="text-2xl font-bold text-gray-900 mb-3 text-center">Monthly {capitalize(viewMode)}</h1>
 
         <!-- Buttons for Earnings and Expenses -->
         <div class="flex justify-center space-x-4 mb-4">
           <button
-            class={`text-white font-semibold px-4 py-2 rounded hover:bg-green-600 bg-green-500 ${
-              viewMode === 'earnings' ? 'border-2 border-gray-700' : ''
-            }`}
+          class={`text-white font-semibold px-4 py-2 rounded ${
+            viewMode === 'earnings' 
+              ? 'bg-gray-400 cursor-not-allowed border-2 border-gray-700' 
+              : 'hover:bg-green-600 bg-green-500'
+          }`}
             on:click={showEarnings}
             disabled={viewMode === 'earnings'}
           >
             Earnings
           </button>
           <button
-            class={`text-white font-semibold bg-purple-500 px-4 py-2 rounded hover:bg-purple-600
-            ${ viewMode === 'expenses' ? 'border-2 border-gray-700' : ''
+            class={`text-white font-semibold px-4 py-2 rounded
+            ${ viewMode === 'expenses' 
+             ? 'bg-gray-400 cursor-not-allowed border-2 border-gray-700' 
+             : 'hover:bg-purple-600 bg-purple-500'
             }`}
             on:click={showExpenses}
             disabled={viewMode === 'expenses'}
