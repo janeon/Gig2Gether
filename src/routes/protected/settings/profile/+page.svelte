@@ -164,7 +164,7 @@
         style="--sms-bg: rgb(249, 250, 251); padding: 8px; border-radius: 8px;"
             --sms-focus-border="2px solid blue"/>
     
-        <Label class="mt-4">Estimated % of time with passengers</Label>
+        <Label class="mt-4">Estimated % time with passengers (% non-idle time)</Label>
         <NumberInput on:keydown={handleKeyDown} bind:value={uberData.percentPassenger} class="mt-1" />
     
         <Label class="mt-4">Estimated Price of gas</Label>
