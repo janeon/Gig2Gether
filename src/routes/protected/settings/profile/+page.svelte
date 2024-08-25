@@ -29,7 +29,7 @@
         rating: null, services: [], platformCut: null, internetHome: null, healthcare:null, insurance:null, software: null, jss:null, hourlyCharge: null, dateJoined: currentDate, timestamp: currentTime, equipmentAmount: null, equipment: ''
     };
 
-    const uberServices = ["UberX", "UberXL", "UberX Share", "UberX Comfort", "Uber Black", "Uber Black SUV", "WAV", "Uber Car Seat X", "Uber Green", "Uber Taxi"];
+    const uberServices = ["UberX", "UberXL", "UberX VIP", "UberX Share", "UberX Comfort", "Uber Premier", "WAV", "Uber Car Seat X", "Uber Green", "Uber Taxi", "Uber Pet", "UberX Priority"];
     const pets = ["Small Dog", "Medium Dog", "Giant Dog", "Cat", "Puppy"];
     const roverServices = ["Boarding", "House Sitting", "Drop-In Visits", "Doggy Day Care", "Dog Walking"];
     const upworkCategories = ["Development & IT", "Design & Creative", "Finance & Accounting", "Admin & Customer Support", "Engineering & Architecture", "Legal", "Sales & Marketing", "Writing & Translation"];
