@@ -14,6 +14,11 @@
 
 	async function navigatePage(direction: string) {
 		plan.set({ key: data.key });
+
+        if (direction === 'work-day') {
+            goto(`./${direction}?next=${encodeURIComponent(true)}`);
+            return;
+        }
 		goto(`./${direction}`);
 	}
 

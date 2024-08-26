@@ -53,6 +53,7 @@
             // Delete the document from the original collection
             await deleteDoc(docRef);
         }
+        invalidateAll();
     }
 
 };

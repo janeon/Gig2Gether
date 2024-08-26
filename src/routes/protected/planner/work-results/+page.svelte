@@ -13,6 +13,7 @@
     let submitted = false
     async function previousPage() {
         plan.set({ key: data.key });
+        console.log(plan);
         goto('./work-breakdown');
     }
 
