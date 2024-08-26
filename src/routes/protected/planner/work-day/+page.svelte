@@ -4,13 +4,20 @@
 	import { updateTitle } from '$lib/stores/title';
 	import ScheduleSelector from 'react-schedule-selector';
 	import { Button } from 'flowbite-svelte';
-	import { plan } from '$lib/stores/plan';
-
+	import { plan, range } from '$lib/stores/plan';
+	import { onMount } from 'svelte';
 
 	let next = false;
-	const handleClick = () => (next ? navigateWithStore() : (next = true));
+	const handleClick = () => {
+    if (next) {
+        navigateWithStore();
+    } else {
+        next = true;
+        plan.set({ key: schedule });
+    }
+};
 
-	next
+	$: next
 		? updateTitle('What time would you like to work?')
 		: updateTitle('What days are you planning for?');
 
@@ -24,17 +31,30 @@
 
 	let schedule = [];
 	const handleChange = (newSchedule) => {
-		console.log(newSchedule);
 		schedule = newSchedule;
 	};
 
 	function navigateWithStore() {
 		plan.set({ key: schedule });
+		range.set({ key: selectedDates });
 		goto('./work-breakdown');
 	}
 
 	// Get today's date
 	const today = new Date();
+
+	onMount(() => {
+		const queryParams = new URLSearchParams(window.location.search);
+		next = queryParams.get('next') === 'true';
+		if ($plan) {
+			schedule = $plan.key;
+			// console.log('schedule', schedule);
+		}
+		if ($range) {
+			selectedDates = $range.key;
+		}
+		// console.log('mounted', schedule);
+	});
 </script>
 
 <div class="flex flex-row">
