@@ -64,17 +64,6 @@
 	{/each}
 {/if}
 
-<h1 class="flex justify-center font-bold">Visits to Trends Page</h1>
-{#if visits.length > 0}
-	<div class="flex flex-row border-2 items-center">
-		{#each visits as visit}
-			<div class="px-2 border-r-2">
-				{visit.timestamp}
-			</div>
-		{/each}
-	</div>
-{/if}
-
 <h1 class="flex justify-center font-bold">Liked Posts</h1>
 
 {#if likes.length > 0}
