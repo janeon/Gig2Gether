@@ -4,21 +4,24 @@ import type { Data } from '$lib/types';
 import { collection, getDocs, orderBy, query, where } from 'firebase/firestore';
 import type { User } from '../../../app';
 
-export async function _load(user:User) {
-	
+export async function _load(user: User) {
+	let visitTimes = [];
 	let postedData = [];
+	let likedPosts = [];
 	// stories
 	let snapshot = await getDocs(
-		query(collection(db, 'stories', user.platform, 'posts'), 
-		where('uid', '==', user.uid),
-		orderBy("date", "desc"))
+		query(
+			collection(db, 'stories', user.platform, 'posts'),
+			where('uid', '==', user.uid),
+			orderBy('date', 'desc')
+		)
 	);
 	snapshot.forEach((doc) => {
 		const post: Data = { timestamp: new Date(), type: '', title: '', id: '', platform: '' };
 		post.platform = user.platform;
 		post.timestamp = doc.data().date.toDate();
-		post.type = 'Story';
-		post.title = doc.data().title;
+		post.type = 'Story' + ':' + doc.id;
+		post.title = doc.data().title + ':' + doc.data().description;
 		post.id = doc.id;
 		postedData.push(post);
 	});
@@ -28,7 +31,7 @@ export async function _load(user:User) {
 		query(
 			collection(db, 'upload', 'expenses', user.platform),
 			where('uid', '==', user.uid),
-			orderBy("timestamp", "asc")
+			orderBy('timestamp', 'asc')
 		)
 	);
 	let expenseCount = 1;
@@ -48,10 +51,12 @@ export async function _load(user:User) {
 		// quests & trips
 		for (const entryType of ['quests', 'trips']) {
 			snapshot = await getDocs(
-				query(collection(db, 'upload', 'manual', entryType), 
-				where('uid', '==', user.uid),
-				orderBy("timestamp", "asc")
-			));
+				query(
+					collection(db, 'upload', 'manual', entryType),
+					where('uid', '==', user.uid),
+					orderBy('timestamp', 'asc')
+				)
+			);
 			let count = 1;
 			snapshot.forEach((doc) => {
 				const post: Data = { timestamp: new Date(), type: '', title: '', id: '', platform: '' };
@@ -61,10 +66,9 @@ export async function _load(user:User) {
 				post.title = doc.data().notes || '';
 				let title = '';
 				for (const item of [doc.data().note, post.type]) {
-					if (item)
-						title += item + ' ';
+					if (item) title += item + ' ';
 				}
-				post.title = title.substring(0, title.length-2)+' #'+count;
+				post.title = title.substring(0, title.length - 2) + ' #' + count;
 				post.id = doc.id;
 				postedData.push(post);
 				count++;
@@ -76,7 +80,7 @@ export async function _load(user:User) {
 			query(
 				collection(db, 'upload', 'manual', user.platform),
 				where('uid', '==', user.uid),
-				orderBy("timestamp", "asc")
+				orderBy('timestamp', 'asc')
 			)
 		);
 		let incomeCount = 1;
@@ -90,7 +94,7 @@ export async function _load(user:User) {
 			for (const item of [doc.data().notes, capitalize(doc.data().type)]) {
 				title += item + ' ';
 			}
-			post.title = title.substring(0, title.length ) + ' #' + incomeCount;
+			post.title = title.substring(0, title.length) + ' #' + incomeCount;
 			post.id = doc.id;
 			postedData.push(post);
 			incomeCount++;
@@ -100,17 +104,18 @@ export async function _load(user:User) {
 	// uber csvs
 	let csvCount = 1;
 	snapshot = await getDocs(
-		query(collection(db, 'upload', 'csv', 'entries'), 
-		where('uid', '==', user.uid),
-		orderBy("timestamp", "asc")
-	)
+		query(
+			collection(db, 'upload', 'csv', 'entries'),
+			where('uid', '==', user.uid),
+			orderBy('timestamp', 'asc')
+		)
 	);
 	snapshot.forEach((doc) => {
 		const post: Data = { timestamp: new Date(), type: '', title: '', id: '', platform: '' };
 		post.platform = user.platform;
 		post.timestamp = doc.data().timestamp.toDate();
 		post.type = 'CSV';
-		post.title = '#' + csvCount + ': ' + doc.data().title ;
+		post.title = '#' + csvCount + ': ' + doc.data().title;
 		post.id = doc.id;
 		postedData.push(post);
 		csvCount++;
@@ -120,8 +125,32 @@ export async function _load(user:User) {
 		return a.timestamp.getTime() - b.timestamp.getTime();
 	});
 
-	
+	// visit counts
+	snapshot = await getDocs(query(collection(db, 'logging', 'trends_visits', user.uid)));
+
+	snapshot.forEach((doc) => {
+		const post: Data = { timestamp: new Date(), type: '', title: '', id: '', platform: '' };
+		post.platform = user.platform;
+		post.timestamp = doc.id.toString() + ' ' + doc.data().time;
+		post.type = 'Trends Visit';
+		post.id = doc.id;
+		visitTimes.push(post);
+	});
+
+	// get likes
+
+	for (const platform of ['uber', 'rover', 'upwork']) {
+		const snapshot = await getDocs(query(collection(db, 'stories', platform, 'posts')));
+		snapshot.forEach((doc) => {
+			const likes = doc.data().likes;
+			if (likes.includes(user.uid))
+				likedPosts.push({ id: doc.id, title: doc.data().title, content: doc.data().description });
+		});
+	}
+
 	return {
-		posts: postedData
+		posts: postedData,
+		visits: visitTimes,
+		likedPosts: likedPosts
 	};
 }
