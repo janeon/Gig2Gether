@@ -5,9 +5,11 @@ import { collection, getDocs, orderBy, query, where } from 'firebase/firestore';
 import type { User } from '../../../app';
 
 export async function _load(user: User) {
-	let visitTimes = [];
+	const visitTimes = [];
 	let postedData = [];
-	let likedPosts = [];
+	const likedPosts = [];
+	const plans = [];
+	
 	// stories
 	let snapshot = await getDocs(
 		query(
@@ -137,8 +139,7 @@ export async function _load(user: User) {
 		visitTimes.push(post);
 	});
 
-	// get likes
-
+	// get liked posts
 	for (const platform of ['uber', 'rover', 'upwork']) {
 		const snapshot = await getDocs(query(collection(db, 'stories', platform, 'posts')));
 		snapshot.forEach((doc) => {
@@ -148,9 +149,24 @@ export async function _load(user: User) {
 		});
 	}
 
+	// get planner entries
+	snapshot = await getDocs(query(collection(db, 'planner', user.platform, user.uid)));
+
+	
+	snapshot.forEach((doc) => {
+		const slots = doc.data()
+		const plan = []
+		for (const obj in slots) {
+			plan.push(new Date(slots[obj].seconds * 1000))
+		}
+		plans.push({id: doc.id, plan: plan})
+	});
+
+	console.log("plans", plans)
 	return {
 		posts: postedData,
 		visits: visitTimes,
-		likedPosts: likedPosts
+		likedPosts: likedPosts,
+		plans: plans
 	};
 }

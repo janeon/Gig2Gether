@@ -21,6 +21,7 @@
 	let posts: any[] = [];
 	let visits: any[] = [];
 	let likes: any[] = [];
+    let plans: any[] = [];
 
 	let toDelete: Data[] = [];
 
@@ -42,6 +43,8 @@
 		posts = loaded.posts;
 		visits = loaded.visits;
 		likes = loaded.likedPosts;
+        plans = loaded.plans
+        console.log("loaded plans", loaded.plans)
 	}
 </script>
 
@@ -86,6 +89,35 @@
 				</div>
 				<div class="px-2 border-r-2">
 					{likedPost.content}
+				</div>
+			</div>
+		{/each}
+	</div>
+{/if}
+
+
+<h1 class="flex justify-center font-bold">Visits to Trends Page</h1>
+{#if visits.length > 0}
+	<div class="flex flex-row border-2 items-center">
+		{#each visits as visit}
+			<div class="px-2 border-r-2">
+				{visit.timestamp}
+			</div>
+		{/each}
+	</div>
+{/if}
+
+<h1 class="flex justify-center font-bold">Plans</h1>
+
+{#if plans.length > 0}
+	<div class="justify-items-center py-2">
+		{#each plans as plan}
+			<div class="flex flex-row border-2 items-center">
+				<div class="px-2 border-r-2">
+					{plan.id}
+				</div>
+				<div class="px-2 border-r-2">
+					{plan.plan}
 				</div>
 			</div>
 		{/each}
