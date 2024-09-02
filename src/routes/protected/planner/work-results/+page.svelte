@@ -24,6 +24,7 @@
         );
         await setDoc(docRef, cleanData);
         submitted = true;
+        goto("/protected/planner/plans")
     }
 </script>
 

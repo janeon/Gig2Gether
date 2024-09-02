@@ -13,6 +13,8 @@
 		"format": "prettier --write ."
 	},
 	"devDependencies": {
+		"@event-calendar/core": "^3.4.0",
+		"@event-calendar/time-grid": "^3.4.0",
 		"@sveltejs/adapter-auto": "^3.0.0",
 		"@sveltejs/adapter-static": "^3.0.1",
 		"@sveltejs/kit": "^2.0.0",
