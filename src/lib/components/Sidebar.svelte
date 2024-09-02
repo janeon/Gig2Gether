@@ -83,6 +83,7 @@
 
 	const planner = [
 		{ label: 'Work', href: '/protected/planner/work-day' },
+		{ label: 'View', href: '/protected/planner/plans' },
 		{ label: 'Tax', href: '/protected/planner/tax' }
 	];
 
