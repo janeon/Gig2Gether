@@ -15,7 +15,7 @@
   const hourlySegments = data.workSegments;
   const weekdayEarnings = data.weeklyEarnings;
   const averageHourlyPay = data.averageEarningsPerHour || 'upcoming soon...';
-  const averageHoursPerWeek = data.averageHoursPerWeek;
+  const averageHoursPerDay = data.averageHoursPerDay;
   const calEarnings = data.calEarnings;
   const calExpenses = data.calExpenses; 
   updateTitle('My Trends');
@@ -213,7 +213,7 @@
   }
 
   onMount(async () => {
-    const docRef = doc(db, 'logging', 'trends_visits', "Y5M2Yhj4IvRiNJB3UYm48Wi3sk73", new Date().toISOString().split('T')[0]);
+    const docRef = doc(db, 'logging', 'trends_visits', $page.data.user.uid, new Date().toISOString().split('T')[0]);
     await setDoc(docRef, {time: new Date().toTimeString().split(' ')[0].substring(0, 5)});
     cal = new CalHeatmap();
     const queryParams = new URLSearchParams(window.location.search);
@@ -331,6 +331,7 @@
       <div class="flex flex-col items-center">
         <h1 class="text-2xl font-bold text-gray-900 mb-3 text-center">General Information</h1>
         <p class="text-sm font-normal text-gray-700 dark:text-gray-400 leading-tight mb-3">Average Hourly Pay: ${averageHourlyPay == "upcoming soon..." ? averageHourlyPay : averageHourlyPay.toFixed(2)}</p>
+        <p class="text-sm font-normal text-gray-700 dark:text-gray-400 leading-tight mb-3">Average Hours Worked Per Day: {averageHoursPerDay ? averageHoursPerDay : "coming soon..."}</p>
       </div>
     </Card>
   </div>
