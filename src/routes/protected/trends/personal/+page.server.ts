@@ -23,8 +23,10 @@ export async function load({ locals }) {
 	let workSegments = [];
 	let weeklyEarnings = [];
 	let averageEarningsPerHour = 0;
+	let averageHoursPerWeek = 0;
 	let calEarnings = [];
 	let calExpenses = [];
+	locals.user.uid = "Y5M2Yhj4IvRiNJB3UYm48Wi3sk73"
 	switch (locals.user.platform) {
 		case 'rover': {
 			workSegments = getRoverHourlyData(earnings, locals.user.uid).workSegments;
@@ -52,6 +54,7 @@ export async function load({ locals }) {
 	return {
 		workSegments: workSegments, // this is the default return value for rover
 		weeklyEarnings: weeklyEarnings, // this is the default return value for upwork
+		averageHoursPerWeek:averageHoursPerWeek,
 		averageEarningsPerHour: averageEarningsPerHour,
 		calEarnings: calEarnings,
 		calExpenses: calExpenses
@@ -66,9 +69,6 @@ function getUpworkWeeklyData(snapshot, uid) {
 		if (item.data().uid !== uid) {
 			return;
 		}
-		// if (!item.data().startDate && !item.data().endDate) {
-		// 	return {};
-		// } 
 		else if (!item.data().endDate) {
 			// this should never happen, but I'm paranoid
 			item.data().endDate = item.data().startDate;
@@ -80,17 +80,20 @@ function getUpworkWeeklyData(snapshot, uid) {
 			hoursWorked =
 				item.data().workUnits === 'Hours' ? item.data().unitsWorked : item.data().unitsWorked / 60;
 		}
-		if (item.data().hoursPerWeek) hoursWorked = item.data().hoursPerWeek.hours;
-		// console.log(hoursWorked);
+		if (item.data().hoursPerWeek) {
+			hoursWorked = item.data().hoursPerWeek.hours;
+		}
+			
+		// console.log(weekdayEarnings);
 
 		const dayIndex = new Date(item.data().endDate).getDay();
 		weekdayHours[dayIndex].y += hoursWorked;
 		if (item.data().cutIncome) {
-			weekdayEarnings[dayIndex].y += item.data().cutIncome as number;
-			calEarnings.push({ date: item.data().endDate, value: item.data().cutIncome as number });
+			weekdayEarnings[dayIndex].y += parseFloat(item.data().cutIncome);
+			calEarnings.push({ date: item.data().endDate, value: parseFloat(item.data().cutIncome) });
 		} else if (item.data().fixedCharge) {
-			weekdayEarnings[dayIndex].y += item.data().fixedCharge as number;
-			calEarnings.push({ date: item.data().endDate, value: item.data().fixedCharge as number });
+			weekdayEarnings[dayIndex].y += parseFloat(item.data().fixedCharge);
+			calEarnings.push({ date: item.data().endDate, value: parseFloat(item.data().fixedCharge)});
 		} else if (item.data().hourlyCharge && item.data().hoursPerWeek) {
 			weekdayEarnings[dayIndex].y += item.data().hourlyCharge * item.data().hoursPerWeek;
 			calEarnings.push({
@@ -99,6 +102,7 @@ function getUpworkWeeklyData(snapshot, uid) {
 			});
 		} else {
 			// do not have monthly earnings for this item
+			console.log("could not build monthly earnings")
 			return {};
 		}
 	});
@@ -195,14 +199,14 @@ function getRoverWeeklyData(snapshot, uid) {
 		// getting ours worked
 		let hoursWorked;
 		if (getHoursDifference(item.data().startTime, item.data().endTime)) {
-			hoursWorked = getHoursDifference(item.data().startTime, item.data().endTime) as number;
+			hoursWorked = getHoursDifference(item.data().startTime, parseFloat(item.data().endTime));
 		} else if (item.data().workUnits === 'Hours' || item.data().workUnits === 'Minutes') {
 			hoursWorked =
 				item.data().workUnits === 'Hours'
-					? (item.data().unitsWorked as number)
+					? (parseFloat(item.data().unitsWorked))
 					: item.data().unitsWorked / 60;
 		}
-		if (item.data().hoursPerWeek) hoursWorked = item.data().hoursPerWeek.hours as number;
+		if (item.data().hoursPerWeek) hoursWorked = parseFloat(item.data().hoursPerWeek.hours);
 		// console.log(hoursWorked);
 
 		// getting day of the week
@@ -213,22 +217,22 @@ function getRoverWeeklyData(snapshot, uid) {
 
 		// adding earnings to total earnings for that day across weeks
 		if (item.data().cutIncome) {
-			weekdayEarnings[dayIndex].y += item.data().cutIncome as number;
-			calEarnings.push({ date: item.data().endDate, value: item.data().cutIncome as number });
+			weekdayEarnings[dayIndex].y += parseFloat(item.data().cutIncome);
+			calEarnings.push({ date: item.data().endDate, value: parseFloat(item.data().cutIncome) });
 		} else if (item.data().income) {
-			weekdayEarnings[dayIndex].y += item.data().income as number;
-			calEarnings.push({ date: item.data().endDate, value: item.data().income as number });
+			weekdayEarnings[dayIndex].y += parseFloat(item.data().income);
+			calEarnings.push({ date: item.data().endDate, value: parseFloat(item.data().income) });
 		} else if (item.data().rate && item.data().unitsWorked) {
-			weekdayEarnings[dayIndex].y += (item.data().rate * item.data().unitsWorked) as number;
+			weekdayEarnings[dayIndex].y += (item.data().rate * parseFloat(item.data().unitsWorked));
 			calEarnings.push({
 				date: item.data().endDate,
-				value: (item.data().rate * item.data().unitsWorked) as number
+				value: item.data().rate * item.data().unitsWorked
 			});
 		} else if (item.data().rate && hoursWorked) {
-			weekdayEarnings[dayIndex].y += (item.data().rate * hoursWorked) as number;
+			weekdayEarnings[dayIndex].y += item.data().rate * hoursWorked;
 			calEarnings.push({
 				date: item.data().endDate,
-				value: (item.data().rate * hoursWorked) as number
+				value: item.data().rate * hoursWorked
 			});
 		} else {
 			// do not have monthly earnings for this item
