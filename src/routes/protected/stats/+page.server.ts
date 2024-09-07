@@ -19,28 +19,54 @@ export async function load() {
 		{ pid: 'P3', uid: 'yLqlH9AUAyeGIC4He3kjlh9iVOY2', platform: 'rover' }
 	];
 
-	const stats = [
+	const participant_stats = [
 		{
 			pid: 'ID',
 			stories: 'Stories',
+            totalWords: 'Total Words',
             liked: 'Liked Stories',
 			incomes: 'Incomes',
 			expenses: 'Expenses',
 			trends: 'Trends Visits'
 		}
 	];
+
     const posts = [];
+    
     for (const platform of ['uber', 'rover', 'upwork']) {
         const snapshot = await getDocs(query(collection(db, 'stories', platform, 'posts')));
         snapshot.forEach(doc => {
-            posts.push({likes: doc.data().likes})
+            const data = doc.data()
+            if (testers.some(item => item.uid === data.uid)) {
+                posts.push({
+                    likes: data.likes,
+                    tags: data.tags,
+                    type: data.type,
+                    uid: data.uid
+                })
+            }
         });
     }
+    
+    // story stats
+    const tags = {};
+    const types = {"issue":0, "strategy":0}
+    for (const post of posts) {
+        types[post.type] += 1
+        for (const tag of post.tags) {
+            tags[tag] = tags[tag] ? tags[tag] + 1 : 1;
+        }
+    }
 
+    // const platformStories = {"uber":0, "upwork":0, "rover":0}
 	for (const item of testers) {
 		const stories = await getDocs(
 			query(collection(db, 'stories', item.platform, 'posts'), where('uid', '==', item.uid))
 		);
+        let totalWords = 0
+        stories.forEach((doc) => {
+            totalWords += doc.data().description.trim().split(/\s+/).length;
+        })
 
         let liked = 0;
         posts.forEach((doc) => {
@@ -78,9 +104,10 @@ export async function load() {
 				break;
 		}
 
-		stats.push({
+		participant_stats.push({
 			pid: item.pid,
 			stories: stories.docs.length.toString(),
+            totalWords: totalWords.toString(),
             liked: liked.toString(),
 			expenses: expenses.docs.length.toString(),
 			incomes: incomeCount.toString(),
@@ -88,34 +115,9 @@ export async function load() {
 		});
 	}
 
-	// Calculate averages and append the "Average" row
-	const averages = stats.slice(1).reduce(
-		(acc, stat) => {
-			acc.stories += parseFloat(stat.stories) || 0;
-            acc.liked += parseFloat(stat.liked) || 0;
-			acc.incomes += parseFloat(stat.incomes) || 0;
-			acc.expenses += parseFloat(stat.expenses) || 0;
-			acc.trends += parseFloat(stat.trends) || 0;
-			acc.count += 1;
-			return acc;
-		},
-		{ stories: 0,liked:0, incomes: 0, expenses: 0, trends: 0, count: 0 }
-	);
-
-	if (averages.count > 0) {
-		stats.push({
-			pid: 'Average',
-			stories: (averages.stories / averages.count).toFixed(2),
-            liked:(averages.stories / averages.count).toFixed(2),
-			incomes: (averages.incomes / averages.count).toFixed(2),
-			expenses: (averages.expenses / averages.count).toFixed(2),
-			trends: (averages.trends / averages.count).toFixed(2)
-		});
-	}
-
-	// console.log(stats); // This will now log the updated stats
-
 	return {
-		stats: stats
+		stats: participant_stats,
+        tags: tags,
+        types: types
 	};
 }
