@@ -36,7 +36,6 @@
 	let uid;
 	let platform;
 	async function setUser() {
-		// user.uid = "spp8He2nTlQvsshggYloBoeHsIf1"
 		user.uid = uid;
 		user.platform = platform;
 		const loaded = await _load(user);
