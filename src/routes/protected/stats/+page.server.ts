@@ -58,7 +58,6 @@ export async function load() {
         }
     }
 
-    // const platformStories = {"uber":0, "upwork":0, "rover":0}
 	for (const item of testers) {
 		const stories = await getDocs(
 			query(collection(db, 'stories', item.platform, 'posts'), where('uid', '==', item.uid))
