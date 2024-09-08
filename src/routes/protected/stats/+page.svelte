@@ -30,27 +30,42 @@
 
 
   <Table>
+	<caption class="p-5 text-lg font-semibold text-left text-gray-900 bg-white dark:text-white dark:bg-gray-800">
+		Tags
+	</caption>
 	<TableHead>
+		<TableHeadCell>Story Type</TableHeadCell>
 		{#each Object.entries(data.tags) as [tag, _]} 	
 			<TableHeadCell> {tag} </TableHeadCell>
 		{/each}
 	</TableHead>
 	<TableBodyRow>
-		{#each Object.entries(data.tags) as [_, count]} 	
-			<TableHeadCell> {count} </TableHeadCell>
+		<TableBodyCell>Issues</TableBodyCell>
+		{#each Object.entries(data.tags) as [_, counts]} 	
+			<TableBodyCell> {counts["issues"]} </TableBodyCell>
+		{/each}
+	</TableBodyRow>
+	<TableBodyRow>
+		<TableBodyCell>Strategies</TableBodyCell>
+		{#each Object.entries(data.tags) as [_, counts]} 	
+			<TableBodyCell> {counts["strategies"]} </TableBodyCell>
 		{/each}
 	</TableBodyRow>
   </Table>
 
+
   <Table>
+	<caption class="p-5 text-lg font-semibold text-left text-gray-900 bg-white dark:text-white dark:bg-gray-800">
+		Expense Fields
+	</caption>
 	<TableHead>
-		{#each Object.entries(data.types) as [types, _]} 	
-			<TableHeadCell> {types} </TableHeadCell>
+		{#each Object.entries(data.expenseFields) as [name, _]} 	
+			<TableHeadCell> {name} </TableHeadCell>
 		{/each}
 	</TableHead>
 	<TableBodyRow>
-		{#each Object.entries(data.types) as [_, count]} 	
-			<TableHeadCell> {count} </TableHeadCell>
+		{#each Object.entries(data.expenseFields) as [_, value]} 	
+			<TableBodyCell> {value} </TableBodyCell>
 		{/each}
 	</TableBodyRow>
   </Table>

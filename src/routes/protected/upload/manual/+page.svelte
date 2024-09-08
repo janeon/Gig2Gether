@@ -4,12 +4,7 @@
 	import { onMount } from 'svelte';
 	import { _getInitialData, _cleanData } from './+page';
 	import { updateTitle } from '$lib/stores/title';
-	import {
-		capitalize,
-		handleBrowseClick,
-		handleKeyDown,
-		handleRatingsKeyDown
-	} from '$lib/utils';
+	import { capitalize, handleBrowseClick, handleKeyDown, handleRatingsKeyDown } from '$lib/utils';
 	import { upworkExperience, roverServices } from '$lib/constants';
 
 	import { db, storage } from '$lib/firebase/client';
@@ -25,9 +20,7 @@
 		Accordion,
 		AccordionItem,
 		Button,
-
 		NumberInput
-
 	} from 'flowbite-svelte';
 	import IconNumberInput from '$lib/components/IconNumberInput.svelte';
 
@@ -52,7 +45,7 @@
 
 	let roverData: any;
 	let upworkData: any;
-	
+
 	onMount(async () => {
 		// Fetch user profile data
 		const profile = await getDoc(doc(db, 'users', $page.data.user.uid, 'settings', 'profile'));
@@ -75,13 +68,12 @@
 						if (value !== null && value !== undefined) {
 							if ($page.data.user?.platform == 'rover') {
 								roverData[key] = value;
-								
 							} else {
 								upworkData[key] = value;
 							}
 							if (key === 'url') {
-                                imageUrlPreview = value;
-                            }
+								imageUrlPreview = value;
+							}
 						}
 					}
 				}
@@ -105,7 +97,7 @@
 	$: dataChanged =
 		JSON.stringify($page.data.user?.platform == 'rover' ? roverData : upworkData) !==
 		JSON.stringify(initialData);
-	
+
 	async function handleFileChange(event: Event) {
 		const fileInput = event.target as HTMLInputElement;
 		imageUrlPreview = URL.createObjectURL(fileInput.files[0]);
@@ -648,15 +640,14 @@
 						</Button>
 					</form>
 					<form method="POST" action="?/manage">
-						
-					<Button
-						class="flex-1 py-3 text-sm md:text-base lg:text-base"
-						color="blue"
-						style="border-radius: 4px; min-width: 120px; flex-grow: 1;"
-						type="submit"
+						<Button
+							class="flex-1 py-3 text-sm md:text-base lg:text-base"
+							color="blue"
+							style="border-radius: 4px; min-width: 120px; flex-grow: 1;"
+							type="submit"
 						>
-						Manage
-					</Button>
+							Manage
+						</Button>
 					</form>
 				</div>
 			{/if}
