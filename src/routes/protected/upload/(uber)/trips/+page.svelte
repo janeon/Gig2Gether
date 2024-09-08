@@ -12,6 +12,7 @@
 	import { Label, Input, Textarea, Button } from 'flowbite-svelte';
 	import IconNumberInput from '$lib/components/IconNumberInput.svelte';
 	import { onMount } from 'svelte';
+	import Duration from '$lib/components/Duration.svelte';
 
 	updateTitle(capitalize($page.data.user?.platform) + ' Trip Upload');
 
@@ -30,6 +31,8 @@
 		timestamp: new Date(),
 		date: null,
 		time: currentTime,
+		durationHours: null,
+		durationMinutes: null,
 		endTime: currentTime,
 		type: 'trip',
 		hours: null,
@@ -96,6 +99,34 @@
 		tripData.url = '';
 	}
 
+	function addTime(startTime, addHours, addMinutes) {
+		// Split the input time (HH:mm) into hours and minutes
+		let [hours, minutes] = startTime.split(':').map(Number);
+
+		// Add the input hours and minutes
+		hours += addHours;
+		minutes += addMinutes;
+
+		// Handle minute overflow
+		if (minutes >= 60) {
+			hours += Math.floor(minutes / 60);
+			minutes = minutes % 60;
+		}
+
+		// Handle hour overflow, handle date changes later
+		hours = (hours >= 24)? hours % 24 : hours ;
+
+		// Format hours and minutes to always be 2 digits (HH:mm)
+		const formattedHours = String(hours).padStart(2, '0');
+		const formattedMinutes = String(minutes).padStart(2, '0');
+
+		return `${formattedHours}:${formattedMinutes}`;
+	}
+
+	function handleDurationChange() {
+		tripData.endTime = addTime(tripData.time, tripData.durationHours, tripData.durationMinutes)
+	}
+
 	async function submitManualTrip() {
 		errorMessage = 'Please enter:';
 		fareError = dateError = '';
@@ -137,6 +168,7 @@
 		// Update initial data after successful submission
 		initialData = { ...tripData };
 	}
+	$: handleDurationChange(); 
 </script>
 
 <div class="flex flex-row">
@@ -150,6 +182,16 @@
 			<div class="flex flex-col">
 				<Label>Start Time</Label>
 				<Input type="time" bind:value={tripData.time} class="mt-1" />
+			</div>
+
+			<div class="flex flex-col">
+				<Label>Trip Duration</Label>
+				<Duration
+					bind:hours={tripData.durationHours}
+					bind:minutes={tripData.durationMinutes}
+					className="mt-1"
+					on:change={handleDurationChange}
+				/>
 			</div>
 
 			<div class="flex flex-col">
