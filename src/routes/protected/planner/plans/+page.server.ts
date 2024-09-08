@@ -1,11 +1,11 @@
 import { db } from '$lib/firebase/client';
-import { collection, getDocs, orderBy, query, where } from 'firebase/firestore';
+import { collection, getDocs, query } from 'firebase/firestore';
 
 export async function load({ parent }) {
 	const user = (await parent()).user;
-    let events = [];
+    const events = [];
 	// get planner entries
-	let snapshot = await getDocs(query(collection(db, 'planner', user.platform, user.uid)));
+	const snapshot = await getDocs(query(collection(db, 'planner', user.platform, user.uid)));
 
 	snapshot.forEach((doc) => {
         Object.values(doc.data()).forEach((timestamp, index) => {

@@ -1,32 +1,32 @@
-import { type ClassValue, clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
-import { cubicOut } from "svelte/easing";
-import type { TransitionConfig } from "svelte/transition";
+import { type ClassValue, clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+import { cubicOut } from 'svelte/easing';
+import type { TransitionConfig } from 'svelte/transition';
 import { db } from '$lib/firebase/client';
 import { doc, getDoc } from 'firebase/firestore';
 import type { User } from '../app';
-import { sendEmailVerification } from "firebase/auth";
+import { sendEmailVerification } from 'firebase/auth';
 
 export const extractAfterEquals = (value: string | null | undefined | number): number | null => {
-    if (value === null) {
-        return null; // Return null if input is null or undefined
-    } else if (typeof value === 'number') {
-        return value;
-    } else if (typeof value !== 'string') {
-        return null
-    }
-    
-    // console.log("Made it through");
-    
-    let result;
-    if (!isNaN(Number(value))) {
-        result = Number(value);
-    } else {
-        result = value.includes('=') ? value.split('=')[1].trim() : null;
-        result = result !== null && !isNaN(Number(result)) ? Number(result) : null;
-    }
-    
-    return result;
+	if (value === null) {
+		return null; // Return null if input is null or undefined
+	} else if (typeof value === 'number') {
+		return value;
+	} else if (typeof value !== 'string') {
+		return null;
+	}
+
+	// console.log("Made it through");
+
+	let result;
+	if (!isNaN(Number(value))) {
+		result = Number(value);
+	} else {
+		result = value.includes('=') ? value.split('=')[1].trim() : null;
+		result = result !== null && !isNaN(Number(result)) ? Number(result) : null;
+	}
+
+	return result;
 };
 const now = new Date();
 const pad = (num) => num.toString().padStart(2, '0');
@@ -34,36 +34,36 @@ export const currentDate = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pa
 export const currentTime = `${pad(now.getHours())}:${pad(now.getMinutes())}`;
 
 export function convertToLocalDate(dateString: string): Date {
-    // Parse the date string (assumed to be in "YYYY-MM-DD" format)
-    const [year, month, day] = dateString.split('-').map(Number);
-    // Create a Date object in the local timezone
-    return new Date(year, month - 1, day);
+	// Parse the date string (assumed to be in "YYYY-MM-DD" format)
+	const [year, month, day] = dateString.split('-').map(Number);
+	// Create a Date object in the local timezone
+	return new Date(year, month - 1, day);
 }
 
 export function capitalize(string: string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
+	return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 export function validateData(data) {
-    for (const key in data) {
-        const value = data[key];
-        
-        if (value === null || value === undefined) {
-            console.error(`Field ${key} is null or undefined.`);
-            return false; // Field is null or undefined
-        }
-        // console.log("string?", key, typeof value === 'string');
-        if (typeof value === 'string' && value.trim() === '') {
-            console.error(`Field ${key} is an empty string.`);
-            return false; // Field is an empty string
-        }
-        
-        if (Array.isArray(value) && value.length === 0) {
-            console.error(`Field ${key} is an empty list.`);
-            return false; // Field is an empty list
-        }
-    }
-    return true; // All fields are valid
+	for (const key in data) {
+		const value = data[key];
+
+		if (value === null || value === undefined) {
+			console.error(`Field ${key} is null or undefined.`);
+			return false; // Field is null or undefined
+		}
+		// console.log("string?", key, typeof value === 'string');
+		if (typeof value === 'string' && value.trim() === '') {
+			console.error(`Field ${key} is an empty string.`);
+			return false; // Field is an empty string
+		}
+
+		if (Array.isArray(value) && value.length === 0) {
+			console.error(`Field ${key} is an empty list.`);
+			return false; // Field is an empty list
+		}
+	}
+	return true; // All fields are valid
 }
 
 export function cn(...inputs: ClassValue[]) {
@@ -82,13 +82,9 @@ export const flyAndScale = (
 	params: FlyAndScaleParams = { y: -8, x: 0, start: 0.95, duration: 150 }
 ): TransitionConfig => {
 	const style = getComputedStyle(node);
-	const transform = style.transform === "none" ? "" : style.transform;
+	const transform = style.transform === 'none' ? '' : style.transform;
 
-	const scaleConversion = (
-		valueA: number,
-		scaleA: [number, number],
-		scaleB: [number, number]
-	) => {
+	const scaleConversion = (valueA: number, scaleA: [number, number], scaleB: [number, number]) => {
 		const [minA, maxA] = scaleA;
 		const [minB, maxB] = scaleB;
 
@@ -98,13 +94,11 @@ export const flyAndScale = (
 		return valueB;
 	};
 
-	const styleToString = (
-		style: Record<string, number | string | undefined>
-	): string => {
+	const styleToString = (style: Record<string, number | string | undefined>): string => {
 		return Object.keys(style).reduce((str, key) => {
 			if (style[key] === undefined) return str;
 			return str + `${key}:${style[key]};`;
-		}, "");
+		}, '');
 	};
 
 	return {
@@ -125,169 +119,225 @@ export const flyAndScale = (
 };
 
 /** Auth fxns **/
-export const getUser = async(uid:string) => {
-    const ref = doc(db, "users", uid)
-    const docRef = await getDoc(ref)
-    if (docRef.exists()) {
-        const user : User = {
-            uid: uid,
-            role: docRef.data().role,
+export const getUser = async (uid: string) => {
+	const ref = doc(db, 'users', uid);
+	const docRef = await getDoc(ref);
+	if (docRef.exists()) {
+		const user: User = {
+			uid: uid,
+			role: docRef.data().role,
 			credentials: docRef.data().credentials,
-            username: docRef.data().username,
-            platform: docRef.data().platform
-        }
-        return user
-    }
-    // It's not always known whether a phone user is registered or not
-    // we'll handle this case in the login by providing error when user not found
-    return null
-}
+			username: docRef.data().username,
+			platform: docRef.data().platform
+		};
+		return user;
+	}
+	// It's not always known whether a phone user is registered or not
+	// we'll handle this case in the login by providing error when user not found
+	return null;
+};
 
 export const sendEmailVerificationWithContinueUrl = async (user, token) => {
 	const actionCodeSettings = {
 		url: `https://gigshare.web.app/verify-email?token=${token}`,
-		handleCodeInApp: true,
+		handleCodeInApp: true
 	};
 	await sendEmailVerification(user, actionCodeSettings);
 };
 
-
 /** Time-based calculations **/
 
+// for bar chart in personal, based on time segments
 export function calculateHourlyRates(
-    timeFrames: string[],
-    workSessions: { startTime: string; endTime: string; rate: number }[]
+	timeFrames: string[],
+	workSessions: { startTime: string; endTime: string; rate: number }[]
 ) {
-    // Initialize results for each time frame
-    const results: Record<string, { totalEarnings: number; totalHours: number; averageRate?: number }> = timeFrames.reduce((acc, frame) => {
-        acc[frame] = { totalEarnings: 0, totalHours: 0 };
-        return acc;
-    }, {} as Record<string, { totalEarnings: number; totalHours: number; averageRate?: number }>);
+	// console.log(timeFrames, workSessions)
+	// Initialize results for each time frame
+	const results: Record<
+		string,
+		{ totalEarnings: number; totalHours: number; averageRate?: number }
+	> = timeFrames.reduce(
+		(acc, frame) => {
+			acc[frame] = { totalEarnings: 0, totalHours: 0 };
+			return acc;
+		},
+		{} as Record<string, { totalEarnings: number; totalHours: number; averageRate?: number }>
+	);
 
-    // Convert time string to total minutes from midnight
-    const parseTime = (timeString: string) => {
-        const timeMatch = timeString.match(/(\d{1,2})(?::(\d{2}))?\s*(am|pm)?/i);
-        if (!timeMatch) throw new Error(`Invalid time format: ${timeString}`);
+	// Convert time string to total minutes from midnight
+	const parseTime = (timeString: string) => {
+		const timeMatch = timeString.match(/(\d{1,2})(?::(\d{2}))?\s*(am|pm)?/i);
+		if (!timeMatch) throw new Error(`Invalid time format: ${timeString}`);
 
-        const [, h, m = '00', period] = timeMatch;
-        let hour = parseInt(h, 10);
-        const minute = parseInt(m, 10);
-        if (period) {
-            if (period.toLowerCase() === 'pm' && hour < 12) hour += 12;
-            if (period.toLowerCase() === 'am' && hour === 12) hour = 0;
-        } else if (hour === 12) hour = 0;
-        return { hour, minute };
-    };
+		const [, h, m = '00', period] = timeMatch;
+		let hour = parseInt(h, 10);
+		const minute = parseInt(m, 10);
+		if (period) {
+			if (period.toLowerCase() === 'pm' && hour < 12) hour += 12;
+			if (period.toLowerCase() === 'am' && hour === 12) hour = 0;
+		} else if (hour === 12) hour = 0;
+		return { hour, minute };
+	};
 
-    // Convert to minutes from midnight
-    const timeToMinutes = ({ hour, minute }: { hour: number; minute: number }) => hour * 60 + minute;
+	// Convert to minutes from midnight
+	const timeToMinutes = ({ hour, minute }: { hour: number; minute: number }) => hour * 60 + minute;
 
-    // Define time frames in minutes
-    const getFrameBoundaries = (frames: string[]): Record<string, [number, number]> => {
-        return frames.reduce((acc, frame) => {
-            const [startTime, endTime] = frame.split('-').map(t => t.trim());
-            acc[frame] = [timeToMinutes(parseTime(startTime)), timeToMinutes(parseTime(endTime))];
-            return acc;
-        }, {} as Record<string, [number, number]>);
-    };
+	// Define time frames in minutes
+	const getFrameBoundaries = (frames: string[]): Record<string, [number, number]> => {
+		return frames.reduce(
+			(acc, frame) => {
+				const [startTime, endTime] = frame.split('-').map((t) => t.trim());
+				acc[frame] = [timeToMinutes(parseTime(startTime)), timeToMinutes(parseTime(endTime))];
+				return acc;
+			},
+			{} as Record<string, [number, number]>
+		);
+	};
 
-    const frameBoundaries = getFrameBoundaries(timeFrames);
+	const frameBoundaries = getFrameBoundaries(timeFrames);
 
-    // Calculate hours worked in each time frame
-    workSessions.forEach(({ startTime, endTime, rate }) => {
-        const start = timeToMinutes(parseTime(startTime));
-        let end = timeToMinutes(parseTime(endTime));
-        if (end < start) end += 1440; // Adjust for crossing midnight
+	// Calculate hours worked in each time frame
+	workSessions.forEach(({ startTime, endTime, rate }) => {
+		const start = timeToMinutes(parseTime(startTime));
+		let end = timeToMinutes(parseTime(endTime));
+		if (end < start) end += 1440; // Adjust for crossing midnight
 
-        Object.entries(frameBoundaries).forEach(([frame, [frameStart, frameEnd]]) => {
-            if (end > frameStart && start < frameEnd) {
-                const effectiveStart = Math.max(start, frameStart);
-                const effectiveEnd = Math.min(end, frameEnd);
-                const hoursWorked = (effectiveEnd - effectiveStart) / 60;
-                const earnings = hoursWorked * rate;
+		Object.entries(frameBoundaries).forEach(([frame, [frameStart, frameEnd]]) => {
+			if (end > frameStart && start < frameEnd) {
+				const effectiveStart = Math.max(start, frameStart);
+				const effectiveEnd = Math.min(end, frameEnd);
+				const hoursWorked = (effectiveEnd - effectiveStart) / 60;
+				const earnings = hoursWorked * rate;
 
-                results[frame].totalEarnings += earnings;
-                results[frame].totalHours += hoursWorked;
-            }
-        });
-    });
+				results[frame].totalEarnings += earnings;
+				results[frame].totalHours += hoursWorked;
+			}
+		});
+	});
 
-    // Calculate average hourly rates for each time frame
-    for (const frame in results) {
-        const { totalEarnings, totalHours } = results[frame];
-        results[frame].averageRate = totalHours > 0 ? totalEarnings / totalHours : 0;
-    }
+	// Calculate average hourly rates for each time frame
+	for (const frame in results) {
+		const { totalEarnings, totalHours } = results[frame];
+		results[frame].averageRate = totalHours > 0 ? totalEarnings / totalHours : 0;
+	}
 
-    return results;
+	return results;
 }
 
 export function getHoursDifference(time1, time2) {
 	if (!time1 || !time2) return 0;
-    const [h1, m1] = time1.split(':').map(Number);
-    const [h2, m2] = time2.split(':').map(Number);
-    return (h2 * 60 + m2 - h1 * 60 - m1) / 60;
+	const [h1, m1] = time1.split(':').map(Number);
+	const [h2, m2] = time2.split(':').map(Number);
+	// Calculate the difference in minutes
+	let differenceInMinutes = h2 * 60 + m2 - (h1 * 60 + m1);
+
+	// If the difference is negative, add 24 * 60 (one full day in minutes)
+	if (differenceInMinutes < 0) {
+		differenceInMinutes += 24 * 60;
+	}
+
+	// Convert minutes difference to hours
+	return differenceInMinutes / 60;
 }
 
-export function calculateMissingTime(startTime: string | null, endTime: string | null, hoursBetween: number): string {
-    const toMinutes = (time: string) => {
-        const [hours, minutes] = time.split(':').map(Number);
-        return hours * 60 + minutes;
-    };
+export function calculateMissingTime(
+	startTime: string | null,
+	endTime: string | null,
+	hoursBetween: number
+): string {
+	const toMinutes = (time: string) => {
+		const [hours, minutes] = time.split(':').map(Number);
+		return hours * 60 + minutes;
+	};
 
-    const toTimeString = (mins: number) => `${Math.floor(mins / 60)}:${(mins % 60).toString().padStart(2, '0')}`;
+	const toTimeString = (mins: number) =>
+		`${Math.floor(mins / 60)}:${(mins % 60).toString().padStart(2, '0')}`;
 
-    const totalMinutes = hoursBetween * 60;
+	const totalMinutes = hoursBetween * 60;
 
-    return startTime 
-        ? toTimeString(toMinutes(startTime) + totalMinutes) 
-        : toTimeString(toMinutes(endTime!) - totalMinutes);
+	return startTime
+		? toTimeString(toMinutes(startTime) + totalMinutes)
+		: toTimeString(toMinutes(endTime!) - totalMinutes);
 }
 
-export function transformHourlyData(data: { [key: string]: { totalEarnings: number; totalHours: number; averageRate: number } }): { x: string; y: number }[] {
+export function transformHourlyData(data: {
+	[key: string]: { totalEarnings: number; totalHours: number; averageRate: number };
+}): { x: string; y: number }[] {
 	// Map the data to the desired format with truncated averageRate
 	return Object.entries(data).map(([key, value]) => ({
-	  x: key,
-	  y: parseFloat(value.averageRate.toFixed(2)) // truncate averageRate to 2 decimals
+		x: key,
+		y: parseFloat(value.averageRate.toFixed(2)) // truncate averageRate to 2 decimals
 	}));
-  }
+}
 
+export function calculateUberStats(dataList) {
+	const totals = dataList.reduce(
+		(acc, item) => {
+			acc.totalHours += item.hoursWorked;
+			acc.totalEarnings += item.earning;
+			acc.totalDays += 1;
+
+			return acc;
+		},
+		{ totalHours: 0, totalEarnings: 0, totalDays: 0 }
+	);
+	// console.log(totals)
+
+	// Avoid division by zero
+	const hourly = totals.totalHours > 0 ? totals.totalEarnings / totals.totalHours : 0;
+	const hours = totals.totalDays > 0 ? totals.totalHours / totals.totalDays : 0;
+	return { hourlyRate: hourly, hoursWorked: hours };
+}
+
+export function calculateUberHours(dataList) {
+	const totals = dataList.reduce(
+		(acc, item) => {
+			acc.totalHours += item.hoursWorked;
+			acc.totalDays += 1;
+			return acc;
+		},
+		{ totalHours: 0, totalDays: 0 }
+	);
+
+	// Avoid division by zero
+	return totals.totalDays > 0 ? totals.totalEarnings / totals.totalDays : 0;
+}
 
 /* Handlers */
 
 export function handleKeyDown(event: KeyboardEvent) {
-    if (
-        !/^\d$/.test(event.key) && // Allow digits 0-9
-        event.key !== "Backspace" && // Allow backspace
-        event.key !== "ArrowLeft" && // Allow arrow keys
-        event.key !== "ArrowRight" && // Allow arrow keys
-        event.key !== "Tab" // Allow tab
-    ) {
-        event.preventDefault();
-    }
+	if (
+		!/^\d$/.test(event.key) && // Allow digits 0-9
+		event.key !== 'Backspace' && // Allow backspace
+		event.key !== 'ArrowLeft' && // Allow arrow keys
+		event.key !== 'ArrowRight' && // Allow arrow keys
+		event.key !== 'Tab' // Allow tab
+	) {
+		event.preventDefault();
+	}
 }
 
 export function handleRatingsKeyDown(event: KeyboardEvent) {
-    const input = event.target as HTMLInputElement;
+	const input = event.target as HTMLInputElement;
 
-    if (event.key === "." && input.value.includes(".")) {
-        event.preventDefault(); // Prevent additional periods
-    } else if (!/^\d$/.test(event.key) && 
-               event.key !== "." && 
-               event.key !== "Backspace" && 
-               event.key !== "ArrowLeft" && 
-               event.key !== "ArrowRight" && 
-               event.key !== "Tab") {
-        event.preventDefault(); // Prevent non-digit characters except period
-    }
+	if (event.key === '.' && input.value.includes('.')) {
+		event.preventDefault(); // Prevent additional periods
+	} else if (
+		!/^\d$/.test(event.key) &&
+		event.key !== '.' &&
+		event.key !== 'Backspace' &&
+		event.key !== 'ArrowLeft' &&
+		event.key !== 'ArrowRight' &&
+		event.key !== 'Tab'
+	) {
+		event.preventDefault(); // Prevent non-digit characters except period
+	}
 }
-
 
 export function handleBrowseClick() {
 	const fileInput = document.getElementById('selectedFile');
 	if (fileInput) {
-	  (fileInput as HTMLInputElement).click();
+		(fileInput as HTMLInputElement).click();
 	}
-  }
-
-
-  
+}

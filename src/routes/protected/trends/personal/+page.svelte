@@ -14,7 +14,8 @@
   export let data;
   const hourlySegments = data.workSegments;
   const weekdayEarnings = data.weeklyEarnings;
-  const averageHourlyPay = data.averageEarningsPerHour || 'upcoming soon...';
+  const averageHourlyPay = data.averageEarningsPerHour || 'coming soon...';
+  const averageHoursPerDay = data.averageHoursPerDay;
   const calEarnings = data.calEarnings;
   const calExpenses = data.calExpenses; 
   updateTitle('My Trends');
@@ -29,12 +30,6 @@
       const platform = $page.data.user.platform;
       const platformData = {
           uber: [
-              { x: '12am', y: 0.5 },
-              { x: '4am', y: 0.75 },
-              { x: '8am', y: 1.2 },
-              { x: '12pm', y: 1.5 },
-              { x: '4pm', y: 2.0 },
-              { x: '8pm', y: 1.5 }
           ],
           rover: hourlySegments,
           upwork: weekdayEarnings
@@ -329,7 +324,8 @@
     <Card class="flex-1">
       <div class="flex flex-col items-center">
         <h1 class="text-2xl font-bold text-gray-900 mb-3 text-center">General Information</h1>
-        <p class="text-sm font-normal text-gray-700 dark:text-gray-400 leading-tight mb-3">Average Hourly Pay: {averageHourlyPay}</p>
+        <p class="text-sm font-normal text-gray-700 dark:text-gray-400 leading-tight mb-3">Average Hourly Income: ${averageHourlyPay == "coming soon..." ? averageHourlyPay : averageHourlyPay.toFixed(2)}</p>
+        <p class="text-sm font-normal text-gray-700 dark:text-gray-400 leading-tight mb-3">Average Time Worked (Daily): {averageHoursPerDay ? averageHoursPerDay.toFixed(2) + " Hours" : "coming soon..."}</p>
       </div>
     </Card>
   </div>

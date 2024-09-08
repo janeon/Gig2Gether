@@ -6,7 +6,7 @@
 	import { enhance } from '$app/forms';
 	import { Button, Input, Alert } from 'flowbite-svelte';
 	import BlueButton from '$lib/components/BlueButton.svelte';
-  	import { BlenderPhoneSolid, EnvelopeSolid, EyeOutline, EyeSlashOutline, FileCopySolid, PhoneOutline, PhoneSolid } from 'flowbite-svelte-icons';
+  	import { BlenderPhoneSolid, EnvelopeSolid, EyeOutline, EyeSlashOutline, FileCopySolid, PhoneSolid } from 'flowbite-svelte-icons';
   	
 	let show = false;
 	export let form : ActionData;
@@ -25,8 +25,6 @@
 			// ..
 		})
 		.catch((error) => {
-			const errorCode = error.code;
-			const errorMessage = error.message;
 			form.formErrors = (error as Error).message;
 		});
 	}
@@ -47,7 +45,7 @@
 			signInMethod = 'phone';
 			recaptchaVerifier = await new RecaptchaVerifier(auth, 'recaptcha-container', {
 			'size': 'invisible',
-			'callback': (response) => {
+			'callback': () => {
 			// reCAPTCHA solved, allow signInWithPhoneNumber.
 			console.log('reCAPTCHA solved.');}
 			});
