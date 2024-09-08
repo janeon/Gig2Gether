@@ -19,11 +19,11 @@ export async function load({ locals }) {
 	let averageHoursPerDay = null;
 	let calEarnings = [];
 	let calExpenses = [];
-	// locals.user.uid = "Y5M2Yhj4IvRiNJB3UYm48Wi3sk73"
+	// locals.user.uid = "gJg2PGAmynMqTVUSYgpicDASUJF2"
 	switch (locals.user.platform) {
 		case 'rover': {
-			workSegments = getRoverHourlyData(earnings, locals.user.uid).workSegments;
 			const roverWeekly = getRoverWeeklyData(earnings, locals.user.uid);
+			workSegments = getRoverHourlyData(earnings, locals.user.uid).workSegments;
 			weeklyEarnings = roverWeekly.weekdayEarnings;
 			averageEarningsPerHour = roverWeekly.averageEarningsPerHour;
 			calEarnings = roverWeekly.calEarnings;

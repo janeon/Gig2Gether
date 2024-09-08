@@ -325,7 +325,7 @@
       <div class="flex flex-col items-center">
         <h1 class="text-2xl font-bold text-gray-900 mb-3 text-center">General Information</h1>
         <p class="text-sm font-normal text-gray-700 dark:text-gray-400 leading-tight mb-3">Average Hourly Income: ${averageHourlyPay == "coming soon..." ? averageHourlyPay : averageHourlyPay.toFixed(2)}</p>
-        <p class="text-sm font-normal text-gray-700 dark:text-gray-400 leading-tight mb-3">Average Time Worked (Daily): {averageHoursPerDay ? averageHoursPerDay + " Hours" : "coming soon..."}</p>
+        <p class="text-sm font-normal text-gray-700 dark:text-gray-400 leading-tight mb-3">Average Time Worked (Daily): {averageHoursPerDay ? averageHoursPerDay.toFixed(2) + " Hours" : "coming soon..."}</p>
       </div>
     </Card>
   </div>
