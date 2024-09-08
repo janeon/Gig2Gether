@@ -154,10 +154,12 @@ export const sendEmailVerificationWithContinueUrl = async (user, token) => {
 
 /** Time-based calculations **/
 
+// for bar chart in personal, based on time segments
 export function calculateHourlyRates(
     timeFrames: string[],
     workSessions: { startTime: string; endTime: string; rate: number }[]
 ) {
+    // console.log(timeFrames, workSessions)
     // Initialize results for each time frame
     const results: Record<string, { totalEarnings: number; totalHours: number; averageRate?: number }> = timeFrames.reduce((acc, frame) => {
         acc[frame] = { totalEarnings: 0, totalHours: 0 };
@@ -251,6 +253,32 @@ export function transformHourlyData(data: { [key: string]: { totalEarnings: numb
 	}));
   }
 
+export function calculateUberStats(dataList) {
+    const totals = dataList.reduce((acc, item) => {
+      acc.totalHours += item.hoursWorked;
+      acc.totalEarnings += item.earning;
+      acc.totalDays += 1
+      
+      return acc;
+    }, { totalHours: 0, totalEarnings: 0, totalDays: 0});
+    // console.log(totals)
+  
+    // Avoid division by zero
+    const hourly = totals.totalHours > 0 ? (totals.totalEarnings / totals.totalHours) : 0;
+    const hours = totals.totalDays > 0 ? (totals.totalHours / totals.totalDays) : 0;
+    return {hourlyRate: hourly, hoursWorked: hours}
+  }
+
+  export function calculateUberHours(dataList) {
+    const totals = dataList.reduce((acc, item) => {
+      acc.totalHours += item.hoursWorked;
+      acc.totalDays += 1;
+      return acc;
+    }, { totalHours: 0, totalDays: 0 });
+  
+    // Avoid division by zero
+    return totals.totalDays > 0 ? (totals.totalEarnings / totals.totalDays) : 0;
+  }
 
 /* Handlers */
 
