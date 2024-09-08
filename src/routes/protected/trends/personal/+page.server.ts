@@ -27,6 +27,7 @@ export async function load({ locals }) {
 			weeklyEarnings = roverWeekly.weekdayEarnings;
 			averageEarningsPerHour = roverWeekly.averageEarningsPerHour;
 			calEarnings = roverWeekly.calEarnings;
+			averageHoursPerDay = roverWeekly.dailyHours;
 			break;
 		}
 		case 'upwork': {
@@ -199,6 +200,7 @@ function getRoverHourlyData(snapshot, uid) {
 function getRoverWeeklyData(snapshot, uid) {
 	const weekdayEarnings = weekdays.map((day) => ({ x: day, y: 0.0 }));
 	const weekdayHours = weekdays.map((day) => ({ x: day, y: 0.0 }));
+	const daysWorked = []
 	const calEarnings = [];
 
 	// console.log("getting rover weekly data");
@@ -237,21 +239,25 @@ function getRoverWeeklyData(snapshot, uid) {
 		if (data.cutIncome) {
 			weekdayEarnings[dayIndex].y += parseFloat(data.cutIncome);
 			calEarnings.push({ date: data.endDate, value: parseFloat(data.cutIncome) });
+			daysWorked.push(data.date)
 		} else if (data.income) {
 			weekdayEarnings[dayIndex].y += parseFloat(data.income);
 			calEarnings.push({ date: data.endDate, value: parseFloat(data.income) });
+			daysWorked.push(data.date)
 		} else if (data.rate && data.unitsWorked) {
 			weekdayEarnings[dayIndex].y += data.rate * parseFloat(data.unitsWorked);
 			calEarnings.push({
 				date: data.endDate,
 				value: data.rate * data.unitsWorked
 			});
+			daysWorked.push(data.date)
 		} else if (data.rate && hoursWorked) {
 			weekdayEarnings[dayIndex].y += data.rate * hoursWorked;
 			calEarnings.push({
 				date: data.endDate,
 				value: data.rate * hoursWorked
 			});
+			daysWorked.push(data.date)
 		} else {
 			// do not have monthly earnings for this item
 			return {};
@@ -276,7 +282,8 @@ function getRoverWeeklyData(snapshot, uid) {
 	return {
 		weekdayEarnings: weekdayEarnings,
 		averageEarningsPerHour: totalHours > 0 ? totalEarnings / totalHours : 0,
-		calEarnings: calEarnings
+		calEarnings: calEarnings,
+		dailyHours: daysWorked.length > 0 ? totalHours / daysWorked.length : 0,
 	};
 }
 

@@ -49,8 +49,10 @@
 		{#each [{ iconClass: 'fa-upload', 
 		title: 'Upload', route: $page.data.user.platform === 'uber' ? '/protected/upload/CSV' : '/protected/upload/manual', 
 		buttons: [ ...($page.data.user.platform === 'uber' ? 
-			[{ label: 'Trips', route: '/protected/upload/trips' }, 
-			{ label: 'Quests', route: '/protected/upload/quests' }] 
+			[ 
+			{ label: 'Trips', route: '/protected/upload/trips' }, 
+			{ label: 'Quests', route: '/protected/upload/quests' },
+			{ label: 'CSV', route: '/protected/upload/CSV' }] 
 			: 
 			[{ label: 'Earnings', route: '/protected/upload/manual' }]),
 			{ label: 'Expenses', route: '/protected/upload/expenses' },

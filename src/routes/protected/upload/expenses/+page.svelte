@@ -199,7 +199,7 @@
 			</div>
 
 			<div class="flex flex-col">
-				<Label>Amount</Label>
+				<Label>Amount<span class="text-red-500">*{amountError}</Label>
 				<IconNumberInput bind:value={data.amount} icon={dollar} className="mt-1" />
 			</div>
 		</div>
