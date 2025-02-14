@@ -53,6 +53,22 @@
 	</TableBodyRow>
   </Table>
 
+  <Table>
+	<caption class="p-5 text-lg font-semibold text-left text-gray-900 bg-white dark:text-white dark:bg-gray-800">
+		Issues vs Strategies
+	</caption>
+	<TableHead>
+		{#each Object.entries(data.types) as [name, _]} 	
+			<TableHeadCell> {name} </TableHeadCell>
+		{/each}
+	</TableHead>
+	<TableBodyRow>
+		{#each Object.entries(data.types) as [_, value]} 	
+			<TableBodyCell> {value} </TableBodyCell>
+		{/each}
+	</TableBodyRow>
+  </Table>
+
 
   <Table>
 	<caption class="p-5 text-lg font-semibold text-left text-gray-900 bg-white dark:text-white dark:bg-gray-800">

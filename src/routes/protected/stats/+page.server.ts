@@ -77,7 +77,7 @@ export async function load() {
 	const expenseFields = {};
 	const upworkIncomeFields = {};
 	const roverIncomeFields = {};
-	const uberIncomeFields = {};
+	// const uberIncomeFields = {};
 	const upworkFields = ['clientHistory', 'experience', 'notes', 'workUnits'];
 	const upworkInitials = {'clientHistory':'', 'experience':[], 'notes':'', 'workUnits': 'Hours'};
 	const roverFields = [ 'notes', 'workUnits'];;

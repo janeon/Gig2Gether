@@ -3,7 +3,6 @@ import { initializeApp, type FirebaseApp } from 'firebase/app';
 import { getAuth, RecaptchaVerifier, signInWithPhoneNumber, type Auth} from 'firebase/auth';
 import { getFirestore, type Firestore } from 'firebase/firestore';
 import { getStorage, type FirebaseStorage } from "firebase/storage";
-import { getAnalytics } from "firebase/analytics";
 
 let db: Firestore;
 let app: FirebaseApp;
