@@ -4,7 +4,7 @@
 	import '../app.css';
 	import { page } from '$app/stores';
 	/** @type {import('./$types').LayoutData} */
-	export let form: ActionData;
+	export let form: HTMLFormElement;
 	$: activeUrl = $page.url.pathname;
 	let activeClass =
 		'text-customBeige-700 dark:text-customBeige-500 hover:text-customBeige-600 dark:hover:text-customBeige-300';
@@ -23,7 +23,6 @@
 	} from 'flowbite-svelte';
 	import { ChevronDownOutline } from 'flowbite-svelte-icons';
 	import { enhance } from '$app/forms';
-	import type { ActionData } from './protected/$types';
 	import Button from '$lib/components/ui/button/button.svelte';
 
 	let mobile: boolean;
@@ -36,14 +35,6 @@
 		script.async = true;
 		script.src = `https://www.googletagmanager.com/gtag/js?id=G-LDJKBQCTBN`;
 		document.head.appendChild(script);
-
-		window.dataLayer = window.dataLayer || [];
-		function gtag() {
-			dataLayer.push(arguments);
-		}
-		gtag('js', new Date());
-
-		gtag('config', 'G-LDJKBQCTBN', { user_id: $page.data.user?.uid });
 		mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
 			window.navigator.userAgent
 		);
