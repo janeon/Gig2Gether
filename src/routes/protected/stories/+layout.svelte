@@ -21,17 +21,6 @@
 
 </script>
 
-<!-- <div class={mobile ? 'overscroll-contain' : 'flex'}>
-    <Sidebar title={title} option="sharing"/>
-    <div class="flex p-3 flex-1 justify-center h-[80vh] overflow-y-auto">
-        <div class="flex flex-col items-center w-full">
-          <div class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg max-w-3xl w-full">
-            <slot/>
-            </div>
-        </div>
-    </div>
-</div> -->
-
 <div class={mobile ? 'fixed-y' : 'flex pt-3'}>
     <Sidebar title={title} option="sharing"/>
     <div class="flex flex-1 justify-center h-[80vh] overflow-y-auto">

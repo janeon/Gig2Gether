@@ -66,9 +66,8 @@
         } else {
             data = docSnap.data();
         }
-        // console.log(data)
         const valid = validateData(data)
-        console.log(valid, "profile valid?")
+        // console.log(valid, "profile valid?")
         updateValue(valid);
         initialData = { ...data };
         switch ($page.data.user?.platform) {

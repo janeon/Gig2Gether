@@ -5,7 +5,7 @@ export const actions = {
     // Existing default action
     reload: async () => {
         return {
-            success: true // Example response
+            success: true
         };
     },
 

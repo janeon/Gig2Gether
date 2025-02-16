@@ -74,16 +74,6 @@
             <Label class="mt-4">Race</Label>
             <Select items={races} bind:value={dataToSetToStore.race}/>
         </div>
-        
-        <!-- <div class="py-5">
-            <Label>Hours spent on a full time (W2) job per week</Label>
-            <NumberInput bind:value={dataToSetToStore.w2Hours} type = "number"/>
-        </div> -->
-        
-        <!-- <div class="py-5">
-            <Label>Estimated hours spent on gigs not part of this platform</Label>
-            <NumberInput bind:value={dataToSetToStore.otherGigHours} type = "number"/>
-        </div> -->
 
         <div class="flex justify-center mt-4">
             <button

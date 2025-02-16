@@ -44,27 +44,25 @@
 		{ value: 'stress', label: 'Stress (e.g. from precarity)' },
 		{ value: 'deactivation', label: 'Deactivation' },
 		{ value: 'technology', label: 'Technology' },
+		{ value: 'algorithms', label: 'Understanding Algorithms' },
 		{ value: 'other', label: 'Other' }
 	];
 
 	const uberTags = [
 		{ value: 'safety', label: 'Safety' },
 		{ value: 'care-giving', label: 'Care-giving' },
-		{ value: 'algorithms', label: 'Understanding Algorithms' },
 		...commonTags
 	];
 
 	const roverTags = [
 		{ value: 'safety', label: 'Safety' },
 		{ value: 'care-giving', label: 'Care-giving' },
-		{ value: 'algorithms', label: 'Understanding Algorithms' },
 		...commonTags
 	];
 
 	const upworkTags = [
 		{ value: 'scams', label: 'Scams' },
 		{ value: 'getting started', label: 'Getting Started' },
-		{ value: 'algorithms', label: 'Algorithm Functionality' },
 		{ value: 'customers', label: 'Customers' },
 		...commonTags
 	];

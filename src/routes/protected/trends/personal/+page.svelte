@@ -131,8 +131,6 @@
           position: 'top', 
           cellSize: 15,
 
-          // height: 90,
-          // width: 90,
           style: { 
             fontFamily: 'Inter, sans-serif', 
             textAlign: 'center', 
@@ -212,11 +210,7 @@
     cal = new CalHeatmap();
     const queryParams = new URLSearchParams(window.location.search);
 		const expense = queryParams.get('expense');
-    if (expense) {
-      showExpenses();
-    } else {
-      showEarnings();
-    }
+    showEarnings();
   });
 
   let mobile: boolean;
