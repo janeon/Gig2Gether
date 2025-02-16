@@ -31,7 +31,7 @@
         // Retrieve the document data
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
-            const docData = docSnap.data();
+            const docData = docSnap.data() as { [key: string]: any };
             docData.deletedAt = new Date().toISOString(); // Add the delete timestamp
             // Add the document to the new collection
             await setDoc(newDocRef, docData);
