@@ -1,4 +1,4 @@
-import { weekdays, getHoursDifference } from "../trends-utils";
+import { weekdays, getHoursDifference } from './trends-utils';
 
 export function getUpworkWeeklyData(snapshot, uid) {
 	const calEarnings = [];

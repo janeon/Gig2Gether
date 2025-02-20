@@ -4,7 +4,7 @@ import {
 	calculateHourlyRates,
 	calculateMissingTime,
 	transformHourlyData
-} from '../trends-utils';
+} from './trends-utils';
 
 export function getRoverHourlyData(snapshot, uid) {
 	const workSessions = [];

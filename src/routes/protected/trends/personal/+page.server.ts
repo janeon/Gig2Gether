@@ -1,8 +1,8 @@
 import { db } from '$lib/firebase/client';
 import { collection, getDocs, query } from 'firebase/firestore';
-import { getRoverWeeklyData, getRoverHourlyData } from './rover-utils';
-import { getUberWeeklyData } from './uber-utils';
-import { getUpworkWeeklyData } from './upwork-utils';
+import { getRoverWeeklyData, getRoverHourlyData } from './personal-utils/rover-utils';
+import { getUberWeeklyData } from './personal-utils/uber-utils';
+import { getUpworkWeeklyData } from './personal-utils/upwork-utils';
 
 export async function load({ locals }) {
 	const manualData = locals.user.platform === 'uber' ? 'trips' : locals.user.platform;
