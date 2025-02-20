@@ -1,4 +1,4 @@
-# Datasharing: Live at [gigshare.web.app](https://gigshare.web.app/)
+# Gig2Gether: Live at [gigshare.web.app](https://gigshare.web.app/)
 
 ## Firebase authentication setup
 Make sure you have .env file added to the root of the folder (under /datasharing) so that authentication is connected
@@ -42,23 +42,6 @@ Hosting setup instructions can be found in src/lib/firebase/Firebase.md
 
 ## Todo 
 
-- [ ] Decide what to do with unverified accounts: Should verifications email resends be allowed?
-
 - [ ] Tailwind
 
-- [X] How to store different types of workers' data, across different apps and work types (what if someone used both Uber and Rover?)
-      
-- [X] Debug login page with upload on deploy 
-
-- [X] Adapt for mobile
-
-- [X] Fix auth so that login doesn't expire at each reload
-
-- [X] Phone authentication
-
-- [X] Demographic form - storing individual user backgrounds to database
-
-
-## Outstanding questions 
--- Whether to have separate interfaces/apps for web and mobile
--- Whether to incorporate parts from existing webapp from UTAustin
+- [ ] Mobile app
