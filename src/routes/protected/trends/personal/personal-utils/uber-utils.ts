@@ -1,4 +1,4 @@
-import { weekdays, getHoursDifference } from "../trends-utils";
+import { weekdays, getHoursDifference } from "./trends-utils";
 
 function calculateUberStats(dataList) {
 	const totals = dataList.reduce(
